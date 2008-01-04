@@ -1,0 +1,35 @@
+= RModBus
+
+*RModBus* - free implementation of protocol ModBus.
+
+== Feature
+
+* Client ModBus-TCP
+* Support functions:  0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0xf, 0x10
+
+== Installation
+
+You can install RModBus with the following command
+
+$ rake install
+
+from its distribution directory
+
+== Gem installation
+
+Download and install RModBus with the following
+
+$ gem install --remote rmodbus
+
+== CSM
+
+-----------------
+
+== Simple Example
+
+require 'rmodbus'
+
+
+ 
+
+ 
