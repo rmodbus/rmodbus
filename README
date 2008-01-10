@@ -23,11 +23,15 @@ $ gem install --remote rmodbus
 
 == CSM
 
------------------
+You can checkout source code from SVN  repositry 
 
-== Simple Example
 
-require 'rmodbus'
+$ svn checkout svn://rubyforge.org/var/svn/rmodbu/trunk
+
+or
+
+$ svn checkout http://rubyforge.org/var/svn/rmodbus/trunk
+
 
 
  

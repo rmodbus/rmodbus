@@ -1,3 +1,15 @@
+# RModBus - free implementation of ModBus protocol on Ruby.
+# Copyright (C) 2008  Timin Aleksey
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
 require 'rmodbus/exceptions'
 
 class String
@@ -47,7 +59,7 @@ module ModBus
     include Errors
 
     def read_coils(addr, nreg)
-      query("\x1" + addr.to_bytes + nreg.to_bytes).to_array_bit
+      query("\x1" + addr.to_bytes + nreg.to_bytes).to_array_bit[0..nreg-1]
     end
 
     def read_discret_inputs(addr, nreg)
@@ -134,5 +146,12 @@ module ModBus
       end
       pdu[2..-1]
     end
+  end
+
+  protected
+  def send_pdu(pdu)
+  end
+
+  def read_pdu
   end
 end
