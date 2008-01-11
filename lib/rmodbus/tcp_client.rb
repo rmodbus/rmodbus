@@ -17,10 +17,12 @@ require 'rmodbus/adu'
 
 module ModBus
 
+  # Implementation clients(master) ModBusTCP
   class TCPClient < Client
 
     include Timeout
 
+    # Connect with a ModBus
     def initialize(ipaddr, port = 502, slaveaddr = 1)
       timeout(1) do
         @sock = TCPSocket.new(ipaddr, port)

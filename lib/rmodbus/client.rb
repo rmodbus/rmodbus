@@ -58,22 +58,33 @@ module ModBus
   
     include Errors
 
-    def read_coils(addr, nreg)
-      query("\x1" + addr.to_bytes + nreg.to_bytes).to_array_bit[0..nreg-1]
+    # Read value *ncoils* coils starting with *addr*
+    # Return array of their values
+    def read_coils(addr, ncoils)
+      query("\x1" + addr.to_bytes + ncoils.to_bytes).to_array_bit[0..ncoils-1]
     end
 
-    def read_discret_inputs(addr, nreg)
-      query("\x2" + addr.to_bytes + nreg.to_bytes).to_array_bit
+    # Read value *ncoils* discrete inputs starting with *addr*
+    # Return array of their values
+    def read_discret_inputs(addr, ncoils)
+      query("\x2" + addr.to_bytes + ncoils.to_bytes).to_array_bit
     end
 
+    # Read value *nreg* holding registers starting with *addr*
+    # Return array of their values
     def read_holding_registers(addr, nreg) 
       query("\x3" + addr.to_bytes + nreg.to_bytes).to_array_int16
     end
 
+    # Read value *nreg* input registers starting with *addr*
+    # Return array of their values
     def read_input_registers(addr, nreg)
       query("\x4" + addr.to_bytes + nreg.to_bytes).to_array_int16
     end
 
+    # Write *val* in *addr* coil 
+    # if *val* lager 0 write 1
+    # Return self
     def write_single_coil(addr, val)
       if val == 0
         query("\x5" + addr.to_bytes + 0.to_bytes)
@@ -83,11 +94,16 @@ module ModBus
       self
     end
 
+    # Write *val* in *addr* register
+    # Return self
     def write_single_register(addr, val)
       query("\x6" + addr.to_bytes + val.to_bytes)
       self
     end
 
+    # Write *val* in coils starting with *addr*
+    # *val* it is array of bits
+    # Return self
     def write_multiple_coils(addr, val)
       nbyte = ((val.size-1) >> 3) + 1
       sum = 0
@@ -106,16 +122,19 @@ module ModBus
       self
     end
 
+    # Write *val* in registers starting with *addr*
+    # *val* it is array of integer
+    # Return self
     def write_multiple_registers(addr, val)
       s_val = ""
       val.each do |reg|
+        raise ModBusException.new("Value registers must be less 0x10000") if reg > 0xffff
         s_val << reg.to_bytes
       end
 
       query("\x10" + addr.to_bytes + val.size.to_bytes + (val.size * 2).chr + s_val)
       self
     end
-
 
     def query(pdu)    
       send_pdu(pdu)
