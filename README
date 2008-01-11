@@ -5,7 +5,15 @@
 == Feature
 
 * Client ModBus-TCP
-* Support functions:  0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0xf, 0x10
+* Support functions:
+** 01 (0x01) Read Coils
+** 02 (0x02) Read Discrete Inputs
+** 03 (0x03) Read Holding Registers
+** 04 (0x04) Read Input Registers 
+** 05 (0x05) Write Single Coil
+** 06 (0x06) Write Single Register
+** 15 (0x0F) Write Multiple Coils
+** 16 (0x10) Write Multiple registers
 
 == Installation
 
@@ -31,6 +39,11 @@ $ svn checkout svn://rubyforge.org/var/svn/rmodbu/trunk
 or
 
 $ svn checkout http://rubyforge.org/var/svn/rmodbus/trunk
+
+== Reference 
+
+* RModBus project: http://rubyforge.org/projects/rmodbus
+* ModBus community: http://www.modbus-ida.org
 
 
 

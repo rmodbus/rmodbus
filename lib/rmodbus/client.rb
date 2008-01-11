@@ -59,31 +59,37 @@ module ModBus
     include Errors
 
     # Read value *ncoils* coils starting with *addr*
+    #
     # Return array of their values
     def read_coils(addr, ncoils)
       query("\x1" + addr.to_bytes + ncoils.to_bytes).to_array_bit[0..ncoils-1]
     end
 
     # Read value *ncoils* discrete inputs starting with *addr*
+    #
     # Return array of their values
     def read_discret_inputs(addr, ncoils)
       query("\x2" + addr.to_bytes + ncoils.to_bytes).to_array_bit
     end
 
     # Read value *nreg* holding registers starting with *addr*
+    #
     # Return array of their values
     def read_holding_registers(addr, nreg) 
       query("\x3" + addr.to_bytes + nreg.to_bytes).to_array_int16
     end
 
     # Read value *nreg* input registers starting with *addr*
+    #
     # Return array of their values
     def read_input_registers(addr, nreg)
       query("\x4" + addr.to_bytes + nreg.to_bytes).to_array_int16
     end
 
     # Write *val* in *addr* coil 
+    #
     # if *val* lager 0 write 1
+    #
     # Return self
     def write_single_coil(addr, val)
       if val == 0
@@ -95,6 +101,7 @@ module ModBus
     end
 
     # Write *val* in *addr* register
+    #
     # Return self
     def write_single_register(addr, val)
       query("\x6" + addr.to_bytes + val.to_bytes)
@@ -102,7 +109,9 @@ module ModBus
     end
 
     # Write *val* in coils starting with *addr*
+    #
     # *val* it is array of bits
+    #
     # Return self
     def write_multiple_coils(addr, val)
       nbyte = ((val.size-1) >> 3) + 1
@@ -123,7 +132,9 @@ module ModBus
     end
 
     # Write *val* in registers starting with *addr*
+    #
     # *val* it is array of integer
+    #
     # Return self
     def write_multiple_registers(addr, val)
       s_val = ""
