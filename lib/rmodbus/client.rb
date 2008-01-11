@@ -1,5 +1,7 @@
 # RModBus - free implementation of ModBus protocol on Ruby.
+#
 # Copyright (C) 2008  Timin Aleksey
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -139,12 +141,19 @@ module ModBus
     def write_multiple_registers(addr, val)
       s_val = ""
       val.each do |reg|
-        raise ModBusException.new("Value registers must be less 0x10000") if reg > 0xffff
         s_val << reg.to_bytes
       end
 
       query("\x10" + addr.to_bytes + val.size.to_bytes + (val.size * 2).chr + s_val)
       self
+    end
+
+    # Write *current value & and_mask | or mask in *addr* register
+    #
+    # Return self
+    def mask_write_register(addr, and_mask, or_mask)
+      query("\x16" + addr.to_bytes + and_mask.to_bytes + or_mask.to_bytes)
+      self  
     end
 
     def query(pdu)    
@@ -176,12 +185,14 @@ module ModBus
       end
       pdu[2..-1]
     end
+
+     protected
+    def send_pdu(pdu)
+    end
+
+    def read_pdu
+    end
+
   end
 
-  protected
-  def send_pdu(pdu)
-  end
-
-  def read_pdu
-  end
 end

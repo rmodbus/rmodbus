@@ -27,28 +27,33 @@ describe Client do
   end
 
   it "should support function 'read input registers'" do
-   @cl_mb.should_receive(:query).with("\x4\x0\x8\x0\x1").and_return("\x0\xa")    
-   @cl_mb.read_input_registers(0x8,0x1).should == [0x000a]
+    @cl_mb.should_receive(:query).with("\x4\x0\x8\x0\x1").and_return("\x0\xa")    
+    @cl_mb.read_input_registers(0x8,0x1).should == [0x000a]
   end
 
   it "should support function 'write single coil'" do
-   @cl_mb.should_receive(:query).with("\x5\x0\xac\xff\x0").and_return("\xac\xff\x00")    
-   @cl_mb.write_single_coil(0xac,0x1).should == @cl_mb
+    @cl_mb.should_receive(:query).with("\x5\x0\xac\xff\x0").and_return("\xac\xff\x00")    
+    @cl_mb.write_single_coil(0xac,0x1).should == @cl_mb
   end
 
   it "should support function 'write single register'" do
-   @cl_mb.should_receive(:query).with("\x6\x0\x1\x0\x3").and_return("\x1\x0\x3")    
-   @cl_mb.write_single_register(0x1,0x3).should == @cl_mb
+    @cl_mb.should_receive(:query).with("\x6\x0\x1\x0\x3").and_return("\x1\x0\x3")    
+    @cl_mb.write_single_register(0x1,0x3).should == @cl_mb
   end
 
   it "should support function 'write multiple coils'" do
-   @cl_mb.should_receive(:query).with("\xf\x0\x13\x0\xa\x2\xcd\x1").and_return("\x13\x0\xa")    
-   @cl_mb.write_multiple_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]).should == @cl_mb
+    @cl_mb.should_receive(:query).with("\xf\x0\x13\x0\xa\x2\xcd\x1").and_return("\x13\x0\xa")    
+    @cl_mb.write_multiple_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]).should == @cl_mb
   end
 
   it "should support function 'write multiple registers'" do
-   @cl_mb.should_receive(:query).with("\x10\x0\x1\x0\x2\x4\x0\xa\x1\x2").and_return("\x1\x0\x2")    
-   @cl_mb.write_multiple_registers(0x1,[0x000a,0x0102]).should == @cl_mb
+    @cl_mb.should_receive(:query).with("\x10\x0\x1\x0\x2\x4\x0\xa\x1\x2").and_return("\x1\x0\x2")    
+    @cl_mb.write_multiple_registers(0x1,[0x000a,0x0102]).should == @cl_mb
+  end
+
+  it "should support function 'mask write register'" do
+    @cl_mb.should_receive(:query).with("\x16\x0\x4\x0\xf2\x0\2").and_return("\x4\x0\xf2\x0\x2")
+    @cl_mb.mask_write_register(0x4, 0xf2, 0x2).should == @cl_mb
   end
 
 end
