@@ -22,8 +22,8 @@ describe Client do
   end
 
   it "should support function 'read holding registers'" do
-   @cl_mb.should_receive(:query).with("\x3\x0\x6b\x0\x3").and_return("\x2\x2b\x0\x0\x0\x64")    
-   @cl_mb.read_holding_registers(0x6b,0x3).should == [0x022b, 0x0000, 0x0064]
+    @cl_mb.should_receive(:query).with("\x3\x0\x6b\x0\x3").and_return("\x2\x2b\x0\x0\x0\x64")    
+    @cl_mb.read_holding_registers(0x6b,0x3).should == [0x022b, 0x0000, 0x0064]
   end
 
   it "should support function 'read input registers'" do
