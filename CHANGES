@@ -1,0 +1,2 @@
+2008-25-01 Release-0.1.1
+- fixed bug in function "read discrete inputs (0x2)" of ModBus client
