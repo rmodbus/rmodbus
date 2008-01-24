@@ -9,5 +9,5 @@ spec = Gem::Specification.new do |s|
  	s.autorequire = "rmodbus"
  	s.has_rdoc = true
   s.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README"]
-  s.extra_rdoc_files = ["README", "AUTHORS", "LICENSE"]
+  s.extra_rdoc_files = ["README", "AUTHORS", "LICENSE", "CHANGES"]
 end
