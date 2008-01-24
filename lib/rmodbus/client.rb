@@ -71,7 +71,7 @@ module ModBus
     #
     # Return array of their values
     def read_discret_inputs(addr, ncoils)
-      query("\x2" + addr.to_bytes + ncoils.to_bytes).to_array_bit
+      query("\x2" + addr.to_bytes + ncoils.to_bytes).to_array_bit[0..ncoils - 1]
     end
 
     # Read value *nreg* holding registers starting with *addr*

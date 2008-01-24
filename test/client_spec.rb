@@ -18,7 +18,7 @@ describe Client do
 
   it "should support function 'read discrete inputs'" do
     @cl_mb.should_receive(:query).with("\x2\x0\xc4\x0\x16").and_return("\xac\xdb\x35")    
-    @cl_mb.read_discret_inputs(0xc4,0x16).should == [0,0,1,1, 0,1,0,1, 1,1,0,1, 1,0,1,1, 1,0,1,0, 1,1,0,0]
+    @cl_mb.read_discret_inputs(0xc4,0x16).should == [0,0,1,1, 0,1,0,1, 1,1,0,1, 1,0,1,1, 1,0,1,0, 1,1]
   end
 
   it "should support function 'read holding registers'" do
