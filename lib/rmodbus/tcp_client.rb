@@ -15,7 +15,6 @@ require 'socket'
 require 'timeout'
 require 'rmodbus/client'
 require 'rmodbus/exceptions'
-require 'rmodbus/adu'
 
 module ModBus
 
@@ -24,6 +23,8 @@ module ModBus
 
     include Timeout
 
+    @@transaction = 0
+
     # Connect with a ModBus server
     def initialize(ipaddr, port = 502, slaveaddr = 1)
       timeout(1) do
@@ -31,11 +32,20 @@ module ModBus
       end
       @slave = slaveaddr
     end
+
+    def close
+      @sock.close
+    end
  
+
+    def self.transaction 
+      @@transaction
+    end
+
     private
     def send_pdu(pdu)   
-      @adu = ADU.new(pdu,@slave) 
-      @sock.write @adu.serialize
+      @@transaction += 1 
+      @sock.write @@transaction.to_bytes + "\0\0" + (pdu.size + 1).to_bytes + @slave.chr + pdu
     end
 
     def read_pdu     
