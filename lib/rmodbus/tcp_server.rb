@@ -36,34 +36,36 @@ module ModBus
         return
       end
 
-      @transaction = req[0,2]
+      tr = req[0,2]
       len = req[4,2].to_int16
       req = io.read(len - 1)
       func = req[0].to_i
 
       unless @@funcs.include?(func)
-        io.write get_err(func,1)
+        io.write get_err(tr, func,1)
         return
       end
       
       quant = req[3,2].to_int16
       unless quant <= 0x7d
-        io.write get_err(func,3)
+        io.write get_err(tr, func,3)
         return
       end
 
       addr = req[1,2].to_int16
       unless addr + quant <= coils.size
-        io.write get_err(func,2)
+        io.write get_err(tr, func,2)
         return
       end
 
+      res = func.chr + (quant * 2).chr + [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1].bits_to_ints16
+      io.write tr + "\0\0" + (res.size + 1).to_bytes + @uid.chr + res
     end
 
     private
 
-    def get_err(func, code)
-      @transaction + "\0\0\0\3\1" + (func | 0x80).chr + code.chr
+    def get_err(tr, func, code)
+      tr + "\0\0\0\3\1" + (func | 0x80).chr + code.chr
     end
 
 	end

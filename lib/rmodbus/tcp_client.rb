@@ -50,10 +50,14 @@ module ModBus
 
     def read_pdu     
       header = @sock.read(7)            
-      tin = header[0,2].to_int16
-      raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @adu.transaction_id
-      len = header[4,2].to_int16       
-      @sock.read(len-1)               
+      if header
+        tin = header[0,2].to_int16
+        raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @@transaction
+        len = header[4,2].to_int16       
+        @sock.read(len-1)               
+      else
+        raise Errors::ModBusException.new("Server not respond")
+      end
     end
 
   end

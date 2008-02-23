@@ -54,6 +54,29 @@ class Integer
   end
 end
 
+class Array
+
+  def bits_to_ints16
+    int16 = 0
+    s = ""
+    mask = 0x01
+    self.each do |bit| 
+      if bit > 0
+        int16 |= mask
+      end
+      mask <<= 1
+      if mask  == 0x10000
+        mask = 0x01
+        s << int16.to_bytes
+        int16 = 0
+      end
+      s << int16.to_bytes unless mask == 0x01
+    end
+    s
+  end
+
+end
+
 module ModBus
 
   class Client

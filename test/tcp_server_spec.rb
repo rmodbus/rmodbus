@@ -32,7 +32,7 @@ describe TCPServer do
 
   it "should send exception if function not supported" do
     begin 
-      @client.query([0x43]) 
+      @client.query('0x43') 
     rescue ModBus::Errors::IllegalFunction => ex
       ex.message.should == "The function code received in the query is not an allowable action for the server"  
     end 
