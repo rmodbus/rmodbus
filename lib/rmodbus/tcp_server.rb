@@ -58,7 +58,7 @@ module ModBus
         return
       end
 
-      res = func.chr + (quant * 2).chr + [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1].bits_to_ints16
+      res = func.chr + (quant * 2).chr + coils[addr,quant].bits_to_bytes
       io.write tr + "\0\0" + (res.size + 1).to_bytes + @uid.chr + res
     end
 
