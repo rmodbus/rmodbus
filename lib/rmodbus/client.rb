@@ -56,23 +56,21 @@ end
 
 class Array
 
-  def bits_to_ints16
+  def bits_to_bytes
     int16 = 0
     s = ""
     mask = 0x01
+
     self.each do |bit| 
-      if bit > 0
-        int16 |= mask
-      end
+      int16 |= mask if bit > 0
       mask <<= 1
-      if mask  == 0x10000
+      if mask  == 0x100
         mask = 0x01
-        s << int16.to_bytes
+        s << int16.chr
         int16 = 0
       end
-      s << int16.to_bytes unless mask == 0x01
     end
-    s
+    s << int16.chr unless mask == 0x01
   end
 
 end
@@ -209,7 +207,7 @@ module ModBus
       pdu[2..-1]
     end
 
-     protected
+    protected
     def send_pdu(pdu)
     end
 
