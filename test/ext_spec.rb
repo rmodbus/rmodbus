@@ -10,4 +10,9 @@ describe Array do
     @arr.bits_to_bytes.should == "\xcd\x6b\x5" 
   end
 
+  it "should return string reprisent 16ints" do
+    @arr = [1,2] 
+    @arr.to_ints16 == "\x0\x1\x0\x2"
+  end
+
 end

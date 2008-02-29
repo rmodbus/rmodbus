@@ -7,6 +7,9 @@ describe TCPServer do
   before do
     @server = ModBus::TCPServer.new(8502,1)
     @server.coils = [1,0,1,1]
+    @server.discret_inputs = [1,1,0,0]
+    @server.holding_registers = [1,2,3,4]
+    @server.input_registers = [1,2,3,4]
     @server.start
     @client = ModBus::TCPClient.new('127.0.0.1', 8502, 1)
   end
@@ -54,7 +57,7 @@ describe TCPServer do
     end
   end
 
-  it "should send valid date" do
+  it "should supported function 'read coils'" do
     @client.read_coils(0,3).should == @server.coils[0,3]
   end
 
@@ -62,4 +65,39 @@ describe TCPServer do
     @server.stop
   end
 
+  it "should supported function 'read discrete inputs'" do
+    @client.read_discret_inputs(1,3).should == @server.discret_inputs[1,3]
+  end
+
+  it "should supported function 'read holding registers'" do
+    @client.read_holding_registers(0,3).should == @server.holding_registers[0,3]
+  end
+
+  it "should supported function 'read input registers'" do
+    @client.read_input_registers(2,2).should == @server.input_registers[2,2]
+  end
+
+  it "should supported function 'write single coil'" do
+    @server.coils[3] = 0
+    @client.write_single_coil(3,1)
+    @server.coils[3].should == 1
+  end
+
+  it "should supported function 'write single register'" do
+    @server.holding_registers[3] = 25
+    @client.write_single_register(3,35)
+    @server.holding_registers[3].should == 35
+  end
+
+  it "should supported function 'write multiple coils'" do
+    @server.coils = [1,1,1,0, 0,0,0,0, 0,0,0,0, 0,1,1,1]
+    @client.write_multiple_coils(3, [1, 0,1,0,1, 0,1,0,1])
+    @server.coils.should == [1,1,1,1, 0,1,0,1, 0,1,0,1, 0,1,1,1]
+  end
+
+  it "should supported function 'write multiple registers'" do
+    @server.holding_registers = [1,2,3,4,5,6,7,8,9]
+    @client.write_multiple_registers(3,[7,7,7])
+    @server.holding_registers = [1,2,3,7,7,7,7,8,9]
+  end
 end

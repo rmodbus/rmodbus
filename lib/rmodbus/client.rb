@@ -56,6 +56,14 @@ end
 
 class Array
 
+  def to_ints16
+    s = ""
+    self.each do |int16|
+      s << int16.to_bytes
+    end
+    s
+  end
+
   def bits_to_bytes
     int16 = 0
     s = ""
