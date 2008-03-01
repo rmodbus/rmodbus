@@ -45,8 +45,8 @@ describe Client do
   end
 
   it "should support function 'write multiple registers'" do
-    @cl_mb.should_receive(:query).with("\x10\x0\x1\x0\x2\x4\x0\xa\x1\x2").and_return("\x1\x0\x2")    
-    @cl_mb.write_multiple_registers(0x1,[0x000a,0x0102]).should == @cl_mb
+    @cl_mb.should_receive(:query).with("\x10\x0\x1\x0\x3\x6\x0\xa\x1\x2\xf\xf").and_return("\x1\x0\x3")    
+    @cl_mb.write_multiple_registers(0x1,[0x000a,0x0102, 0xf0f]).should == @cl_mb
   end
 
   it "should support function 'mask write register'" do

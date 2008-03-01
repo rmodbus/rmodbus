@@ -97,7 +97,7 @@ describe TCPServer do
 
   it "should supported function 'write multiple registers'" do
     @server.holding_registers = [1,2,3,4,5,6,7,8,9]
-    @client.write_multiple_registers(3,[7,7,7])
-    @server.holding_registers = [1,2,3,7,7,7,7,8,9]
+    @client.write_multiple_registers(3,[1,2,3,4,5])
+    @server.holding_registers.should == [1,2,3,7,7,7,7,8,9]
   end
 end

@@ -84,14 +84,17 @@ module ModBus
             res = func.chr + req
           end
         when 15
-          param = parse_write_multiple_coils(req)
+          param = parse_write_multiple_coils_func(req)
           if param[:err] == 0
             @coils[param[:addr],param[:quant]] = param[:val][0,param[:quant]]
             res = func.chr + req
           end
         when 16
-          
-          
+          param = parse_write_multiple_registers_func(req)
+          if param[:err] == 0
+            @holding_registers[param[:addr],param[:quant]] = param[:val][0,param[:quant]]
+            res = func.chr + req
+          end
       end
       if param[:err] ==  0
         io.write tr + "\0\0" + (res.size + 1).to_bytes + @uid.chr + res
@@ -100,9 +103,9 @@ module ModBus
       end 
     end
 
-      private
+    private
 
-      def parse_read_func(req, field)
+    def parse_read_func(req, field)
       quant = req[3,2].to_int16
 
       return { :err => 3} unless quant <= 0x7d
@@ -118,8 +121,8 @@ module ModBus
       return { :err => 2 } unless addr <= @coils.size
 
       val = req[3,2].to_int16
-      return { :err => 3} unless val == 0 or val == 0xff00
-
+      return { :err => 3 } unless val == 0 or val == 0xff00
+      
       val = 1 if val == 0xff00
       return { :err => 0, :addr => addr, :val => val }  
     end
@@ -133,12 +136,23 @@ module ModBus
       return { :err => 0, :addr => addr, :val => val }  
 	  end
 
-    def parse_write_multiple_register_coils(req)
+    def parse_write_multiple_coils_func(req)
       param = parse_read_func(req, @coils)
+
       if param[:err] == 0
-        param = {:err => 0,  :addr => param[:addr], :quant => param[:quant], :val => req[6,param[:quant]].to_array_bit }
+        param = {:err => 0, :addr => param[:addr], :quant => param[:quant], :val => req[6,param[:quant]].to_array_bit }
       end
       param
     end
+
+    def parse_write_multiple_registers_func(req)
+      param = parse_read_func(req, @holding_registers)
+
+      if param[:err] == 0
+        param = {:err => 0, :addr => param[:addr], :quant => param[:quant], :val => req[6,param[:quant]].to_array_int16 }
+      end
+      param
+    end
+
 	end
 end
