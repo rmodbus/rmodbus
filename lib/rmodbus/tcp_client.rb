@@ -28,7 +28,6 @@ module ModBus
     # Connect with a ModBus server
     def initialize(ipaddr, port = 502, slaveaddr = 1)
       
-      timeout(1) do
       tried = 0
       begin
         timeout(1, ModBusTimeout) do
