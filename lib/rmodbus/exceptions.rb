@@ -33,10 +33,13 @@ module ModBus
     class Acknowledge < ModBusException
     end
 
-    class SlaveDiviceBus < ModBusException
+    class SlaveDeviceBus < ModBusException
     end
 
     class MemoryParityError < ModBusException
+    end
+
+    class ModBusTimeout < ModBusException
     end
 
   end
