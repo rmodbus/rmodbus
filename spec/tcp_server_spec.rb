@@ -100,7 +100,9 @@ describe TCPServer do
   end
 
   after do
-    @client.close if @client
-    @server.stop if @server
+    @client.close 
+    @server.stop unless @server.stopped?
+    while GServer.in_service?(8502) 
+    end
   end
 end
