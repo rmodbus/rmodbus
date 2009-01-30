@@ -207,7 +207,6 @@ module ModBus
         retry unless tried >= READ_RETRIES
         raise ModBusTimeout.new, 'Timed out during read attempt'
       end
-      pdu = read_pdu
     
       if pdu[0].to_i >= 0x80
         case pdu[1].to_i
@@ -222,7 +221,7 @@ module ModBus
           when 5
             raise Acknowledge.new, "The server has accepted the request and is processing it, but a long duration of time will be required to do so"
           when 6
-+            raise SlaveDeviceBus.new, "The server is engaged in processing a long duration program command"
+            raise SlaveDeviceBus.new, "The server is engaged in processing a long duration program command"
           when 8
             raise MemoryParityError.new, "The extended file area failed to pass a consistency check"
           else

@@ -1,5 +1,3 @@
-$:.unshift "#{File.dirname(__FILE__)}/../lib"
-
 require 'lib/rmodbus'
 
 describe TCPServer do
@@ -20,7 +18,7 @@ describe TCPServer do
     begin
       client.read_coils(1,3)
     rescue ModBus::Errors::ModBusException => ex
-      ex.message.should == "Server not respond"
+      ex.message.should == "Server did not respond"
     end
   end
 
@@ -29,7 +27,7 @@ describe TCPServer do
     begin
       client.write "\0\0\1\0\0\6\1"
     rescue ModBus::Errors::ModBusException => ex
-      ex.message.should == "Server not respond"
+      ex.message.should == "Server did not respond"
     end
   end
 
@@ -98,6 +96,11 @@ describe TCPServer do
   it "should supported function 'write multiple registers'" do
     @server.holding_registers = [1,2,3,4,5,6,7,8,9]
     @client.write_multiple_registers(3,[1,2,3,4,5])
-    @server.holding_registers.should == [1,2,3,7,7,7,7,8,9]
+    @server.holding_registers.should == [1,2,3,1,2,3,4,5,9]
+  end
+
+  after do
+    @client.close if @client
+    @server.stop if @server
   end
 end

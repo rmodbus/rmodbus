@@ -13,7 +13,7 @@ begin
     t.spec_opts = ['-c']
     t.libs << 'lib'
     t.spec_files = FileList['spec/**/*_spec.rb']
-    t.rcov = true 
+    t.rcov = false 
   end
 rescue Exception 
   puts 'RSpec not available. Install it with: sudo gem install rspec'
