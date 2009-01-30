@@ -30,6 +30,16 @@ class String
     array_int16
   end
 
+  def to_array_bytes
+    array_bytes = []
+    i = 0
+    while(i<self.size) do
+        array_bytes << self[i].to_i
+        i += 1
+    end
+    array_bytes
+  end
+
   def to_array_bit
     array_bit = []
     self.each_byte do |byte|

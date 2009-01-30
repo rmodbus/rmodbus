@@ -11,3 +11,5 @@
 # GNU General Public License for more details.
 require 'rmodbus/tcp_client'
 require 'rmodbus/tcp_server'
+require 'rmodbus/rtu_client'
+

@@ -19,9 +19,16 @@ end
 
 describe String do
 
-  it "should return array of int16" do
+  before do
     @str = "\x1\x2\x3\x4\x5\x6"
+  end
+
+  it "should return array of int16" do
     @str.to_array_int16.should == [0x102, 0x304, 0x506]
+  end
+
+  it "shold return array of bytes" do
+    @str.to_array_bytes.should == [1,2,3,4,5,6]
   end
 
 end
