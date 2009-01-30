@@ -11,11 +11,12 @@ begin
 
  Spec::Rake::SpecTask.new do |t|
     t.spec_opts = ['-c']
-    t.spec_files = FileList['test/**/*_spec.rb']
+    t.libs << 'lib'
+    t.spec_files = FileList['spec/**/*_spec.rb']
     t.rcov = true 
   end
 rescue Exception 
-  puts 'RSpec not found, please install rspec for run testes'
+  puts 'RSpec not available. Install it with: sudo gem install rspec'
 end
 
 include Config
