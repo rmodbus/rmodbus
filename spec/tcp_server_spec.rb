@@ -64,7 +64,7 @@ describe TCPServer do
   end
 
   it "should supported function 'read discrete inputs'" do
-    @client.read_discret_inputs(1,3).should == @server.discret_inputs[1,3]
+    @client.read_discrete_inputs(1,3).should == @server.discret_inputs[1,3]
   end
 
   it "should supported function 'read holding registers'" do

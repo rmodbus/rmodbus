@@ -1,7 +1,7 @@
 2008-25-01 Release-0.1.1
 - fixed bug in function "read discrete inputs (0x2)" of ModBus client
 
-2009-39-01 Release-0.2
+2009-30-01 Release-0.2
 - add ModBus-TCP server
 - add retries for tcp connection and read, default of 10 retries, still 1 second timeout
 - fix typos
