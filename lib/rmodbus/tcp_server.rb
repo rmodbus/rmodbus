@@ -21,7 +21,9 @@ module ModBus
     
     attr_accessor :coils, :discret_inputs, :holding_registers, :input_registers
 
-    @@funcs = [1,2,3,4,5,6,15,16]
+
+
+    Funcs = [1,2,3,4,5,6,15,16]
     
     def initialize(port = 502, uid = 1)
       @coils = []
@@ -44,7 +46,7 @@ module ModBus
       req = io.read(len - 1)
       func = req[0].to_i
 
-      unless @@funcs.include?(func)
+      unless Funcs.include?(func)
         param = { :err => 1 }
       end
       
