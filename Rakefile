@@ -1,5 +1,9 @@
 require 'rbconfig'
-require 'ftools'
+if RUBY_VERSION.to_f >= 1.9
+    require 'fileutils'
+else
+    require 'ftools'
+end
 
 begin
   require 'rubygems'
