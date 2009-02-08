@@ -21,7 +21,12 @@ module ModBus
     end
 
     def read_pdu
-        @port.read
+        msg =  @port.read
+        puts msg[-2..-1] + ":" + msg[0..-3]
+        return msg[1..-3] if msg[-2,-1] == crc16(msg[0..-3]).to_bytes
+        while true 
+          #Wait timeout
+        end
     end
 
     def crc16(msg)

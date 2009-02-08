@@ -6,7 +6,7 @@ describe TCPClient, "method 'query'"  do
 
   UID = 1
 
-  before do
+  before(:each) do
     @sock = mock("Socket")
     @adu = "\000\001\000\000\000\001\001"
 

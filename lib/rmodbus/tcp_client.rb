@@ -27,11 +27,11 @@ module ModBus
 
     # Connect with a ModBus server
     def initialize(ipaddr, port = 502, slaveaddr = 1)
-      
+      @ipaddr, @port = ipaddr, port
       tried = 0
       begin
         timeout(1, ModBusTimeout) do
-        @sock = TCPSocket.new(ipaddr, port)
+        @sock = TCPSocket.new(@ipaddr, @port)
       end
       rescue ModBusTimeout => err
         tried += 1
@@ -44,7 +44,6 @@ module ModBus
     def close
       @sock.close unless @sock.closed?
     end
- 
 
     def self.transaction 
       @@transaction
@@ -56,7 +55,7 @@ module ModBus
       @sock.write @@transaction.to_bytes + "\0\0" + (pdu.size + 1).to_bytes + @slave.chr + pdu
     end
 
-    def read_pdu     
+    def read_pdu    
       header = @sock.read(7)            
       if header
         tin = header[0,2].to_int16

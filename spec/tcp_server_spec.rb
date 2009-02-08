@@ -20,15 +20,18 @@ describe TCPServer do
     rescue ModBus::Errors::ModBusException => ex
       ex.message.should == "Server did not respond"
     end
+    client.close
   end
 
   it "should silent if protocol identifer has mismatched" do
+    @client.close
     client = TCPSocket.new('127.0.0.1', 8502)
     begin
       client.write "\0\0\1\0\0\6\1"
     rescue ModBus::Errors::ModBusException => ex
       ex.message.should == "Server did not respond"
     end
+    client.close
   end
 
   it "should send exception if function not supported" do
@@ -55,12 +58,14 @@ describe TCPServer do
     end
   end
 
-  it "should supported function 'read coils'" do
-    @client.read_coils(0,3).should == @server.coils[0,3]
+  it "should calc a many requests" do
+    @client.read_coils(1,2)
+    @client.write_multiple_registers(0,[9,9,9,])
+    @client.read_holding_registers
   end
 
-  after do
-    @server.stop
+  it "should supported function 'read coils'" do
+    @client.read_coils(0,3).should == @server.coils[0,3]
   end
 
   it "should supported function 'read discrete inputs'" do

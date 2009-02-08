@@ -4,8 +4,8 @@
 
 == Feature
 
-* Client\Server ModBus-TCP
-* Client\Server ModBus-RTU
+* Client ModBus-TCP
+* Server ModBus-TCP
 * Support functions:
   * 01 (0x01) Read Coils
   * 02 (0x02) Read Discrete Inputs

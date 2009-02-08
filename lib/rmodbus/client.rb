@@ -16,29 +16,56 @@ require 'rmodbus/exceptions'
 
 class String
 
-  def to_int16
-    self[0]*256 + self[1]
-  end
 
-  def to_array_int16
-    array_int16 = []
-    i = 0
-    while(i < self.size) do
-      array_int16 << self[i]*256 + self[i+1]
-      i += 2
+  if RUBY_VERSION.to_f == 1.9
+    def to_array_int16
+      array_int16 = []
+      i = 0
+      while(i < self.bytesize) do
+        array_int16 << self.getbyte(i) * 256 + self.getbyte(i+1)
+        i += 2
+      end
+      array_int16
     end
-    array_int16
-  end
 
-  def to_array_bytes
-    array_bytes = []
-    i = 0
-    while(i<self.size) do
+    def to_array_bytes
+      array_bytes = []
+      self.each_byte do |b|
+        array_bytes << b
+      end
+      array_bytes
+    end
+    
+    def to_int16
+        self.getbyte(0)*256 + self.getbyte(1)
+    end
+
+  else
+    def to_array_int16
+      array_int16 = []
+      i = 0
+      while(i < self.size) do
+        array_int16 << (self[i].to_i)*256 + self[i+1].to_i
+        i += 2
+      end
+      array_int16
+    end
+
+    def to_array_bytes
+      array_bytes = []
+      i = 0
+      while(i<self.size) do
         array_bytes << self[i].to_i
         i += 1
+      end
+      array_bytes
     end
-    array_bytes
-  end
+
+    def to_int16
+        self[0]*256 + self[1]
+    end
+  end  
+    
 
   def to_array_bit
     array_bit = []
@@ -99,8 +126,8 @@ module ModBus
   
     include Errors
     # Number of times to retry on connection and read timeouts
-    CONNECTION_RETRIES = 10
-    READ_RETRIES = 10
+    CONNECTION_RETRIES = 3
+    READ_RETRIES = 3 
 
     # Read value *ncoils* coils starting with *addr*
     #
@@ -210,8 +237,8 @@ module ModBus
       tried = 0
       begin
         timeout(1, ModBusTimeout) do
-        pdu = read_pdu
-       end
+        pdu = read_pdu
+       end
       rescue ModBusTimeout => err
         tried += 1
         retry unless tried >= READ_RETRIES

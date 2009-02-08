@@ -6,3 +6,8 @@
 - add retries for tcp connection and read, default of 10 retries, still 1 second timeout
 - fix typos
 
+2009-09-02 Release-0.2.1
+- add support ruby 1.9.1
+- fix bug in TCPServer class (it don't close connection after first request now)
+
+

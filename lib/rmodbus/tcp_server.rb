@@ -35,74 +35,89 @@ module ModBus
     end
 
     def serve(io)
-      req = io.read(7)
-      if req[2,2] != "\x00\x00" or req[6].to_i != @uid
-        io.close
-        return
-      end
+      loop do
+        req = io.read(7)
+        if RUBY_VERSION.to_f == 1.9
+          if req[2,2] != "\x00\x00" or req.getbyte(6) != @uid
+            io.close
+            break
+          end
+        else
+          if req[2,2] != "\x00\x00" or req[6].to_i != @uid
+            io.close
+            break
+          end
+        end
+ 
+        tr = req[0,2]
+        len = req[4,2].to_int16
+        req = io.read(len - 1)
 
-      tr = req[0,2]
-      len = req[4,2].to_int16
-      req = io.read(len - 1)
-      func = req[0].to_i
+        if RUBY_VERSION.to_f == 1.9
+          func = req.getbyte(0)
+        else
+          func = req[0].to_i
+        end
 
-      unless Funcs.include?(func)
-        param = { :err => 1 }
-      end
+        unless Funcs.include?(func)
+          param = { :err => 1 }
+        end
       
-      case func
-        when 1
-          param = parse_read_func(req, @coils)
-          if param[:err] == 0
-            val = @coils[param[:addr],param[:quant]].bits_to_bytes
-            res = func.chr + val.size.chr + val
-          end
-        when 2
-          param = parse_read_func(req, @discret_inputs)
-          if param[:err] == 0
-            val = @discret_inputs[param[:addr],param[:quant]].bits_to_bytes
-            res = func.chr + val.size.chr + val
-          end
-        when 3
-          param = parse_read_func(req, @holding_registers)
-          if param[:err] == 0
-            res = func.chr + (param[:quant] * 2).chr + @holding_registers[param[:addr],param[:quant]].to_ints16
-          end
-        when 4
-          param = parse_read_func(req, @input_registers)
-          if param[:err] == 0
-            res = func.chr + (param[:quant] * 2).chr + @input_registers[param[:addr],param[:quant]].to_ints16
-          end
-        when 5 
-          param = parse_write_coil_func(req)
-          if param[:err] == 0
-            @coils[param[:addr]] = param[:val]
-            res = func.chr + req
-          end
-        when 6
-          param = parse_write_register_func(req)
-          if param[:err] == 0
-            @holding_registers[param[:addr]] = param[:val]
-            res = func.chr + req
-          end
-        when 15
-          param = parse_write_multiple_coils_func(req)
-          if param[:err] == 0
-            @coils[param[:addr],param[:quant]] = param[:val][0,param[:quant]]
-            res = func.chr + req
-          end
-        when 16
-          param = parse_write_multiple_registers_func(req)
-          if param[:err] == 0
-            @holding_registers[param[:addr],param[:quant]] = param[:val][0,param[:quant]]
-            res = func.chr + req
-          end
+        case func
+          when 1
+            param = parse_read_func(req, @coils)
+            if param[:err] == 0
+              val = @coils[param[:addr],param[:quant]].bits_to_bytes
+              res = func.chr + val.size.chr + val
+            end
+          when 2
+            param = parse_read_func(req, @discret_inputs)
+            if param[:err] == 0
+              val = @discret_inputs[param[:addr],param[:quant]].bits_to_bytes
+              res = func.chr + val.size.chr + val
+            end
+          when 3
+            param = parse_read_func(req, @holding_registers)
+            if param[:err] == 0
+              res = func.chr + (param[:quant] * 2).chr + @holding_registers[param[:addr],param[:quant]].to_ints16
+            end
+          when 4
+            param = parse_read_func(req, @input_registers)
+            if param[:err] == 0
+              res = func.chr + (param[:quant] * 2).chr + @input_registers[param[:addr],param[:quant]].to_ints16
+            end
+          when 5 
+            param = parse_write_coil_func(req)
+            if param[:err] == 0
+              @coils[param[:addr]] = param[:val]
+              res = func.chr + req
+            end
+          when 6
+            param = parse_write_register_func(req)
+            if param[:err] == 0
+              @holding_registers[param[:addr]] = param[:val]
+              res = func.chr + req
+            end
+          when 15
+            param = parse_write_multiple_coils_func(req)
+            if param[:err] == 0
+              @coils[param[:addr],param[:quant]] = param[:val][0,param[:quant]]
+              res = func.chr + req
+            end
+          when 16
+            param = parse_write_multiple_registers_func(req)
+            if param[:err] == 0
+              @holding_registers[param[:addr],param[:quant]] = param[:val][0,param[:quant]]
+              res = func.chr + req
+            end
+        end
+        if param[:err] ==  0
+          resp = tr + "\0\0" + (res.size + 1).to_bytes + @uid.chr + res
+        else
+          resp = tr + "\0\0\0\3" + @uid.chr + (func | 0x80).chr + param[:err].chr
+        end 
+        io.write resp
       end
-      if param[:err] ==  0
-        io.write tr + "\0\0" + (res.size + 1).to_bytes + @uid.chr + res
-      else
-        io.write tr + "\0\0\0\3" + @uid.chr + (func | 0x80).chr + param[:err].chr
-      end 
     end
 
     private
