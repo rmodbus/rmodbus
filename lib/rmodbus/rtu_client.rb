@@ -9,24 +9,24 @@ module ModBus
   class RTUClient < Client
     
     def initialize(port, rate=9600, slaveaddr=1)
-        @port = SerialPort.new(port, rate)
-        @slave = slaveaddr
+      @port = SerialPort.new(port, rate)
+      @slave = slaveaddr
     end
 
     protected
     def send_pdu(pdu)
-        msg = @slave.chr + pdu 
-        msg <<  crc16(msg).to_bytes
-        @port.write msg
+      msg = @slave.chr + pdu 
+      msg <<  crc16(msg).to_bytes
+      @port.write msg
     end
 
     def read_pdu
-        msg =  @port.read
-        puts msg[-2..-1] + ":" + msg[0..-3]
-        return msg[1..-3] if msg[-2,-1] == crc16(msg[0..-3]).to_bytes
-        while true 
-          #Wait timeout
-        end
+      msg =  @port.read
+      puts msg[-2..-1] + ":" + msg[0..-3]
+      return msg[1..-3] if msg[-2,-1] == crc16(msg[0..-3]).to_bytes
+      loop do
+        #Wait timeout 
+      end
     end
 
     def crc16(msg)
