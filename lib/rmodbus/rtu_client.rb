@@ -24,8 +24,8 @@ module ModBus
 
     def read_pdu
       msg =  @port.read(3)
-      if msg[0] == @slave.chr
-        case msg[1]
+      if msg.getbyte(0) == @slave
+        case msg.getbyte(2)
           when 1..4
             msg << @port.read(msg.getbyte(3) + 2)
           else
