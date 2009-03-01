@@ -37,10 +37,14 @@ class String
     end
     
     def to_int16
-        self.getbyte(0)*256 + self.getbyte(1)
+      self.getbyte(0)*256 + self.getbyte(1)
     end
 
   else
+    def getbyte(index)
+      self[index].to_i  
+    end
+
     def to_array_int16
       array_int16 = []
       i = 0
