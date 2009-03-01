@@ -10,6 +10,7 @@ describe TCPServer do
     @server.input_registers = [1,2,3,4]
     @server.start
     @client = ModBus::TCPClient.new('127.0.0.1', 8502, 1)
+    @client.read_retries = 0
   end
 
   it "should silent if UID has mismatched" do
@@ -61,7 +62,7 @@ describe TCPServer do
   it "should calc a many requests" do
     @client.read_coils(1,2)
     @client.write_multiple_registers(0,[9,9,9,])
-    @client.read_holding_registers
+    @client.read_holding_registers(0,3).should == [9,9,9]
   end
 
   it "should supported function 'read coils'" do

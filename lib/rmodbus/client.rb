@@ -244,7 +244,9 @@ module ModBus
       rescue ModBusTimeout => err
         tried += 1
         retry unless tried >= @read_retries
-        raise ModBusTimeout.new, 'Timed out during read attempt'
+        raise ModBusTimeout.new, "Timed out during read attempt"
+      rescue 
+        raise ModBusException.new, "Server did not respond"
       end
     
       if pdu[0].to_i >= 0x80
