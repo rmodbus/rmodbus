@@ -35,7 +35,7 @@ module ModBus
       end
       rescue ModBusTimeout => err
         tried += 1
-        retry unless tried >= CONNECTION_RETRIES
+        retry unless tried >= @connection_retries 
         raise ModBusTimeout.new, 'Timed out attempting to create connection'
       end
       @slave = slaveaddr

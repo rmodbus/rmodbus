@@ -126,11 +126,13 @@ module ModBus
   
     include Errors
     # Number of times to retry on connection and read timeouts
-    CONNECTION_RETRIES = 3
-    READ_RETRIES = 3 
+    attr_accessor :connection_retries, :read_retries
 
+    def initialize
+      @connection_retries = 10
+      @read_retries = 10
+    end
     # Read value *ncoils* coils starting with *addr*
-    #
     # Return array of their values
     def read_coils(addr, ncoils)
       query("\x1" + addr.to_bytes + ncoils.to_bytes).to_array_bit[0..ncoils-1]
@@ -241,7 +243,7 @@ module ModBus
        end
       rescue ModBusTimeout => err
         tried += 1
-        retry unless tried >= READ_RETRIES
+        retry unless tried >= @read_retries
         raise ModBusTimeout.new, 'Timed out during read attempt'
       end
     
