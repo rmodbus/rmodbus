@@ -16,24 +16,13 @@ module ModBus
     protected
     def send_pdu(pdu)
       msg = @slave.chr + pdu 
-      puts msg.inspect
       msg << crc16(msg).to_word
-      puts msg.inspect
       @port.write msg
     end
 
     def read_pdu
-      msg =  @port.read(3)
+      msg =  @port.read
       if msg.getbyte(0) == @slave
-        case msg.getbyte(2)
-          when 1..4
-            msg << @port.read(msg.getbyte(3) + 2)
-          else
-            msg << @port.read(5)
-        end
-        puts msg.inspect
-        puts msg[0..-3].inspect
-        puts crc16(msg[0..-3]).to_word.inspect
         return msg[1..-3] if msg[-2,2] == crc16(msg[0..-3]).to_word
       end
       loop do

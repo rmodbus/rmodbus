@@ -2,7 +2,11 @@
 
 2009-03-5 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/ext.rb: Added.
-	* lib/rmodbus/*.rb, spec/*_spec.rb: Has done
+	* lib/rmodbus/*.rb, spec/*_spec.rb: Have done
 	refactoring. Now using pack\unpack methods.
 	* CHANGES: Delete.
 	* ChageLog: Start new log of shanges.
+
+2009-03-6 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/rtu_client.rb, spec/rtu_client_spec.rb: Have completed to
+	design of ModBus::RTUClient class.
