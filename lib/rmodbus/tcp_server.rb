@@ -21,8 +21,6 @@ module ModBus
     
     attr_accessor :coils, :discret_inputs, :holding_registers, :input_registers
 
-
-
     Funcs = [1,2,3,4,5,6,15,16]
     
     def initialize(port = 502, uid = 1)
@@ -37,27 +35,16 @@ module ModBus
     def serve(io)
       loop do
         req = io.read(7)
-        if RUBY_VERSION.to_f == 1.9
-          if req[2,2] != "\x00\x00" or req.getbyte(6) != @uid
-            io.close
-            break
-          end
-        else
-          if req[2,2] != "\x00\x00" or req[6].to_i != @uid
-            io.close
-            break
-          end
+        if req[2,2] != "\x00\x00" or req.getbyte(6) != @uid
+          io.close
+          break
         end
  
         tr = req[0,2]
         len = req[4,2].to_int16
         req = io.read(len - 1)
 
-        if RUBY_VERSION.to_f == 1.9
-          func = req.getbyte(0)
-        else
-          func = req[0].to_i
-        end
+        func = req.getbyte(0)
 
         unless Funcs.include?(func)
           param = { :err => 1 }
