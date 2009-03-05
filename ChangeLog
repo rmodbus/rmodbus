@@ -1,0 +1,8 @@
+# -*- coding: utf-8 -*-
+
+2009-03-5 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/ext.rb: Added.
+	* lib/rmodbus/*.rb, spec/*_spec.rb: Has done
+	refactoring. Now using pack\unpack methods.
+	* CHANGES: Delete.
+	* ChageLog: Start new log of shanges.
