@@ -17,7 +17,7 @@ module ModBus
     def send_pdu(pdu)
       msg = @slave.chr + pdu 
       puts msg.inspect
-      msg << crc16(msg).to_bytes
+      msg << crc16(msg).to_word
       puts msg.inspect
       @port.write msg
     end
@@ -33,8 +33,8 @@ module ModBus
         end
         puts msg.inspect
         puts msg[0..-3].inspect
-        puts crc16(msg[0..-3]).to_bytes.inspect
-        return msg[1..-3] if msg[-2,2] == crc16(msg[0..-3]).to_bytes
+        puts crc16(msg[0..-3]).to_word.inspect
+        return msg[1..-3] if msg[-2,2] == crc16(msg[0..-3]).to_word
       end
       loop do
         #waite timeout  
@@ -45,7 +45,7 @@ module ModBus
       crc_lo = 0xff
       crc_hi = 0xff
 
-      msg.to_array_bytes.each do |byte|
+      msg.unpack('c*').each do |byte|
         i = crc_hi ^ byte
         crc_hi = crc_lo ^ CrcHiTable[i]
         crc_lo = CrcLoTable[i]

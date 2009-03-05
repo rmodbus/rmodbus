@@ -31,14 +31,14 @@ module ModBus
     # Read value *ncoils* coils starting with *addr*
     # Return array of their values
     def read_coils(addr, ncoils)
-      query("\x1" + addr.to_bytes + ncoils.to_bytes).to_array_bit[0..ncoils-1]
+      query("\x1" + addr.to_word + ncoils.to_word).unpack_bits[0..ncoils-1]
     end
 
     # Read value *ncoils* discrete inputs starting with *addr*
     #
     # Return array of their values
     def read_discrete_inputs(addr, ncoils)
-      query("\x2" + addr.to_bytes + ncoils.to_bytes).to_array_bit[0..ncoils-1]
+      query("\x2" + addr.to_word + ncoils.to_word).unpack_bits[0..ncoils-1]
     end
 
     # Deprecated version of read_discrete_inputs
@@ -51,14 +51,14 @@ module ModBus
     #
     # Return array of their values
     def read_holding_registers(addr, nreg) 
-      query("\x3" + addr.to_bytes + nreg.to_bytes).to_array_int16
+      query("\x3" + addr.to_word + nreg.to_word).unpack('n*')
     end
 
     # Read value *nreg* input registers starting with *addr*
     #
     # Return array of their values
     def read_input_registers(addr, nreg)
-      query("\x4" + addr.to_bytes + nreg.to_bytes).to_array_int16
+      query("\x4" + addr.to_word + nreg.to_word).unpack('n*')
     end
 
     # Write *val* in *addr* coil 
@@ -68,9 +68,9 @@ module ModBus
     # Return self
     def write_single_coil(addr, val)
       if val == 0
-        query("\x5" + addr.to_bytes + 0.to_bytes)
+        query("\x5" + addr.to_word + 0.to_word)
       else
-        query("\x5" + addr.to_bytes + 0xff00.to_bytes) 
+        query("\x5" + addr.to_word + 0xff00.to_word) 
       end
       self
     end
@@ -79,7 +79,7 @@ module ModBus
     #
     # Return self
     def write_single_register(addr, val)
-      query("\x6" + addr.to_bytes + val.to_bytes)
+      query("\x6" + addr.to_word + val.to_word)
       self
     end
 
@@ -102,7 +102,7 @@ module ModBus
         sum >>= 8 
       end
 
-      query("\xf" + addr.to_bytes + val.size.to_bytes + nbyte.chr + s_val)
+      query("\xf" + addr.to_word + val.size.to_word + nbyte.chr + s_val)
       self
     end
 
@@ -114,10 +114,10 @@ module ModBus
     def write_multiple_registers(addr, val)
       s_val = ""
       val.each do |reg|
-        s_val << reg.to_bytes
+        s_val << reg.to_word
       end
 
-      query("\x10" + addr.to_bytes + val.size.to_bytes + (val.size * 2).chr + s_val)
+      query("\x10" + addr.to_word + val.size.to_word + (val.size * 2).chr + s_val)
       self
     end
 
@@ -125,7 +125,7 @@ module ModBus
     #
     # Return self
     def mask_write_register(addr, and_mask, or_mask)
-      query("\x16" + addr.to_bytes + and_mask.to_bytes + or_mask.to_bytes)
+      query("\x16" + addr.to_word + and_mask.to_word + or_mask.to_word)
       self  
     end
 
@@ -136,7 +136,7 @@ module ModBus
       begin
         timeout(1, ModBusTimeout) do
         pdu = read_pdu
-       end
+      end
       rescue ModBusTimeout => err
         tried += 1
         retry unless tried >= @read_retries

@@ -52,15 +52,15 @@ module ModBus
     private
     def send_pdu(pdu)   
       @@transaction += 1 
-      @sock.write @@transaction.to_bytes + "\0\0" + (pdu.size + 1).to_bytes + @slave.chr + pdu
+      @sock.write @@transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @slave.chr + pdu
     end
 
     def read_pdu    
       header = @sock.read(7)            
       if header
-        tin = header[0,2].to_int16
+        tin = header[0,2].unpack('n')[0]
         raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @@transaction
-        len = header[4,2].to_int16       
+        len = header[4,2].unpack('n')[0]       
         @sock.read(len-1)               
       else
         raise Errors::ModBusException.new("Server did not respond")

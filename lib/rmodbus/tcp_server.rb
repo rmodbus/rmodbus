@@ -17,7 +17,7 @@ require 'gserver'
 
 module ModBus
 	
-	class TCPServer < GServer
+  class TCPServer < GServer
     
     attr_accessor :coils, :discret_inputs, :holding_registers, :input_registers
 
@@ -41,7 +41,7 @@ module ModBus
         end
  
         tr = req[0,2]
-        len = req[4,2].to_int16
+        len = req[4,2].unpack('n')[0]
         req = io.read(len - 1)
 
         func = req.getbyte(0)
@@ -54,24 +54,24 @@ module ModBus
           when 1
             param = parse_read_func(req, @coils)
             if param[:err] == 0
-              val = @coils[param[:addr],param[:quant]].bits_to_bytes
+              val = @coils[param[:addr],param[:quant]].pack_to_word
               res = func.chr + val.size.chr + val
             end
           when 2
             param = parse_read_func(req, @discret_inputs)
             if param[:err] == 0
-              val = @discret_inputs[param[:addr],param[:quant]].bits_to_bytes
+              val = @discret_inputs[param[:addr],param[:quant]].pack_to_word
               res = func.chr + val.size.chr + val
             end
           when 3
             param = parse_read_func(req, @holding_registers)
             if param[:err] == 0
-              res = func.chr + (param[:quant] * 2).chr + @holding_registers[param[:addr],param[:quant]].to_ints16
+              res = func.chr + (param[:quant] * 2).chr + @holding_registers[param[:addr],param[:quant]].pack('n*')
             end
           when 4
             param = parse_read_func(req, @input_registers)
             if param[:err] == 0
-              res = func.chr + (param[:quant] * 2).chr + @input_registers[param[:addr],param[:quant]].to_ints16
+              res = func.chr + (param[:quant] * 2).chr + @input_registers[param[:addr],param[:quant]].pack('n*')
             end
           when 5 
             param = parse_write_coil_func(req)
@@ -99,7 +99,7 @@ module ModBus
             end
         end
         if param[:err] ==  0
-          resp = tr + "\0\0" + (res.size + 1).to_bytes + @uid.chr + res
+          resp = tr + "\0\0" + (res.size + 1).to_word + @uid.chr + res
         else
           resp = tr + "\0\0\0\3" + @uid.chr + (func | 0x80).chr + param[:err].chr
         end 
@@ -110,21 +110,21 @@ module ModBus
     private
 
     def parse_read_func(req, field)
-      quant = req[3,2].to_int16
+      quant = req[3,2].unpack('n')[0]
 
       return { :err => 3} unless quant <= 0x7d
         
-      addr = req[1,2].to_int16
+      addr = req[1,2].unpack('n')[0]
       return { :err => 2 } unless addr + quant <= field.size
         
       return { :err => 0, :quant => quant, :addr => addr }    
     end
 
     def parse_write_coil_func(req)
-      addr = req[1,2].to_int16
+      addr = req[1,2].unpack('n')[0]
       return { :err => 2 } unless addr <= @coils.size
 
-      val = req[3,2].to_int16
+      val = req[3,2].unpack('n')[0]
       return { :err => 3 } unless val == 0 or val == 0xff00
       
       val = 1 if val == 0xff00
@@ -132,10 +132,10 @@ module ModBus
     end
 
     def parse_write_register_func(req)
-      addr = req[1,2].to_int16
+      addr = req[1,2].unpack('n')[0]
       return { :err => 2 } unless addr <= @coils.size
 
-      val = req[3,2].to_int16
+      val = req[3,2].unpack('n')[0]
 
       return { :err => 0, :addr => addr, :val => val }  
 	  end
@@ -144,7 +144,7 @@ module ModBus
       param = parse_read_func(req, @coils)
 
       if param[:err] == 0
-        param = {:err => 0, :addr => param[:addr], :quant => param[:quant], :val => req[6,param[:quant]].to_array_bit }
+        param = {:err => 0, :addr => param[:addr], :quant => param[:quant], :val => req[6,param[:quant]].unpack_bits }
       end
       param
     end
@@ -153,7 +153,7 @@ module ModBus
       param = parse_read_func(req, @holding_registers)
 
       if param[:err] == 0
-        param = {:err => 0, :addr => param[:addr], :quant => param[:quant], :val => req[6,param[:quant] * 2].to_array_int16 }
+        param = {:err => 0, :addr => param[:addr], :quant => param[:quant], :val => req[6,param[:quant] * 2].unpack('n*')}
       end
       param
     end

@@ -14,46 +14,16 @@
 
 class String
 
-  if RUBY_VERSION.to_f != 1.9
+  unless RUBY_VERSION.to_f == 1.9
     def getbyte(index)
-      self[index].to_i  
+      self[index].to_i
     end
-	end
-
-  def to_array_int16
-    array_int16 = []
-    i = 0
-    while(i < self.bytesize) do
-      array_int16 << self.getbyte(i) * 256 + self.getbyte(i+1)
-      i += 2
-    end
-    array_int16
   end
 
-  def to_array_bytes
-    array_bytes = []
-    self.each_byte do |b|
-      array_bytes << b
-    end
-    array_bytes
-  end
-    
-  def to_int16
-    self.getbyte(0)*256 + self.getbyte(1)
-  end
-
-  def to_array_bit
+  def unpack_bits
     array_bit = []
-    self.each_byte do |byte|
-      mask = 0x01 
-      8.times {
-        unless (mask & byte) == 0
-          array_bit << 1
-        else
-          array_bit << 0
-        end
-        mask = mask << 1
-      }
+    self.unpack('b*')[0].each_char do |b|
+        array_bit << b.to_i
     end
     array_bit
   end
@@ -61,36 +31,30 @@ class String
 end
 
 class Integer
-  def to_bytes
+
+  def to_word
     (self >> 8).chr + (self & 0xff).chr 
   end
+
 end
 
 class Array
 
-  def to_ints16
-    s = ""
-    self.each do |int16|
-      s << int16.to_bytes
-    end
-    s
-  end
-
-  def bits_to_bytes
-    int16 = 0
+  def pack_to_word
+    word = 0
     s = ""
     mask = 0x01
 
     self.each do |bit| 
-      int16 |= mask if bit > 0
+      word |= mask if bit > 0
       mask <<= 1
       if mask  == 0x100
         mask = 0x01
-        s << int16.chr
-        int16 = 0
+        s << word.chr
+        word = 0
       end
     end
-    s << int16.chr unless mask == 0x01
+    s << word.chr unless mask == 0x01
   end
 
 end
