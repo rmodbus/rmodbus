@@ -10,3 +10,7 @@
 2009-03-6 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/rtu_client.rb, spec/rtu_client_spec.rb: Have completed to
 	design of ModBus::RTUClient class.
+
+2009-04-17 James Sanders <sanderjd@gmail.com>
+    * lib/rmodbus/exceptions.rb: Inherit from StandardError instead of
+	Exception
