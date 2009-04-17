@@ -15,7 +15,7 @@ module ModBus
 
   module Errors
 
-    class ModBusException < Exception
+    class ModBusException < StandardError
     end
 
     class IllegalFunction < ModBusException
