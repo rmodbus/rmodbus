@@ -10,4 +10,5 @@
 - add support ruby 1.9.1
 - fix bug in TCPServer class (it don't close connection after first request now)
 
-
+2009-17-04 Release-0.2.2
+- Make exceptions inherit from StandardError instead of Exception
