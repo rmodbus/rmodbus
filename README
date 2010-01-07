@@ -15,6 +15,7 @@
   * 06 (0x06) Write Single Register
   * 15 (0x0F) Write Multiple Coils
   * 16 (0x10) Write Multiple registers
+  * 22 (0x16) Mask Write register 
 
 == Installation
 

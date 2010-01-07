@@ -14,3 +14,7 @@
 2009-04-17 James Sanders <sanderjd@gmail.com>
     * lib/rmodbus/exceptions.rb: Inherit from StandardError instead of
 	Exception
+2010-01-7 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/tcp_client.rb: Fixed bug of overflow transaction counter (thanks
+	Tallak Tveide)
+
