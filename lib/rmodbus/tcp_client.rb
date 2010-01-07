@@ -51,6 +51,7 @@ module ModBus
 
     private
     def send_pdu(pdu)   
+      @@transaction = 0 if @@transaction.next > 65535
       @@transaction += 1 
       @sock.write @@transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @slave.chr + pdu
     end
