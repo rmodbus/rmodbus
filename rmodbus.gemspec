@@ -1,7 +1,7 @@
 require 'rubygems'
 spec = Gem::Specification.new do |s|
 	s.name = "rmodbus"
-	s.version = "0.2.1"
+	s.version = "0.3.0"
 	s.author  = 'A.Timin, J. Sanders'
 	s.platform = Gem::Platform::RUBY
 	s.summary = "RModBus - free implementation of protocol ModBus"
