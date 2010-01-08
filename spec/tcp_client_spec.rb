@@ -46,11 +46,14 @@ describe TCPClient, "method 'query'"  do
   end
 
   it 'should sugar connect method' do
-    TCPSocket.should_receive(:new).with('127.0.0.1', 502).and_return(@sock)
+    ipaddr, port, slave = '127.0.0.1', 502, 3
+    TCPSocket.should_receive(:new).with(ipaddr, port).and_return(@sock)
     @sock.should_receive(:closed?).and_return(false)
     @sock.should_receive(:close)
-    TCPClient.connect('127.0.0.1') do |cl|
-      cl.class.should == TCPClient
+    TCPClient.connect(ipaddr, port, slave) do |cl|
+      cl.ipaddr.should == ipaddr
+      cl.port.should == port
+      cl.slave.should == slave
     end
   end
 

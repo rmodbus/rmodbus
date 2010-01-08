@@ -23,6 +23,8 @@ module ModBus
 
     include Timeout
 
+    attr_reader :ipaddr, :port, :slave
+
     @@transaction = 0
     
     # Connect with ModBus server
@@ -93,7 +95,6 @@ module ModBus
         raise Errors::ModBusException.new("Server did not respond")
       end
     end
-
   end
 
 end

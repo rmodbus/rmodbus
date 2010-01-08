@@ -18,6 +18,7 @@
 	* lib/rmodbus/tcp_client.rb: Fixed bug of overflow transaction counter (thanks
 	Tallak Tveide)
 2010-01-8 Timin Aleksey <atimin@gmail.com>
-	* lib/rmodbus/tcp_client.rb: Added new method TCPClient::connect
+	* lib/rmodbus/tcp_client.rb: Added new method TCPClient::connect,
+	TCPClient#ipaddr, TCPClient#port, TCPClient#slave
 	* lib/rmodbus/rtu_client.rb: Added new methods RTUClient::connect,
 	RTUClient#close
