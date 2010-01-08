@@ -17,4 +17,5 @@
 2010-01-7 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/tcp_client.rb: Fixed bug of overflow transaction counter (thanks
 	Tallak Tveide)
-
+2010-01-8 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/tcp_client.rb: Added new method TCPClient.connect

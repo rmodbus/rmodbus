@@ -45,4 +45,13 @@ describe TCPClient, "method 'query'"  do
     @mb_client.query(request).should == response[2..-1]
   end
 
+  it 'should sugar connect method' do
+    TCPSocket.should_receive(:new).with('127.0.0.1', 502).and_return(@sock)
+    @sock.should_receive(:closed?).and_return(false)
+    @sock.should_receive(:close)
+    TCPClient.connect('127.0.0.1') do |cl|
+      cl.class.should == TCPClient
+    end
+  end
+
 end

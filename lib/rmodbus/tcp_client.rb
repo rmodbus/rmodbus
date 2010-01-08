@@ -24,8 +24,33 @@ module ModBus
     include Timeout
 
     @@transaction = 0
+    
+    # Connect with ModBus server
+    #
+    # ipaddr - ip of the server
+    #
+    # port - port TCP connections
+    #
+    # slaveaddr - slave ID of the server
+    #
+    # ModBus.connect('127.0.0.1') do |cl|
+    #
+    #   put cl.read_holding_registers(0, 10)
+    #
+    # end
+    def self.connect(ipaddr, port = 502, slaveaddr = 1)
+      cl = TCPClient.new(ipaddr, port, slaveaddr) 
+      yield cl
+      cl.close
+    end
 
     # Connect with a ModBus server
+    #
+    # ipaddr - ip of the server
+    #
+    # port - port TCP connections
+    #
+    # slaveaddr - slave ID of the server
     def initialize(ipaddr, port = 502, slaveaddr = 1)
       @ipaddr, @port = ipaddr, port
       tried = 0
@@ -41,6 +66,7 @@ module ModBus
       @slave = slaveaddr
     end
 
+    # Close TCP connections
     def close
       @sock.close unless @sock.closed?
     end

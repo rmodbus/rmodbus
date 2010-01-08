@@ -29,6 +29,7 @@ module ModBus
       @read_retries = 10
     end
     # Read value *ncoils* coils starting with *addr*
+    #
     # Return array of their values
     def read_coils(addr, ncoils)
       query("\x1" + addr.to_word + ncoils.to_word).unpack_bits[0..ncoils-1]
