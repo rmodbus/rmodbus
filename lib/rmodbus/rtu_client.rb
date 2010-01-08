@@ -7,15 +7,18 @@ require 'serialport'
 module ModBus
   
   class RTUClient < Client
+
+    attr_reader :port, :baud, :slave
+
     # Connect with RTU server
     #
     # port - serial port of connections with RTU server
     #
-    # baud - rate port of connections with RTU server
+    # baud - rate sp of connections with RTU server
     #
     # slaveaddr - slave ID of the RTU server
     #
-    # RTUClient.connect('127.0.0.1') do |cl|
+    # RTUClient.connect('/dev/port1') do |cl|
     #
     #   put cl.read_holding_registers(0, 10)
     #
@@ -30,27 +33,27 @@ module ModBus
     #
     # port - serial port of connections with RTU server
     #
-    # baud - rate port of connections with RTU server
+    # baud - rate sp of connections with RTU server
     #
     # slaveaddr - slave ID of the RTU server
     def initialize(port, baud=9600, slaveaddr=1)
-      @port = SerialPort.new(port, baud)
-      @slave = slaveaddr
+      @sp = SerialPort.new(port, baud)
+      @port, @baud, @slave =port, baud, slaveaddr
     end
 
     def close
-      @port.close
+      @sp.close
     end
 
     protected
     def send_pdu(pdu)
       msg = @slave.chr + pdu 
       msg << crc16(msg).to_word
-      @port.write msg
+      @sp.write msg
     end
 
     def read_pdu
-      msg =  @port.read
+      msg =  @sp.read
       if msg.getbyte(0) == @slave
         return msg[1..-3] if msg[-2,2] == crc16(msg[0..-3]).to_word
       end

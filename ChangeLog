@@ -21,4 +21,4 @@
 	* lib/rmodbus/tcp_client.rb: Added new method TCPClient::connect,
 	TCPClient#ipaddr, TCPClient#port, TCPClient#slave
 	* lib/rmodbus/rtu_client.rb: Added new methods RTUClient::connect,
-	RTUClient#close
+	RTUClient#close, RTUClient#port, RTUClient#baud, RTUClient#slave

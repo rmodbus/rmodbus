@@ -9,38 +9,41 @@ include ModBus
 describe RTUClient do
     
   before do 
-    @port = mock('Serial port')
-    SerialPort.should_receive(:new).with("/dev/port1", 9600).and_return(@port)    
+    @sp = mock('Serial port')
+    SerialPort.should_receive(:new).with("/dev/port1", 9600).and_return(@sp)    
     @mb_client = RTUClient.new("/dev/port1", 9600, 1)
     @mb_client.read_retries = 0
   end
 
   it "should ignore frame with other UID" do
     request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
-    @port.should_receive(:write).with("\1#{request}\xA6\x31")
-    @port.should_receive(:read).and_return("\x2\x10\x0\x1\x0\x1\x1C\x08")
+    @sp.should_receive(:write).with("\1#{request}\xA6\x31")
+    @sp.should_receive(:read).and_return("\x2\x10\x0\x1\x0\x1\x1C\x08")
     lambda {@mb_client.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
   end
 
   it "should ignored frame with incorrect CRC" do
     request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
-    @port.should_receive(:write).with("\1#{request}\xA6\x31")
-    @port.should_receive(:read).and_return("\x1\x10\x0\x1\x0\x1\x1C\x08")
+    @sp.should_receive(:write).with("\1#{request}\xA6\x31")
+    @sp.should_receive(:read).and_return("\x1\x10\x0\x1\x0\x1\x1C\x08")
     lambda {@mb_client.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
   end
   
   it "should return value of registers"do
     request = "\x3\x0\x1\x0\x1"
-    @port.should_receive(:write).with("\1#{request}\xd5\xca")
-    @port.should_receive(:read).and_return("\x1\x3\x2\xff\xff\xb9\xf4")
+    @sp.should_receive(:write).with("\1#{request}\xd5\xca")
+    @sp.should_receive(:read).and_return("\x1\x3\x2\xff\xff\xb9\xf4")
     @mb_client.query(request).should == "\xff\xff"
   end
 
  it 'should sugar connect method' do
-    SerialPort.should_receive(:new).with("/dev/port1", 4800).and_return(@port)    
-    @port.should_receive(:close)
-    RTUClient.connect('/dev/port1', 4800) do |cl|
-      cl.class.should == RTUClient
+    port, baud, slave = "/dev/port1", 4800, 3
+    SerialPort.should_receive(:new).with(port, baud).and_return(@sp)    
+    @sp.should_receive(:close)
+    RTUClient.connect(port, baud, slave) do |cl|
+      cl.port.should == port
+      cl.baud.should == baud
+      cl.slave.should == slave
     end
   end
 
