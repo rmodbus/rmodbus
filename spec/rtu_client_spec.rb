@@ -36,5 +36,13 @@ describe RTUClient do
     @mb_client.query(request).should == "\xff\xff"
   end
 
+ it 'should sugar connect method' do
+    SerialPort.should_receive(:new).with("/dev/port1", 4800).and_return(@port)    
+    @port.should_receive(:close)
+    RTUClient.connect('/dev/port1', 4800) do |cl|
+      cl.class.should == RTUClient
+    end
+  end
+
 end
 

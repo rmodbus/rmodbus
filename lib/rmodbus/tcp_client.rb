@@ -33,7 +33,7 @@ module ModBus
     #
     # slaveaddr - slave ID of the server
     #
-    # ModBus.connect('127.0.0.1') do |cl|
+    # TCPClient.connect('127.0.0.1') do |cl|
     #
     #   put cl.read_holding_registers(0, 10)
     #

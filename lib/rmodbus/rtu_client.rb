@@ -7,10 +7,39 @@ require 'serialport'
 module ModBus
   
   class RTUClient < Client
-    
-    def initialize(port, rate=9600, slaveaddr=1)
-      @port = SerialPort.new(port, rate)
+    # Connect with RTU server
+    #
+    # port - serial port of connections with RTU server
+    #
+    # baud - rate port of connections with RTU server
+    #
+    # slaveaddr - slave ID of the RTU server
+    #
+    # RTUClient.connect('127.0.0.1') do |cl|
+    #
+    #   put cl.read_holding_registers(0, 10)
+    #
+    # end
+    def self.connect(port, baud=9600, slaveaddr=1)
+      cl = RTUClient.new(port, baud, slaveaddr) 
+      yield cl
+      cl.close
+    end
+
+    # Connect with RTU server
+    #
+    # port - serial port of connections with RTU server
+    #
+    # baud - rate port of connections with RTU server
+    #
+    # slaveaddr - slave ID of the RTU server
+    def initialize(port, baud=9600, slaveaddr=1)
+      @port = SerialPort.new(port, baud)
       @slave = slaveaddr
+    end
+
+    def close
+      @port.close
     end
 
     protected
