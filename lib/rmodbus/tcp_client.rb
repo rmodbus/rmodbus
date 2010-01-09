@@ -24,6 +24,7 @@ module ModBus
     include Timeout
 
     attr_reader :ipaddr, :port, :slave
+    attr_accessor :debug
 
     @@transaction = 0
     
@@ -66,6 +67,8 @@ module ModBus
         raise ModBusTimeout.new, 'Timed out attempting to create connection'
       end
       @slave = slaveaddr
+      @debug = false
+      super()
     end
 
     # Close TCP connections
@@ -81,7 +84,12 @@ module ModBus
     def send_pdu(pdu)   
       @@transaction = 0 if @@transaction.next > 65535
       @@transaction += 1 
-      @sock.write @@transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @slave.chr + pdu
+      msg = @@transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @slave.chr + pdu
+      @sock.write msg
+      
+      if debug
+        STDOUT << "Tx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
+      end
     end
 
     def read_pdu    
@@ -90,11 +98,16 @@ module ModBus
         tin = header[0,2].unpack('n')[0]
         raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @@transaction
         len = header[4,2].unpack('n')[0]       
-        @sock.read(len-1)               
+        msg = @sock.read(len-1)               
+        if @debug
+          STDOUT << "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg) + "\n"
+        end
+        msg
       else
         raise Errors::ModBusException.new("Server did not respond")
       end
     end
+
   end
 
 end

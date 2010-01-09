@@ -22,3 +22,8 @@
 	TCPClient#ipaddr, TCPClient#port, TCPClient#slave
 	* lib/rmodbus/rtu_client.rb: Added new methods RTUClient::connect,
 	RTUClient#close, RTUClient#port, RTUClient#baud, RTUClient#slave
+2010-01-9 Timin Aleksey <atimin@gmail.com>
+	* rmodbus.gemspec: Added Rakefile into gem 
+	* spec/logging_spec.rb: Added specs for debug logging
+	* lib/rmodbus/client.rb, lib/rmodbus/tcp_client.rb,
+	lib/rmodbus/rtu_client.rb: Added debug logging functional

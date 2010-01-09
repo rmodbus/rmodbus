@@ -179,6 +179,21 @@ module ModBus
     def close
     end
 
+    private
+    def logging_bytes(msg)
+      result = ""
+      msg.each_byte do |c|
+        result << "["
+        if c < 16
+          result << '0' << c.to_s(16)
+        else
+          result << c.to_s(16)
+        end
+        result << "]"
+      end
+      result
+    end
+
   end
 
 end

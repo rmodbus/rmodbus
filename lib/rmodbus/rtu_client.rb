@@ -9,6 +9,7 @@ module ModBus
   class RTUClient < Client
 
     attr_reader :port, :baud, :slave
+    attr_accessor :debug
 
     # Connect with RTU server
     #
@@ -39,6 +40,7 @@ module ModBus
     def initialize(port, baud=9600, slaveaddr=1)
       @sp = SerialPort.new(port, baud)
       @port, @baud, @slave =port, baud, slaveaddr
+      @debug = false
     end
 
     def close
@@ -50,10 +52,17 @@ module ModBus
       msg = @slave.chr + pdu 
       msg << crc16(msg).to_word
       @sp.write msg
+      if @debug
+        STDOUT << "Tx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
+      end
     end
 
     def read_pdu
       msg =  @sp.read
+      if @debug
+          STDOUT << "Rx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
+        end
+
       if msg.getbyte(0) == @slave
         return msg[1..-3] if msg[-2,2] == crc16(msg[0..-3]).to_word
       end
