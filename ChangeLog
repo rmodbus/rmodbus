@@ -28,4 +28,6 @@
 	* spec/logging_spec.rb: Added specs for debug logging
 	* lib/rmodbus/client.rb, lib/rmodbus/tcp_client.rb,
 	lib/rmodbus/rtu_client.rb: Added debug logging functional
+2010-01-12 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/rtu_client.rb: RTUClient is live!
 

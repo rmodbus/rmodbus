@@ -135,15 +135,11 @@ module ModBus
 
       tried = 0
       begin
-        timeout(1, ModBusTimeout) do
-        pdu = read_pdu
-      end
+        timeout(1, ModBusTimeout) { pdu = read_pdu }
       rescue ModBusTimeout => err
         tried += 1
         retry unless tried >= @read_retries
         raise ModBusTimeout.new, "Timed out during read attempt"
-      rescue 
-        raise ModBusException.new, "Server did not respond"
       end
     
       if pdu[0].to_i >= 0x80

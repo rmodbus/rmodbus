@@ -38,9 +38,13 @@ module ModBus
     #
     # slaveaddr - slave ID of the RTU server
     def initialize(port, baud=9600, slaveaddr=1)
-      @sp = SerialPort.new(port, baud)
       @port, @baud, @slave =port, baud, slaveaddr
       @debug = false
+
+      @sp = SerialPort.new(port, baud)
+      @sp.read_timeout = 5
+
+      super()
     end
 
     def close
@@ -58,10 +62,14 @@ module ModBus
     end
 
     def read_pdu
-      msg =  @sp.read
+      msg = ''
+      while msg.size == 0
+        msg =  @sp.read
+      end
+
       if @debug
-          STDOUT << "Rx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
-        end
+        STDOUT << "Rx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
+      end
 
       if msg.getbyte(0) == @slave
         return msg[1..-3] if msg[-2,2] == crc16(msg[0..-3]).to_word
