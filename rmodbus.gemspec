@@ -1,7 +1,7 @@
 require 'rubygems'
 spec = Gem::Specification.new do |s|
 	s.name = "rmodbus"
-	s.version = "0.3.0"
+	s.version = "0.3.1"
 	s.author  = 'A.Timin, J. Sanders'
 	s.platform = Gem::Platform::RUBY
 	s.summary = "RModBus - free implementation of protocol ModBus"
@@ -9,5 +9,6 @@ spec = Gem::Specification.new do |s|
  	s.autorequire = "rmodbus"
  	s.has_rdoc = true
   s.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README"]
-  s.extra_rdoc_files = ["README", "AUTHORS", "LICENSE", "CHANGES"]
+  s.extra_rdoc_files = ["README", "AUTHORS", "LICENSE", "ChangeLog"]
+  s.add_dependency "serialport", ">=0.8.0"
 end

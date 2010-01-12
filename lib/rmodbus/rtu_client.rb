@@ -10,7 +10,9 @@ module ModBus
     
     def initialize(port, rate=9600, slaveaddr=1)
       @port = SerialPort.new(port, rate)
+      @port.read_timeout = 5
       @slave = slaveaddr
+      super()
     end
 
     protected
@@ -21,7 +23,11 @@ module ModBus
     end
 
     def read_pdu
-      msg =  @port.read
+      msg = ''
+      while msg.size == 0 do
+        msg =  @port.read
+      end
+
       if msg.getbyte(0) == @slave
         return msg[1..-3] if msg[-2,2] == crc16(msg[0..-3]).to_word
       end

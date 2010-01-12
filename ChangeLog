@@ -17,4 +17,6 @@
 2010-01-7 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/tcp_client.rb: Fixed bug of overflow transaction counter (thanks
 	Tallak Tveide)
+2010-01-12 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/rtu_client.rb: RTUClient is live!!!
 
