@@ -46,6 +46,9 @@ describe RTUClient do
   before do 
     @sp = mock('Serial port')
     SerialPort.should_receive(:new).with("/dev/port1", 9600).and_return(@sp)    
+
+    @sp.stub!(:read_timeout=)
+
     @mb_client = RTUClient.new("/dev/port1", 9600, 1)
     @mb_client.read_retries = 0
   end
