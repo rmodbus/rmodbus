@@ -21,6 +21,16 @@ require 'serialport'
 module ModBus
  
   class RTUServer
+
+    attr_accessor :coils, :discret_inputs, :holding_registers, :input_registers
+
+    def initialize(port, baud=9600, slaveaddr=1)
+      @sp = SerialPort.new(port, baud, slaveaddr)
+      @coils = []
+      @discret_inputs = []
+      @holding_registers = []
+      @input_registers = []
+    end
   end
 
 end
