@@ -26,10 +26,32 @@ module ModBus
 
     def initialize(port, baud=9600, slaveaddr=1)
       @sp = SerialPort.new(port, baud, slaveaddr)
+      @sp.read_timeout = 5
+
       @coils = []
       @discret_inputs = []
       @holding_registers = []
       @input_registers = []
+    end
+
+    def start
+      @serv = Thread.new do
+        msg = '' 
+        while msg.size == 0 
+          msg = @sp.read
+        end
+
+        if msg.getbyte(0) == @slave
+        end
+      end
+    end
+
+    def stop
+      @serv.stop
+    end
+
+    def join
+      @serv.join
     end
   end
 

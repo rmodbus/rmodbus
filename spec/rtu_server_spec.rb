@@ -6,6 +6,7 @@ describe RTUServer do
   before do
     @sp = mock "SerialPort"
     SerialPort.stub!(:new).and_return(@sp)
+    @sp.stub!(:read_timeout=)
 
     @server = RTUServer.new('/dev/ttyS0')
     @server.coils = [1,0,1,1]
@@ -20,4 +21,5 @@ describe RTUServer do
     @server.holding_registers.should == [1,2,3,4]
     @server.input_registers.should == [1,2,3,4]
   end
+
 end
