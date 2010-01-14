@@ -12,15 +12,20 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+require 'rmodbus/parsers'
+
 begin
   require 'rubygems'
 rescue
 end
+
 require 'serialport'
 
 module ModBus
  
   class RTUServer
+    include Parsers
+    include CRC16
 
     attr_accessor :coils, :discret_inputs, :holding_registers, :input_registers
 
@@ -32,16 +37,27 @@ module ModBus
       @discret_inputs = []
       @holding_registers = []
       @input_registers = []
+      @slave = slaveaddr
     end
 
     def start
       @serv = Thread.new do
-        msg = '' 
-        while msg.size == 0 
-          msg = @sp.read
-        end
+        loop do
+          req = '' 
+          while req.size == 0 
+            req = @sp.read
+          end
+       
+          if req.getbyte(0) == @slave and req[-2,2] == crc16(req[0..-3]).to_word
+            params = exec_req(req, @coils, @discret_inputs, @holding_registers, @input_registers)
 
-        if msg.getbyte(0) == @slave
+            if params[:err] ==  0
+              resp = @slave.sgr + params[:res]
+            else
+              resp =  @uid.chr + (params[:func] | 0x80).chr + params[:err].chr
+            end 
+            @sp.write resp + crc16(resp)
+          end
         end
       end
     end
@@ -54,6 +70,5 @@ module ModBus
       @serv.join
     end
   end
-
 end
 
