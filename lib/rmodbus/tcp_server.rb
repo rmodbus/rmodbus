@@ -43,15 +43,10 @@ module ModBus
         len = req[4,2].unpack('n')[0]
         req = io.read(len - 1)
 
-        params = exec_req(req, @coils, @discret_inputs, @holding_registers, @input_registers)
+        pdu = exec_req(req, @coils, @discret_inputs, @holding_registers, @input_registers)
 
-        if params[:err] ==  0
-          resp = tr + "\0\0" + (params[:res].size + 1).to_word + @uid.chr + params[:res]
-        else
-          resp = tr + "\0\0\0\3" + @uid.chr + (params[:func] | 0x80).chr + params[:err].chr
-        end 
-        io.write resp
-     end
+        io.write tr + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
+    end
     end
   end
 end

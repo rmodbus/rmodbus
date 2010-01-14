@@ -29,52 +29,55 @@ module ModBus
           params = parse_read_func(req, coils)
           if params[:err] == 0
             val = coils[params[:addr],params[:quant]].pack_to_word
-            res = func.chr + val.size.chr + val
+            pdu = func.chr + val.size.chr + val
           end
         when 2
           params = parse_read_func(req, discret_inputs)
           if params[:err] == 0
             val = discret_inputs[params[:addr],params[:quant]].pack_to_word
-            res = func.chr + val.size.chr + val
+            pdu = func.chr + val.size.chr + val
           end
         when 3
           params = parse_read_func(req, holding_registers)
           if params[:err] == 0
-            res = func.chr + (params[:quant] * 2).chr + holding_registers[params[:addr],params[:quant]].pack('n*')
+            pdu = func.chr + (params[:quant] * 2).chr + holding_registers[params[:addr],params[:quant]].pack('n*')
           end
         when 4
           params = parse_read_func(req, input_registers)
           if params[:err] == 0
-            res = func.chr + (params[:quant] * 2).chr + input_registers[params[:addr],params[:quant]].pack('n*')
+            pdu = func.chr + (params[:quant] * 2).chr + input_registers[params[:addr],params[:quant]].pack('n*')
           end
         when 5 
           params = parse_write_coil_func(req)
           if params[:err] == 0
             coils[params[:addr]] = params[:val]
-            res = func.chr + req
+            pdu = func.chr + req
           end
         when 6
           params = parse_write_register_func(req)
           if params[:err] == 0
             holding_registers[params[:addr]] = params[:val]
-            res = func.chr + req
+            pdu = func.chr + req
           end
         when 15
           params = parse_write_multiple_coils_func(req)
           if params[:err] == 0
             coils[params[:addr],params[:quant]] = params[:val][0,params[:quant]]
-            res = func.chr + req
+            pdu = func.chr + req
           end
         when 16
           params = parse_write_multiple_registers_func(req)
           if params[:err] == 0
             holding_registers[params[:addr],params[:quant]] = params[:val][0,params[:quant]]
-            res = func.chr + req
+            pdu = func.chr + req
           end
       end
-      params[:func] = func
-      params[:res] = res
-      params
+      
+      if params[:err] == 0
+        pdu 
+      else
+        pdu = (func | 0x80).chr + params[:err].chr
+      end
     end
 
     private

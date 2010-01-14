@@ -49,13 +49,8 @@ module ModBus
           end
        
           if req.getbyte(0) == @slave and req[-2,2] == crc16(req[0..-3]).to_word
-            params = exec_req(req, @coils, @discret_inputs, @holding_registers, @input_registers)
-
-            if params[:err] ==  0
-              resp = @slave.sgr + params[:res]
-            else
-              resp =  @uid.chr + (params[:func] | 0x80).chr + params[:err].chr
-            end 
+            pdu = exec_req(req, @coils, @discret_inputs, @holding_registers, @input_registers)
+            resp = @slave.chr + pdu
             @sp.write resp + crc16(resp)
           end
         end
