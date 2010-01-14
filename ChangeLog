@@ -30,4 +30,9 @@
 	lib/rmodbus/rtu_client.rb: Added debug logging functional
 2010-01-12 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/rtu_client.rb: RTUClient is live!
-
+2010-01-14 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/crc16.rb: Added module for calculation CRC16
+	* lib/rmodbus/parsers.rb: Added module for parsing requiest from clients
+	* lib/rmodbus/rtu_server.rb: Added RTUServer class
+	* rmodbus.gemspec: Update verison => 0.4.0
+	* README: Update information about project

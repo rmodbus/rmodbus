@@ -4,8 +4,9 @@
 
 == Features
 
-* Client\Server ModBus-TCP
-* Client ModBus-RTU (experimental) with serialport gem
+* Support Ruby 1.8, Ruby 1.9
+* Support ModBus-TCP, ModBus-RTU protocol
+* Support client(master) and server(slave)
 * Support functions:
   * 01 (0x01) Read Coils
   * 02 (0x02) Read Discrete Inputs
@@ -19,17 +20,16 @@
 
 == Installation
 
-You can install RModBus with the following command
-
-$ rake install
-
-from its distribution directory
-
-== Gem installation
-
 Download and install RModBus with the following
 
 $ gem install --remote rmodbus
+
+== Example
+
+require 'rmodbus'
+cl = ModBus::TCPClient.new('127.0.0.1', 8502, 1)
+puts cl.read_holding_registers(0,4)
+cl.write_multiple_registers(0, [4,4,4])
 
 == GitHub 
 
