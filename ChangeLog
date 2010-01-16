@@ -45,3 +45,4 @@
 2010-01-17 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/rtu_server, lib/rmodbus/tcp_server.rb: Fixed typo
 	discret_inputs -> discrete_inputs
+	* examples/perfomance_tcp.rb: Added test perfomance for ModBus TCP
