@@ -142,8 +142,8 @@ module ModBus
         raise ModBusTimeout.new, "Timed out during read attempt"
       end
     
-      if pdu[0].to_i >= 0x80
-        case pdu[1].to_i
+      if pdu.getbyte(0) >= 0x80
+        case pdu.getbyte(1)
           when 1
             raise IllegalFunction.new, "The function code received in the query is not an allowable action for the server"  
           when 2
