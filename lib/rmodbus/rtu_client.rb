@@ -88,7 +88,7 @@ module ModBus
       end
 
       if msg.getbyte(0) == @slave
-        return msg[1..-3] if msg[-2,2] == crc16(msg[0..-3]).to_word
+        return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
       end
       loop do
         #waite timeout  
