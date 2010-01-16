@@ -36,3 +36,5 @@
 	* lib/rmodbus/rtu_server.rb: Added RTUServer class
 	* rmodbus.gemspec: Update verison => 0.4.0
 	* README: Update information about project
+2010-01-16 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/ext.rb: Fixed for ruby-1.8.6 compatibility 
