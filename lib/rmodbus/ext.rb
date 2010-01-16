@@ -14,7 +14,7 @@
 
 class String
 
-  unless RUBY_VERSION.to_f == 1.9
+  unless RUBY_VERSION =~ /^1\.9/
     def getbyte(index)
       self[index].to_i
     end
@@ -22,8 +22,8 @@ class String
 
   def unpack_bits
     array_bit = []
-    self.unpack('b*')[0].each_char do |b|
-        array_bit << b.to_i
+    self.unpack('b*')[0].each_byte do |b|
+        array_bit << b.chr.to_i
     end
     array_bit
   end
