@@ -51,25 +51,25 @@ module ModBus
           params = parse_write_coil_func(req)
           if params[:err] == 0
             coils[params[:addr]] = params[:val]
-            pdu = func.chr + req
+            pdu = req
           end
         when 6
           params = parse_write_register_func(req)
           if params[:err] == 0
             holding_registers[params[:addr]] = params[:val]
-            pdu = func.chr + req
+            pdu = req
           end
         when 15
           params = parse_write_multiple_coils_func(req)
           if params[:err] == 0
             coils[params[:addr],params[:quant]] = params[:val][0,params[:quant]]
-            pdu = func.chr + req
+            pdu = req[0,5]
           end
         when 16
           params = parse_write_multiple_registers_func(req)
           if params[:err] == 0
             holding_registers[params[:addr],params[:quant]] = params[:val][0,params[:quant]]
-            pdu = func.chr + req
+            pdu = req[0,5]
           end
       end
       
