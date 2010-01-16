@@ -42,3 +42,6 @@
 	* lib/rmodbus/rtu_client.rb: Fixed bug in verifing CRC
 	* lib/rmodbus/rtu_server.rb: Reanimation RTUServer
 	* examples/perfomance_rtu.rb: Added test perfomance for ModBus RTU
+2010-01-17 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/rtu_server, lib/rmodbus/tcp_server.rb: Fixed typo
+	discret_inputs -> discrete_inputs

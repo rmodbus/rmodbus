@@ -5,7 +5,7 @@ describe TCPServer do
   before do
     @server = ModBus::TCPServer.new(8502,1)
     @server.coils = [1,0,1,1]
-    @server.discret_inputs = [1,1,0,0]
+    @server.discrete_inputs = [1,1,0,0]
     @server.holding_registers = [1,2,3,4]
     @server.input_registers = [1,2,3,4]
     @server.start
@@ -70,7 +70,7 @@ describe TCPServer do
   end
 
   it "should supported function 'read discrete inputs'" do
-    @client.read_discrete_inputs(1,3).should == @server.discret_inputs[1,3]
+    @client.read_discrete_inputs(1,3).should == @server.discrete_inputs[1,3]
   end
 
   it "should supported function 'read holding registers'" do

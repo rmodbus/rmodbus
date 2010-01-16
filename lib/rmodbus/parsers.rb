@@ -17,7 +17,7 @@ module ModBus
 
     Funcs = [1,2,3,4,5,6,15,16]
 
-    def exec_req(req, coils, discret_inputs, holding_registers, input_registers)
+    def exec_req(req, coils, discrete_inputs, holding_registers, input_registers)
       func = req.getbyte(0)
         
       unless Funcs.include?(func)
@@ -32,9 +32,9 @@ module ModBus
             pdu = func.chr + val.size.chr + val
           end
         when 2
-          params = parse_read_func(req, discret_inputs)
+          params = parse_read_func(req, discrete_inputs)
           if params[:err] == 0
-            val = discret_inputs[params[:addr],params[:quant]].pack_to_word
+            val = discrete_inputs[params[:addr],params[:quant]].pack_to_word
             pdu = func.chr + val.size.chr + val
           end
         when 3

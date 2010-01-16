@@ -27,7 +27,18 @@ module ModBus
     include Parsers
     include CRC16
 
-    attr_accessor :coils, :discret_inputs, :holding_registers, :input_registers
+    attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers
+
+     def discret_inputs
+      warn "[DEPRECATION] `discret_inputs` is deprecated.  Please use `discrete_inputs` instead."
+      @discrete_inputs 
+    end
+  
+    def discret_inputs=(val)
+      warn "[DEPRECATION] `discret_inputs=` is deprecated.  Please use `discrete_inputs=` instead."
+      @discrete_inputs=val
+    end
+
 
     def initialize(port, baud=9600, slaveaddr=1)
       @sp = SerialPort.new(port, baud)
@@ -35,7 +46,7 @@ module ModBus
       Thread.abort_on_exception = true 
 
       @coils = []
-      @discret_inputs = []
+      @discrete_inputs = []
       @holding_registers = []
       @input_registers = []
       @slave = slaveaddr
@@ -49,7 +60,7 @@ module ModBus
             req = @sp.read
           end
           if req.getbyte(0) == @slave and req[-2,2].unpack('n')[0] == crc16(req[0..-3])
-            pdu = exec_req(req[1..-1], @coils, @discret_inputs, @holding_registers, @input_registers)
+            pdu = exec_req(req[1..-1], @coils, @discrete_inputs, @holding_registers, @input_registers)
             resp = @slave.chr + pdu
             resp << crc16(resp).to_word
             @sp.write resp

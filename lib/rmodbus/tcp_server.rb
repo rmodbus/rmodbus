@@ -19,12 +19,22 @@ module ModBus
   class TCPServer < GServer
     include Parsers
     
-    attr_accessor :coils, :discret_inputs, :holding_registers, :input_registers
+    attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers
 
-    
+    def discret_inputs
+      warn "[DEPRECATION] `discret_inputs` is deprecated.  Please use `discrete_inputs` instead."
+      @discrete_inputs 
+    end
+  
+    def discret_inputs=(val)
+      warn "[DEPRECATION] `discret_inputs=` is deprecated.  Please use `discrete_inputs=` instead."
+      @discrete_inputs=val
+    end
+  
+   
     def initialize(port = 502, uid = 1)
       @coils = []
-      @discret_inputs = []
+      @discrete_inputs = []
       @holding_registers =[]
       @input_registers = []
       @uid = uid
@@ -43,7 +53,7 @@ module ModBus
         len = req[4,2].unpack('n')[0]
         req = io.read(len - 1)
 
-        pdu = exec_req(req, @coils, @discret_inputs, @holding_registers, @input_registers)
+        pdu = exec_req(req, @coils, @discrete_inputs, @holding_registers, @input_registers)
 
         io.write tr + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
     end
