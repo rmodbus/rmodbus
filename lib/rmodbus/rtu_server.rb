@@ -30,8 +30,9 @@ module ModBus
     attr_accessor :coils, :discret_inputs, :holding_registers, :input_registers
 
     def initialize(port, baud=9600, slaveaddr=1)
-      @sp = SerialPort.new(port, baud, slaveaddr)
+      @sp = SerialPort.new(port, baud)
       @sp.read_timeout = 5
+      Thread.abort_on_exception = true 
 
       @coils = []
       @discret_inputs = []
@@ -47,18 +48,19 @@ module ModBus
           while req.size == 0 
             req = @sp.read
           end
-       
-          if req.getbyte(0) == @slave and req[-2,2] == crc16(req[0..-3]).to_word
-            pdu = exec_req(req, @coils, @discret_inputs, @holding_registers, @input_registers)
+          if req.getbyte(0) == @slave and req[-2,2].unpack('n')[0] == crc16(req[0..-3])
+            pdu = exec_req(req[1..-1], @coils, @discret_inputs, @holding_registers, @input_registers)
             resp = @slave.chr + pdu
-            @sp.write resp + crc16(resp)
+            resp << crc16(resp).to_word
+            @sp.write resp
           end
         end
       end
     end
 
     def stop
-      @serv.stop
+      Thread.kill(@serv)
+      @sp.close 
     end
 
     def join
@@ -66,4 +68,3 @@ module ModBus
     end
   end
 end
-
