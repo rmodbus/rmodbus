@@ -41,6 +41,7 @@ describe RTUClient do
  it 'should sugar connect method' do
     port, baud, slave = "/dev/port1", 4800, 3
     SerialPort.should_receive(:new).with(port, baud).and_return(@sp)    
+    @sp.should_receive(:closed?).and_return(false)
     @sp.should_receive(:close)
     RTUClient.connect(port, baud, slave) do |cl|
       cl.port.should == port
@@ -48,6 +49,20 @@ describe RTUClient do
       cl.slave.should == slave
     end
   end
+
+  it 'should have closed? method' do
+    @sp.should_receive(:closed?).and_return(false)
+    @mb_client.closed?.should == false
+
+    @sp.should_receive(:closed?).and_return(false)
+    @sp.should_receive(:close)
+
+    @mb_client.close
+
+    @sp.should_receive(:closed?).and_return(true)
+    @mb_client.closed?.should == true
+  end
+
 
 end
 

@@ -64,7 +64,11 @@ module ModBus
     end
 
     def close
-      @sp.close
+      @sp.close unless @sp.closed?
+    end
+
+    def closed?
+      @sp.closed?
     end
 
     protected
