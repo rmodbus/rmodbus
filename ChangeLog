@@ -46,3 +46,4 @@
 	* lib/rmodbus/rtu_server, lib/rmodbus/tcp_server.rb: Fixed typo
 	discret_inputs -> discrete_inputs
 	* examples/perfomance_tcp.rb: Added test perfomance for ModBus TCP
+	* lib/rmodbus/tcp_client.rb: Added method TCPClient#closed?

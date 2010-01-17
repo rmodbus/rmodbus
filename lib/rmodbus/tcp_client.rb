@@ -76,6 +76,11 @@ module ModBus
       @sock.close unless @sock.closed?
     end
 
+    # Check TCP connections
+    def closed?
+      @sock.closed?
+    end
+
     def self.transaction 
       @@transaction
     end

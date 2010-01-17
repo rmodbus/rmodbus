@@ -57,4 +57,17 @@ describe TCPClient, "method 'query'"  do
     end
   end
 
+  it 'should have closed? method' do
+    @sock.should_receive(:closed?).and_return(false)
+    @mb_client.closed?.should == false
+
+    @sock.should_receive(:closed?).and_return(false)
+    @sock.should_receive(:close)
+
+    @mb_client.close
+
+    @sock.should_receive(:closed?).and_return(true)
+    @mb_client.closed?.should == true
+  end
+
 end
