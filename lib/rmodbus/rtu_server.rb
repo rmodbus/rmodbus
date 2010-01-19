@@ -28,6 +28,7 @@ module ModBus
     include CRC16
 
     attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers
+    attr_reader :port, :baud, :slave, :data_bits, :stop_bits, :parity
 
      def discret_inputs
       warn "[DEPRECATION] `discret_inputs` is deprecated.  Please use `discrete_inputs` instead."
@@ -40,10 +41,18 @@ module ModBus
     end
 
 
-    def initialize(port, baud=9600, slaveaddr=1)
-      @sp = SerialPort.new(port, baud)
-      @sp.read_timeout = 5
+    def initialize(port, baud=9600, slaveaddr=1, options = {})
       Thread.abort_on_exception = true 
+
+      @port, @baud = port, baud
+      @data_bits, @stop_bits, @parity = 8, 1, SerialPort::NONE
+
+      @data_bits = options[:data_bits] unless options[:data_bits].nil?
+      @stop_bits = options[:stop_bits] unless options[:stop_bits].nil?
+      @parity = options[:parity] unless options[:parity].nil?
+
+      @sp = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
+      @sp.read_timeout = 5
 
       @coils = []
       @discrete_inputs = []

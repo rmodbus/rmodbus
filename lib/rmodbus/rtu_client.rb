@@ -24,7 +24,7 @@ module ModBus
   class RTUClient < Client
 
     include CRC16
-    attr_reader :port, :baud, :slave
+    attr_reader :port, :baud, :slave, :data_bits, :stop_bits, :parity
     attr_accessor :debug
 
     # Connect with RTU server
@@ -35,13 +35,21 @@ module ModBus
     #
     # slaveaddr - slave ID of the RTU server
     #
+    # Options:
+    #
+    # :data_bits => from 5 to 8
+    #
+    # :stop_bits => 1 or 2
+    #
+    # :parity => NONE, EVEN or ODD
+    #
     # RTUClient.connect('/dev/port1') do |cl|
     #
     #   put cl.read_holding_registers(0, 10)
     #
     # end
-    def self.connect(port, baud=9600, slaveaddr=1)
-      cl = RTUClient.new(port, baud, slaveaddr) 
+    def self.connect(port, baud=9600, slaveaddr=1, options = {})
+      cl = RTUClient.new(port, baud, slaveaddr, options) 
       yield cl
       cl.close
     end
@@ -52,12 +60,39 @@ module ModBus
     #
     # baud - rate sp of connections with RTU server
     #
+    # data_bits - from 5 to 8
+    #
+    # stop_bits - 1 or 2
+    #
+    # parity - NONE, EVEN or ODD
+    #
+    # slaveaddr - slave ID of the RTU server    # Connect with RTU server
+    #
+    # port - serial port of connections with RTU server
+    #
+    # baud - rate sp of connections with RTU server
+    #
     # slaveaddr - slave ID of the RTU server
-    def initialize(port, baud=9600, slaveaddr=1)
-      @port, @baud, @slave =port, baud, slaveaddr
+    #
+    # Options:
+    #
+    # :data_bits => from 5 to 8
+    #
+    # :stop_bits => 1 or 2
+    #
+    # :parity => NONE, EVEN or ODD
+    def initialize(port, baud=9600, slaveaddr=1, options = {})
+      @port, @baud, @slave = port, baud, slaveaddr
+      
+      @data_bits, @stop_bits, @parity = 8, 1, SerialPort::NONE
+
+      @data_bits = options[:data_bits] unless options[:data_bits].nil?
+      @stop_bits = options[:stop_bits] unless options[:stop_bits].nil?
+      @parity = options[:parity] unless options[:parity].nil?
+
       @debug = false
 
-      @sp = SerialPort.new(port, baud)
+      @sp = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
       @sp.read_timeout = 5
 
       super()

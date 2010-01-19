@@ -10,10 +10,11 @@ describe RTUClient do
     
   before do 
     @sp = mock('Serial port')
-    SerialPort.should_receive(:new).with("/dev/port1", 9600).and_return(@sp)    
+    SerialPort.should_receive(:new).with("/dev/port1", 9600, 8, 1, 0).and_return(@sp)    
     @sp.stub!(:read_timeout=)
 
-    @mb_client = RTUClient.new("/dev/port1", 9600, 1)
+    @mb_client = RTUClient.new("/dev/port1", 9600, 1, 
+      :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)
     @mb_client.read_retries = 0
   end
 
@@ -40,13 +41,16 @@ describe RTUClient do
 
  it 'should sugar connect method' do
     port, baud, slave = "/dev/port1", 4800, 3
-    SerialPort.should_receive(:new).with(port, baud).and_return(@sp)    
+    SerialPort.should_receive(:new).with(port, baud, 8, 1, SerialPort::NONE).and_return(@sp)    
     @sp.should_receive(:closed?).and_return(false)
     @sp.should_receive(:close)
     RTUClient.connect(port, baud, slave) do |cl|
       cl.port.should == port
       cl.baud.should == baud
       cl.slave.should == slave
+      cl.data_bits.should == 8
+      cl.stop_bits.should == 1
+      cl.parity.should == SerialPort::NONE
     end
   end
 
@@ -62,7 +66,6 @@ describe RTUClient do
     @sp.should_receive(:closed?).and_return(true)
     @mb_client.closed?.should == true
   end
-
 
 end
 
