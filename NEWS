@@ -1,0 +1,12 @@
+modbus-0.4.0
+--------------------------
+- Added new RTUServer class;
+- Added debug logging for clients classes;
+- Added methods RTUClient::connent, TCPClient::connect.
+    They have following syntax:
+    TCPClient.connect '127.0.0.1' do |cl|
+      puts cl.read_coils(0, 5)
+    end
+- Added support more modem parameters sush as data bits, stop bits and parity
+- Added more methods for getting information about TCP connections and modem parametrs (see API and ChangeLog)
+- Fixed bug for Ruby-1.8.6 compatibility
