@@ -7,7 +7,11 @@ describe Array do
   end
 
   it "should return string reprisent 16bit" do
-    @arr.pack_to_word == "\xcd\x6b\x5" 
+    @arr.pack_to_word.should == "\xcd\x6b\x5" 
+  end
+
+  it "fixed bug for	divisible 8 data " do
+    ([0] * 8).pack_to_word.should == "\x00"
   end
 
 end

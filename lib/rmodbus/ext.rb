@@ -54,7 +54,11 @@ class Array
         word = 0
       end
     end
-    s << word.chr unless mask == 0x01
+    unless mask == 0x01
+      s << word.chr
+    else
+      s
+    end
   end
 
 end

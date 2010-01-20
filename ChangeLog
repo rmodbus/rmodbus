@@ -52,3 +52,5 @@
 	* lib/rmodbus/rtu_client.rb, lib/rmodbus/rtu_server.rb: Added support
 	modem parameters - :data_bits => 5..8, :stop_bits => 1 or 2, :parity =>
 	SerialPort::NONE, SerialPort::EVEN, SerialPort::ODD
+2010-01-20 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/ext.rb: Fixed bug for	divisible 8 data in Array#pack_to_word 
