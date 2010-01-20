@@ -27,8 +27,11 @@ $ gem install --remote rmodbus
 == Example
 
 require 'rmodbus'
+
 cl = ModBus::TCPClient.new('127.0.0.1', 8502, 1)
+
 puts cl.read_holding_registers(0,4)
+
 cl.write_multiple_registers(0, [4,4,4])
 
 == GitHub 
