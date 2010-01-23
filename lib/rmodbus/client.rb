@@ -142,6 +142,8 @@ module ModBus
         raise ModBusTimeout.new, "Timed out during read attempt"
       end
     
+      return nil if pdu.size == 0
+
       if pdu.getbyte(0) >= 0x80
         case pdu.getbyte(1)
           when 1
