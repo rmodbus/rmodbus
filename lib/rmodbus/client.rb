@@ -181,13 +181,12 @@ module ModBus
     def logging_bytes(msg)
       result = ""
       msg.each_byte do |c|
-        result << "["
-        if c < 16
-          result << '0' << c.to_s(16)
+        byte = if c < 16
+          '0' + c.to_s(16)
         else
-          result << c.to_s(16)
+          c.to_s(16)
         end
-        result << "]"
+        result << "[#{byte}]"
       end
       result
     end
