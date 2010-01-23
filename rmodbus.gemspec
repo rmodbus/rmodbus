@@ -13,5 +13,5 @@ spec = Gem::Specification.new do |s|
   s.has_rdoc = true
   s.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README"]
   s.extra_rdoc_files = ["README", "AUTHORS", "LICENSE", "ChangeLog"]
-  s.add_dependency("serialport", ">=0.8.0")
+  s.add_dependency("serialport", ">=1.0.1")
 end
