@@ -24,6 +24,15 @@ module ModBus
     # Number of times to retry on connection and read timeouts
     attr_accessor :connection_retries, :read_retries
 
+    Exceptions = { 
+          1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
+          2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),
+          3 => IllegalDataValue.new("A value contained in the query data field is not an allowable value for server"),
+          4 => SlaveDeviceFailure.new("An unrecoverable error occurred while the server was attempting to perform the requested action"),
+          5 => Acknowledge.new("The server has accepted the request and is processing it, but a long duration of time will be required to do so"),
+          6 => SlaveDeviceBus.new("The server is engaged in processing a long duration program command"),
+          8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
+    }
     def initialize
       @connection_retries = 10
       @read_retries = 10
@@ -145,24 +154,10 @@ module ModBus
       return nil if pdu.size == 0
 
       if pdu.getbyte(0) >= 0x80
-        case pdu.getbyte(1)
-          when 1
-            raise IllegalFunction.new, "The function code received in the query is not an allowable action for the server"  
-          when 2
-            raise IllegalDataAddress.new, "The data address received in the query is not an allowable address for the server"
-          when 3
-            raise IllegalDataValue.new, "A value contained in the query data field is not an allowable value for server"
-          when 4
-            raise SlaveDeviceFailure.new, "An unrecoverable error occurred while the server was attempting to perform the requested action"
-          when 5
-            raise Acknowledge.new, "The server has accepted the request and is processing it, but a long duration of time will be required to do so"
-          when 6
-            raise SlaveDeviceBus.new, "The server is engaged in processing a long duration program command"
-          when 8
-            raise MemoryParityError.new, "The extended file area failed to pass a consistency check"
-          else
-            raise ModBusException.new, "Unknown error"
-        end
+        exc_id = pdu.getbyte(1)
+        raise Exceptions[exc_id] unless Exceptions[exc_id].nil?
+
+        raise ModBusException.new, "Unknown error"
       end
       pdu[2..-1]
     end
