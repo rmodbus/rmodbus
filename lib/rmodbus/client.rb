@@ -33,10 +33,12 @@ module ModBus
           6 => SlaveDeviceBus.new("The server is engaged in processing a long duration program command"),
           8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
     }
+
     def initialize
       @connection_retries = 10
       @read_retries = 10
     end
+
     # Read value *ncoils* coils starting with *addr*
     #
     # Return array of their values
@@ -137,6 +139,21 @@ module ModBus
     def mask_write_register(addr, and_mask, or_mask)
       query("\x16" + addr.to_word + and_mask.to_word + or_mask.to_word)
       self  
+    end
+
+    def get_value(addr)
+      case addr
+        when 0..65535
+          query("\x1" + addr.to_word + "\x0\x1").unpack_bits[0]
+        when 100000..165535
+          query("\x2" + (addr-100000).to_word + "\x0\x1").unpack_bits[0]
+        when 300000..365535 
+          query("\x3" + (addr-300000).to_word + "\x0\x1").unpack('n')[0]
+        when 400000..465535
+          query("\x4" + (addr-400000).to_word + "\x0\x1").unpack('n')[0]
+        else
+          raise Errors::ModBusException, "Address notation is not valid"
+       end
     end
 
     def query(pdu)    
