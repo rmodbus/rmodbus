@@ -34,6 +34,17 @@ module ModBus
           8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
     }
 
+    TypeSize = {
+        :bool => 1,
+        :int16 => 1,
+        :float => 2
+    }
+
+    TypeFormat = {
+        :int16 => 'n',
+        :float => 'g'
+    }
+
     def initialize
       @connection_retries = 10
       @read_retries = 10
@@ -141,16 +152,23 @@ module ModBus
       self  
     end
 
-    def get_value(addr)
+    def get_value(addr, opts={})
+      if opts[:type].nil?
+        opts[:type] = :bool if addr <= 165535
+        opts[:type] = :int16 if addr >= 300000 
+      end
+
+      num = TypeSize[opts[:type]].to_word
+      frm = TypeFormat[opts[:type]]
       case addr
         when 0..65535
-          query("\x1" + addr.to_word + "\x0\x1").unpack_bits[0]
+          query("\x1" + addr.to_word + num).unpack_bits[0]
         when 100000..165535
-          query("\x2" + (addr-100000).to_word + "\x0\x1").unpack_bits[0]
+          query("\x2" + (addr-100000).to_word + num).unpack_bits[0]
         when 300000..365535 
-          query("\x3" + (addr-300000).to_word + "\x0\x1").unpack('n')[0]
+          query("\x3" + (addr-300000).to_word + num).unpack(frm)[0]
         when 400000..465535
-          query("\x4" + (addr-400000).to_word + "\x0\x1").unpack('n')[0]
+          query("\x4" + (addr-400000).to_word + num).unpack(frm)[0]
         else
           raise Errors::ModBusException, "Address notation is not valid"
        end
