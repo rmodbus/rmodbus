@@ -34,15 +34,10 @@ module ModBus
           8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
     }
 
-    TypeSize = {
-        :bool => 1,
-        :int16 => 1,
-        :float => 2
-    }
-
-    TypeFormat = {
-        :int16 => 'n',
-        :float => 'g'
+    Types = {
+        :bool => {:size => 1},
+        :int16 => {:size => 1, :format => 'n'},
+        :float => {:size => 2, :format => 'g'}
     }
 
     def initialize
@@ -158,8 +153,8 @@ module ModBus
         opts[:type] = :int16 if addr >= 300000 
       end
 
-      num = TypeSize[opts[:type]]
-      frm = TypeFormat[opts[:type]]
+      num = Types[opts[:type]][:size]
+      frm = Types[opts[:type]][:format]
       case addr + num -1
         when 0..65535
           query("\x1" + addr.to_word + num.to_word).unpack_bits[0]
