@@ -54,3 +54,5 @@
 	SerialPort::NONE, SerialPort::EVEN, SerialPort::ODD
 2010-01-20 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/ext.rb: Fixed bug for	divisible 8 data in Array#pack_to_word 
+2010-02-6 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/client.rb, lib/rmodbus/tcp_client.rb:	Client#connection_retries don't use more 

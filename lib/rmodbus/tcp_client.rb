@@ -59,11 +59,9 @@ module ModBus
       tried = 0
       begin
         timeout(1, ModBusTimeout) do
-        @sock = TCPSocket.new(@ipaddr, @port)
-      end
+          @sock = TCPSocket.new(@ipaddr, @port)
+        end
       rescue ModBusTimeout => err
-        tried += 1
-        retry unless tried >= @connection_retries 
         raise ModBusTimeout.new, 'Timed out attempting to create connection'
       end
       @slave = slaveaddr
