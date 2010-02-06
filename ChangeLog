@@ -54,3 +54,6 @@
 	SerialPort::NONE, SerialPort::EVEN, SerialPort::ODD
 2010-01-20 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/ext.rb: Fixed bug for	divisible 8 data in Array#pack_to_word 
+2010-02-7 Timin Aleksey <atimin@gmail.com>
+	* lib/rmodbus/client.rb: Added method Client#get_value - support modicon
+	notation, types(:bool, :uint16, :uint32, :float, :double) and arrays.

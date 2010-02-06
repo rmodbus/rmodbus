@@ -43,10 +43,6 @@ describe Client, "Get value" do
     @cl_mb.get_value(400004, :type => :float).should == 0.1875
   end
 
-  it "should raise exception if address notation not valid" do
-    lambda { @cl_mb.get_value(465535, :type => :float) }.should raise_error(Errors::ModBusException)
-  end
-
   #UInt32
   it "should get int32 value from holding register" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x2").and_return("\x3e\x40\x0\x0")    
@@ -58,10 +54,6 @@ describe Client, "Get value" do
     @cl_mb.get_value(400004, :type => :uint32).should == 0x3e400000
   end
 
-  it "should raise exception if address notation not valid" do
-    lambda { @cl_mb.get_value(465535, :type => :uint32) }.should raise_error(Errors::ModBusException)
-  end
-
   #Double
   it "should get double value from holding register" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x4").and_return("\x40\x04\x0\x0\x0\x0\x0\x0")    
@@ -71,10 +63,6 @@ describe Client, "Get value" do
   it "should get double value from input register" do
     @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x4").and_return("\x40\x04\x0\x0\x0\x0\x0\x0")    
     @cl_mb.get_value(400004, :type => :double).should == 2.5
-  end
-
-  it "should raise exception if address notation not valid" do
-    lambda { @cl_mb.get_value(465533, :type => :double) }.should raise_error(Errors::ModBusException)
   end
 
 end

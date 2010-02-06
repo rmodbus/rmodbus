@@ -35,7 +35,7 @@ module ModBus
     }
 
     Types = {
-        :bool => {:size => 1},
+        :bool => {:size => 1, :format => ''},
         :uint16 => {:size => 1, :format => 'n'},
         :uint32 => {:size => 2, :format => 'N'},
         :float => {:size => 2, :format => 'g'},
@@ -150,25 +150,35 @@ module ModBus
     end
 
     def get_value(addr, opts={})
+      opts[:number] = 1 if opts[:number].nil?
+
       if opts[:type].nil?
         opts[:type] = :bool if addr <= 165535
         opts[:type] = :uint16 if addr >= 300000 
       end
 
-      num = Types[opts[:type]][:size]
-      frm = Types[opts[:type]][:format]
-      case addr + num -1
+      num = opts[:number]
+      size = Types[opts[:type]][:size] * num 
+      frm = Types[opts[:type]][:format] + '*'
+
+      result = case addr
         when 0..65535
-          query("\x1" + addr.to_word + num.to_word).unpack_bits[0]
+          query("\x1" + addr.to_word + size.to_word).unpack_bits[0,num]
         when 100000..165535
-          query("\x2" + (addr-100000).to_word + num.to_word).unpack_bits[0]
+          query("\x2" + (addr-100000).to_word + size.to_word).unpack_bits[0,num]
         when 300000..365535 
-          query("\x3" + (addr-300000).to_word + num.to_word).unpack(frm)[0]
+          query("\x3" + (addr-300000).to_word + size.to_word).unpack(frm)[0,num]
         when 400000..465535
-          query("\x4" + (addr-400000).to_word + num.to_word).unpack(frm)[0]
+          query("\x4" + (addr-400000).to_word + size.to_word).unpack(frm)[0,num]
         else
           raise Errors::ModBusException, "Address notation is not valid"
-       end
+      end
+
+      if num == 1 
+        result[0]
+      else
+        result
+      end
     end
 
     def query(pdu)    
