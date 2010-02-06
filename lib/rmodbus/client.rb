@@ -158,17 +158,17 @@ module ModBus
         opts[:type] = :int16 if addr >= 300000 
       end
 
-      num = TypeSize[opts[:type]].to_word
+      num = TypeSize[opts[:type]]
       frm = TypeFormat[opts[:type]]
-      case addr
+      case addr + num -1
         when 0..65535
-          query("\x1" + addr.to_word + num).unpack_bits[0]
+          query("\x1" + addr.to_word + num.to_word).unpack_bits[0]
         when 100000..165535
-          query("\x2" + (addr-100000).to_word + num).unpack_bits[0]
+          query("\x2" + (addr-100000).to_word + num.to_word).unpack_bits[0]
         when 300000..365535 
-          query("\x3" + (addr-300000).to_word + num).unpack(frm)[0]
+          query("\x3" + (addr-300000).to_word + num.to_word).unpack(frm)[0]
         when 400000..465535
-          query("\x4" + (addr-400000).to_word + num).unpack(frm)[0]
+          query("\x4" + (addr-400000).to_word + num.to_word).unpack(frm)[0]
         else
           raise Errors::ModBusException, "Address notation is not valid"
        end
