@@ -36,7 +36,8 @@ module ModBus
 
     Types = {
         :bool => {:size => 1},
-        :int16 => {:size => 1, :format => 'n'},
+        :uint16 => {:size => 1, :format => 'n'},
+        :uint32 => {:size => 2, :format => 'N'},
         :float => {:size => 2, :format => 'g'}
     }
 
@@ -150,7 +151,7 @@ module ModBus
     def get_value(addr, opts={})
       if opts[:type].nil?
         opts[:type] = :bool if addr <= 165535
-        opts[:type] = :int16 if addr >= 300000 
+        opts[:type] = :uint16 if addr >= 300000 
       end
 
       num = Types[opts[:type]][:size]
