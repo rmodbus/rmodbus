@@ -62,4 +62,19 @@ describe Client, "Get value" do
     lambda { @cl_mb.get_value(465535, :type => :uint32) }.should raise_error(Errors::ModBusException)
   end
 
+  #Double
+  it "should get double value from holding register" do
+    @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x4").and_return("\x40\x04\x0\x0\x0\x0\x0\x0")    
+    @cl_mb.get_value(300004, :type => :double).should == 2.5 
+  end
+
+  it "should get double value from input register" do
+    @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x4").and_return("\x40\x04\x0\x0\x0\x0\x0\x0")    
+    @cl_mb.get_value(400004, :type => :double).should == 2.5
+  end
+
+  it "should raise exception if address notation not valid" do
+    lambda { @cl_mb.get_value(465533, :type => :double) }.should raise_error(Errors::ModBusException)
+  end
+
 end

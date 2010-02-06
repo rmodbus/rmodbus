@@ -38,7 +38,8 @@ module ModBus
         :bool => {:size => 1},
         :uint16 => {:size => 1, :format => 'n'},
         :uint32 => {:size => 2, :format => 'N'},
-        :float => {:size => 2, :format => 'g'}
+        :float => {:size => 2, :format => 'g'},
+        :double => {:size => 4, :format => 'G'}
     }
 
     def initialize
