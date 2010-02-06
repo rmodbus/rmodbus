@@ -192,6 +192,22 @@ module ModBus
       end
     end
 
+    def set_value(addr, val)
+      case addr
+        when 0..65535
+          if val == 0
+            query("\x5" + addr.to_word + "\x0\x0")
+          else
+            query("\x5" + addr.to_word + "\xff\x0")
+          end
+        when 400000..465535 
+          query("\x6" + (addr-300000).to_word + val.to_word)
+        else
+          raise Errors::ModBusException, "Address notation is not valid"
+      end
+      self
+    end
+
     def query(pdu)    
       send_pdu(pdu)
 
