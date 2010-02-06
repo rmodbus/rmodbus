@@ -5,7 +5,6 @@ include ModBus
 describe Client, "Get value" do
   before do
     @cl_mb = Client.new
-    @cl_mb.stub!(:query).and_return('')
   end
 
   it "should get value from coil" do
@@ -20,12 +19,12 @@ describe Client, "Get value" do
 
   it "should get value from holding register" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x1").and_return("\x00\xaa")    
-    @cl_mb.get_value(300004).should == 0x00aa
+    @cl_mb.get_value(400004).should == 0x00aa
   end
 
   it "should get value from input register" do
     @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x1").and_return("\xcc\xaa")    
-    @cl_mb.get_value(400004).should == 0xccaa
+    @cl_mb.get_value(300004).should == 0xccaa
   end
 
   it "should raise exception if address notation not valid" do
@@ -35,34 +34,34 @@ describe Client, "Get value" do
   #Float
   it "should get float value from holding register" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x2").and_return("\x3e\x40\x0\x0")    
-    @cl_mb.get_value(300004, :type => :float).should == 0.1875
+    @cl_mb.get_value(400004, :type => :float).should == 0.1875
   end
 
   it "should get float value from input register" do
     @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x2").and_return("\x3e\x40\x0\x0")    
-    @cl_mb.get_value(400004, :type => :float).should == 0.1875
+    @cl_mb.get_value(300004, :type => :float).should == 0.1875
   end
 
   #UInt32
   it "should get int32 value from holding register" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x2").and_return("\x3e\x40\x0\x0")    
-    @cl_mb.get_value(300004, :type => :uint32).should == 0x3e400000
+    @cl_mb.get_value(400004, :type => :uint32).should == 0x3e400000
   end
 
   it "should get int32 value from input register" do
     @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x2").and_return("\x3e\x40\x0\x0")    
-    @cl_mb.get_value(400004, :type => :uint32).should == 0x3e400000
+    @cl_mb.get_value(300004, :type => :uint32).should == 0x3e400000
   end
 
   #Double
   it "should get double value from holding register" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x4").and_return("\x40\x04\x0\x0\x0\x0\x0\x0")    
-    @cl_mb.get_value(300004, :type => :double).should == 2.5 
+    @cl_mb.get_value(400004, :type => :double).should == 2.5 
   end
 
   it "should get double value from input register" do
     @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x4").and_return("\x40\x04\x0\x0\x0\x0\x0\x0")    
-    @cl_mb.get_value(400004, :type => :double).should == 2.5
+    @cl_mb.get_value(300004, :type => :double).should == 2.5
   end
 
 end

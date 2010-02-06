@@ -5,7 +5,6 @@ include ModBus
 describe Client, "Get value for array" do
   before do
     @cl_mb = Client.new
-    @cl_mb.stub!(:query).and_return('')
   end
 
   it "should get 4 values from coils" do
@@ -20,45 +19,45 @@ describe Client, "Get value for array" do
 
   it "should get 2 values from holding registers" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x2").and_return("\x00\xaa\x11\x22")    
-    @cl_mb.get_value(300004, :number => 2).should == [0x00aa, 0x1122]
+    @cl_mb.get_value(400004, :number => 2).should == [0x00aa, 0x1122]
   end
 
   it "should get 3 values from input registers" do
     @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x3").and_return("\xcc\xaa\x1\x2\x0\x0")    
-    @cl_mb.get_value(400004, :number => 3).should == [0xccaa, 0x0102, 0]
+    @cl_mb.get_value(300004, :number => 3).should == [0xccaa, 0x0102, 0]
   end
 
   #Float[]
   it "should get 2 float values from holding registers" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x4").and_return("\x3e\x40\x0\x0\x3e\x40\x0\x0")    
-    @cl_mb.get_value(300004, :type => :float, :number => 2).should == [0.1875, 0.1875]
+    @cl_mb.get_value(400004, :type => :float, :number => 2).should == [0.1875, 0.1875]
   end
 
   it "should get 2 floats value from input registers" do
     @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x4").and_return("\x3e\x40\x0\x0\x3e\x40\x0\x0")    
-    @cl_mb.get_value(400004, :type => :float, :number => 2).should == [0.1875, 0.1875]
+    @cl_mb.get_value(300004, :type => :float, :number => 2).should == [0.1875, 0.1875]
   end
 
   #UInt32[]
   it "should get 2 int32 values from holding registers" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x4").and_return("\x3e\x40\x0\x0\x1\x2\x3\x4")    
-    @cl_mb.get_value(300004, :type => :uint32, :number => 2).should == [0x3e400000, 0x01020304]
+    @cl_mb.get_value(400004, :type => :uint32, :number => 2).should == [0x3e400000, 0x01020304]
   end
 
   it "should get 2 int32 values from input registers" do
      @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x4").and_return("\x3e\x40\x0\x0\x1\x2\x3\x4")    
-    @cl_mb.get_value(400004, :type => :uint32, :number => 2).should == [0x3e400000, 0x01020304]
+    @cl_mb.get_value(300004, :type => :uint32, :number => 2).should == [0x3e400000, 0x01020304]
   end
 
   #Double[]
   it "should get double value from holding register" do
     @cl_mb.should_receive(:query).with("\x3\x0\x4\x0\x8").and_return("\x40\x04\x0\x0\x0\x0\x0\x0\x40\x04\x0\x0\x0\x0\x0\x0")    
-    @cl_mb.get_value(300004, :type => :double, :number => 2).should == [2.5, 2.5]
+    @cl_mb.get_value(400004, :type => :double, :number => 2).should == [2.5, 2.5]
   end
 
   it "should get double value from input register" do
     @cl_mb.should_receive(:query).with("\x4\x0\x4\x0\x8").and_return("\x40\x04\x0\x0\x0\x0\x0\x0\x40\x04\x0\x0\x0\x0\x0\x0")    
-    @cl_mb.get_value(400004, :type => :double, :number => 2).should == [2.5, 2.5]
+    @cl_mb.get_value(300004, :type => :double, :number => 2).should == [2.5, 2.5]
   end
 
 end

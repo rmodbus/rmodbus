@@ -178,9 +178,9 @@ module ModBus
         when 100000..165535
           query("\x2" + (addr-100000).to_word + size.to_word).unpack_bits[0,num]
         when 300000..365535 
-          query("\x3" + (addr-300000).to_word + size.to_word).unpack(frm)[0,num]
+          query("\x4" + (addr-300000).to_word + size.to_word).unpack(frm)[0,num]
         when 400000..465535
-          query("\x4" + (addr-400000).to_word + size.to_word).unpack(frm)[0,num]
+          query("\x3" + (addr-400000).to_word + size.to_word).unpack(frm)[0,num]
         else
           raise Errors::ModBusException, "Address notation is not valid"
       end
