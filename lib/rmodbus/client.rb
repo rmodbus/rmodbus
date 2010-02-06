@@ -44,10 +44,20 @@ module ModBus
           6 => SlaveDeviceBus.new("The server is engaged in processing a long duration program command"),
           8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
     }
+
+    Types = {
+        :bool => {:size => 1, :format => ''},
+        :uint16 => {:size => 1, :format => 'n'},
+        :uint32 => {:size => 2, :format => 'N'},
+        :float => {:size => 2, :format => 'g'},
+        :double => {:size => 4, :format => 'G'}
+    }
+
     def initialize
       @connection_retries = 10
       @read_retries = 10
     end
+
     # Read value *ncoils* coils starting with *addr*
     #
     # Return array of their values
@@ -148,6 +158,38 @@ module ModBus
     def mask_write_register(addr, and_mask, or_mask)
       query("\x16" + addr.to_word + and_mask.to_word + or_mask.to_word)
       self  
+    end
+
+    def get_value(addr, opts={})
+      opts[:number] = 1 if opts[:number].nil?
+
+      if opts[:type].nil?
+        opts[:type] = :bool if addr <= 165535
+        opts[:type] = :uint16 if addr >= 300000 
+      end
+
+      num = opts[:number]
+      size = Types[opts[:type]][:size] * num 
+      frm = Types[opts[:type]][:format] + '*'
+
+      result = case addr
+        when 0..65535
+          query("\x1" + addr.to_word + size.to_word).unpack_bits[0,num]
+        when 100000..165535
+          query("\x2" + (addr-100000).to_word + size.to_word).unpack_bits[0,num]
+        when 300000..365535 
+          query("\x3" + (addr-300000).to_word + size.to_word).unpack(frm)[0,num]
+        when 400000..465535
+          query("\x4" + (addr-400000).to_word + size.to_word).unpack(frm)[0,num]
+        else
+          raise Errors::ModBusException, "Address notation is not valid"
+      end
+
+      if num == 1 
+        result[0]
+      else
+        result
+      end
     end
 
     def query(pdu)    
