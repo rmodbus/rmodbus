@@ -20,7 +20,25 @@ describe Client, "Set value" do
   end
 
   it "should raise exception if address notation not valid" do
-    lambda { @cl_mb.set_value(400100, 0) }.should raise_error(Errors::ModBusException)
+    lambda { @cl_mb.set_value(300100, 0) }.should raise_error(Errors::ModBusException)
+    lambda { @cl_mb.set_value(100100, 0) }.should raise_error(Errors::ModBusException)
   end
 
+  #Uint32 
+  it "should set uint value to holding registers" do
+    @cl_mb.should_receive(:query).with("\x10\x0\x4\x0\x2\x4\x1\x2\x3\x4")  
+    @cl_mb.set_value(400004, 0x01020304, :type => :uint32).should == @cl_mb
+  end
+
+  #Float
+  it "should set float value to holding registers" do
+    @cl_mb.should_receive(:query).with("\x10\x0\x4\x0\x2\x4?\360\x0\x0")  
+    @cl_mb.set_value(400004, 1.875, :type => :float).should == @cl_mb
+  end
+
+  #Double 
+  it "should set double value to holding registers" do
+    @cl_mb.should_receive(:query).with("\x10\x0\x4\x0\x4\x8\x40\x04\x0\x0\x0\x0\x0\x0")  
+    @cl_mb.set_value(400004, 2.5, :type => :double).should == @cl_mb
+  end
 end

@@ -182,7 +182,7 @@ module ModBus
         when 400000..465535
           query("\x4" + (addr-400000).to_word + size.to_word).unpack(frm)[0,num]
         else
-          raise Errors::ModBusException, "Address notation is not valid"
+          raise Errors::ModBusException, "Address '#{addr}' is not valid"
       end
 
       if num == 1 
@@ -192,7 +192,7 @@ module ModBus
       end
     end
 
-    def set_value(addr, val)
+    def set_value(addr, val, opts={})
       case addr
         when 0..65535
           if val == 0
@@ -201,9 +201,25 @@ module ModBus
             query("\x5" + addr.to_word + "\xff\x0")
           end
         when 400000..465535 
-          query("\x6" + (addr-300000).to_word + val.to_word)
+          opts[:type] = :uint16 if opts[:type].nil?
+          case opts[:type]
+            when :uint16
+              val = val.to_i & 0xffff
+              query("\x6" + (addr-400000).to_word + val.to_word)
+            when :uint32
+              val = val.to_i & 0xffffffff
+              query("\x10" + (addr - 400000).to_word + "\x0\x2\x4" + [val].pack('N'))
+            when :float
+              val.to_f
+              query("\x10" + (addr - 400000).to_word + "\x0\x2\x4" + [val].pack('g'))
+            when :double
+              val.to_f
+              query("\x10" + (addr - 400000).to_word + "\x0\x4\x8" + [val].pack('G'))
+            else
+              raise Errors::ModBusException, "Type '#{opts[:type]}' is not supported"
+          end
         else
-          raise Errors::ModBusException, "Address notation is not valid"
+          raise Errors::ModBusException, "Address '#{addr}' is not valid"
       end
       self
     end
