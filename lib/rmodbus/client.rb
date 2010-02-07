@@ -109,7 +109,6 @@ module ModBus
     #
     # Return self
     def write_single_register(addr, val)
-      val = val.to_i & 0xffff
       query("\x6" + addr.to_word + val.to_word)
       self
     end

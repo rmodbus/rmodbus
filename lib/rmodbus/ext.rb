@@ -33,7 +33,7 @@ end
 class Integer
 
   def to_word
-    (self >> 8).chr + (self & 0xff).chr 
+    [self].pack('n')
   end
 
 end
