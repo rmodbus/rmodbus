@@ -34,7 +34,6 @@ module ModBus
       @connection_retries = value
     end
 
-
     Exceptions = { 
           1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
           2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),
@@ -110,6 +109,7 @@ module ModBus
     #
     # Return self
     def write_single_register(addr, val)
+      val = val.to_i & 0xffff
       query("\x6" + addr.to_word + val.to_word)
       self
     end
@@ -121,18 +121,7 @@ module ModBus
     # Return self
     def write_multiple_coils(addr, val)
       nbyte = ((val.size-1) >> 3) + 1
-      sum = 0
-      (val.size - 1).downto(0) do |i|
-        sum = sum << 1
-        sum |= 1 if val[i] > 0
-      end
-   
-      s_val = ""
-      nbyte.times do
-        s_val << (sum & 0xff).chr
-        sum >>= 8 
-      end
-
+      s_val = val.to_s.to_a.pack('b*')
       query("\xf" + addr.to_word + val.size.to_word + nbyte.chr + s_val)
       self
     end
@@ -193,31 +182,15 @@ module ModBus
     end
 
     def set_value(addr, val, opts={})
+      val = [val] unless val.class == Array
       case addr
         when 0..65535
-          if val == 0
-            query("\x5" + addr.to_word + "\x0\x0")
-          else
-            query("\x5" + addr.to_word + "\xff\x0")
-          end
+          write_multiple_coils(addr, val)
         when 400000..465535 
           opts[:type] = :uint16 if opts[:type].nil?
-          case opts[:type]
-            when :uint16
-              val = val.to_i & 0xffff
-              query("\x6" + (addr-400000).to_word + val.to_word)
-            when :uint32
-              val = val.to_i & 0xffffffff
-              query("\x10" + (addr - 400000).to_word + "\x0\x2\x4" + [val].pack('N'))
-            when :float
-              val.to_f
-              query("\x10" + (addr - 400000).to_word + "\x0\x2\x4" + [val].pack('g'))
-            when :double
-              val.to_f
-              query("\x10" + (addr - 400000).to_word + "\x0\x4\x8" + [val].pack('G'))
-            else
-              raise Errors::ModBusException, "Type '#{opts[:type]}' is not supported"
-          end
+          size = Types[opts[:type]][:size] * val.size
+          frm = Types[opts[:type]][:format] + '*'
+          query("\x10" + (addr-400000).to_word + size.to_word + (size*2).chr + val.pack(frm))
         else
           raise Errors::ModBusException, "Address '#{addr}' is not valid"
       end

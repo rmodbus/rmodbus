@@ -8,14 +8,12 @@ describe Client, "Set value" do
   end
 
   it "should set value to single coil" do
-    @cl_mb.should_receive(:query).with("\x5\x0\x1\xff\x00")    
+    @cl_mb.should_receive(:query).with("\xf\x0\x1\x0\x1\x1\x1")    
     @cl_mb.set_value(1,1).should == @cl_mb
-    @cl_mb.should_receive(:query).with("\x5\x0\x1\x00\x00")    
-    @cl_mb.set_value(1,0).should == @cl_mb
   end
 
   it "should set value to single holding register" do
-    @cl_mb.should_receive(:query).with("\x6\x0\x4\x00\xaa")
+    @cl_mb.should_receive(:query).with("\x10\x0\x4\x00\x1\x2\x0\xaa")
     @cl_mb.set_value(400004, 0x00aa).should == @cl_mb
   end
 
