@@ -57,5 +57,6 @@
 2010-02-6 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/client.rb, lib/rmodbus/tcp_client.rb:	Client#connection_retries don't use more 
 2010-02-7 Timin Aleksey <atimin@gmail.com>
-	* lib/rmodbus/client.rb: Added method Client#get_value - support modicon
+	* lib/rmodbus/client.rb: Added method Client#get_value\set_value - support modicon
 	notation, types(:bool, :uint16, :uint32, :float, :double) and arrays.
+
