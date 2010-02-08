@@ -18,7 +18,15 @@ require 'gserver'
 module ModBus
   class TCPServer < GServer
     include Parsers
-    
+
+    Types = {
+        :bool => {:size => 1, :format => ''},
+        :uint16 => {:size => 1, :format => 'n'},
+        :uint32 => {:size => 2, :format => 'N'},
+        :float => {:size => 2, :format => 'g'},
+        :double => {:size => 4, :format => 'G'}
+    }
+   
     attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers
 
     def discret_inputs
@@ -56,7 +64,30 @@ module ModBus
         pdu = exec_req(req, @coils, @discrete_inputs, @holding_registers, @input_registers)
 
         io.write tr + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
+      end
     end
+
+    def get_value(addr, opts={})
+      if opts[:type].nil?
+        opts[:type] = :bool if addr <= 165535
+        opts[:type] = :uint16 if addr >= 300000 
+      end
+
+      size = Types[opts[:type]][:size] 
+      frm = Types[opts[:type]][:format]
+
+      result = case addr
+        when 0..65535
+          @coils[addr] 
+        when 100000..165535
+          @discrete_inputs[addr-100000]
+        when 300000..365535
+          @input_registers[addr-300000,size].pack('n*').unpack(frm)[0]
+        when 400000..465535
+          @holding_registers[addr-400000,size].pack('n*').unpack(frm)[0]
+        else
+          raise Errors::ModBusException, "Address '#{addr}' is not valid"
+      end
     end
   end
 end
