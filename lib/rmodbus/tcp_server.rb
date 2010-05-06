@@ -68,26 +68,36 @@ module ModBus
     end
 
     def get_value(addr, opts={})
+      opts[:number] = 1 if opts[:number].nil?
+
       if opts[:type].nil?
         opts[:type] = :bool if addr <= 165535
         opts[:type] = :uint16 if addr >= 300000 
       end
 
+      num = opts[:number]
       size = Types[opts[:type]][:size] 
-      frm = Types[opts[:type]][:format]
+      frm = Types[opts[:type]][:format] + "*"
 
       result = case addr
         when 0..65535
-          @coils[addr] 
+          @coils[addr, num] 
         when 100000..165535
-          @discrete_inputs[addr-100000]
+          @discrete_inputs[addr-100000, num]
         when 300000..365535
-          @input_registers[addr-300000,size].pack('n*').unpack(frm)[0]
+          @input_registers[addr-300000,size * num].pack('n*').unpack(frm)[0,num]
         when 400000..465535
-          @holding_registers[addr-400000,size].pack('n*').unpack(frm)[0]
+          @holding_registers[addr-400000,size * num].pack('n*').unpack(frm)[0, num]
         else
           raise Errors::ModBusException, "Address '#{addr}' is not valid"
       end
+
+      if num == 1 
+        result[0]
+      else
+        result
+      end
+
     end
   end
 end
