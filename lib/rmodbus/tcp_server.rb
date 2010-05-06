@@ -97,7 +97,23 @@ module ModBus
       else
         result
       end
-
     end
+
+    def set_value(addr, val, opts={})
+      val = [val] unless val.class == Array
+      case addr
+        when 0..65535
+          @coils[addr, val.size] = val
+        when 400000..465535 
+          opts[:type] = :uint16 if opts[:type].nil?
+          size = Types[opts[:type]][:size] * val.size
+          frm = Types[opts[:type]][:format] + '*'
+          @holding_registers[(addr-400000), size * val.size] = val.pack(frm).unpack('n*')
+        else
+          raise Errors::ModBusException, "Address '#{addr}' is not valid"
+      end
+      self
+    end
+
   end
 end
