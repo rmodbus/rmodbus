@@ -13,6 +13,7 @@
 # GNU General Public License for more details.
 
 require 'rmodbus/parsers'
+require 'rmodbus/modicon'
 
 begin
   require 'rubygems'
@@ -26,6 +27,7 @@ module ModBus
   class RTUServer
     include Parsers
     include CRC16
+    include Modicon::Server
 
     attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers
     attr_reader :port, :baud, :slave, :data_bits, :stop_bits, :parity

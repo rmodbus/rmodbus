@@ -14,6 +14,7 @@
 
 require 'rmodbus/exceptions'
 require 'rmodbus/ext'
+require 'rmodbus/modicon'
 
 
 module ModBus
@@ -21,6 +22,8 @@ module ModBus
   class Client
   
     include Errors
+    include Modicon::Client
+
     # Number of times to retry on connection and read timeouts
     attr_accessor :read_retries
 
@@ -44,14 +47,7 @@ module ModBus
           8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
     }
 
-    Types = {
-        :bool => {:size => 1, :format => ''},
-        :uint16 => {:size => 1, :format => 'n'},
-        :uint32 => {:size => 2, :format => 'N'},
-        :float => {:size => 2, :format => 'g'},
-        :double => {:size => 4, :format => 'G'}
-    }
-
+   
     def initialize
       @connection_retries = 10
       @read_retries = 10
@@ -148,54 +144,7 @@ module ModBus
       self  
     end
 
-    def get_value(addr, opts={})
-      opts[:number] = 1 if opts[:number].nil?
-
-      if opts[:type].nil?
-        opts[:type] = :bool if addr <= 165535
-        opts[:type] = :uint16 if addr >= 300000 
-      end
-
-      num = opts[:number]
-      size = Types[opts[:type]][:size] * num 
-      frm = Types[opts[:type]][:format] + '*'
-
-      result = case addr
-        when 0..65535
-          query("\x1" + addr.to_word + size.to_word).unpack_bits[0,num]
-        when 100000..165535
-          query("\x2" + (addr-100000).to_word + size.to_word).unpack_bits[0,num]
-        when 300000..365535 
-          query("\x4" + (addr-300000).to_word + size.to_word).unpack(frm)[0,num]
-        when 400000..465535
-          query("\x3" + (addr-400000).to_word + size.to_word).unpack(frm)[0,num]
-        else
-          raise Errors::ModBusException, "Address '#{addr}' is not valid"
-      end
-
-      if num == 1 
-        result[0]
-      else
-        result
-      end
-    end
-
-    def set_value(addr, val, opts={})
-      val = [val] unless val.class == Array
-      case addr
-        when 0..65535
-          write_multiple_coils(addr, val)
-        when 400000..465535 
-          opts[:type] = :uint16 if opts[:type].nil?
-          size = Types[opts[:type]][:size] * val.size
-          frm = Types[opts[:type]][:format] + '*'
-          query("\x10" + (addr-400000).to_word + size.to_word + (size*2).chr + val.pack(frm))
-        else
-          raise Errors::ModBusException, "Address '#{addr}' is not valid"
-      end
-      self
-    end
-
+  
     def query(pdu)    
       send_pdu(pdu)
 
