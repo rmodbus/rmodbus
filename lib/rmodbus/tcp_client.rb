@@ -90,9 +90,7 @@ module ModBus
       msg = @@transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @slave.chr + pdu
       @sock.write msg
       
-      if debug
-        STDOUT << "Tx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
-      end
+      log "Tx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
     end
 
     def read_pdu    
@@ -102,9 +100,8 @@ module ModBus
         raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @@transaction
         len = header[4,2].unpack('n')[0]       
         msg = @sock.read(len-1)               
-        if @debug
-          STDOUT << "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg) + "\n"
-        end
+
+        log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg) + "\n"
         msg
       else
         raise Errors::ModBusException.new("Server did not respond")

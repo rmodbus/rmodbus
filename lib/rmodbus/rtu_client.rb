@@ -111,9 +111,8 @@ module ModBus
       msg = @slave.chr + pdu 
       msg << crc16(msg).to_word
       @sp.write msg
-      if @debug
-        STDOUT << "Tx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
-      end
+
+      log "Tx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
     end
 
     def read_pdu
@@ -122,12 +121,13 @@ module ModBus
         msg =  @sp.read
       end
 
-      if @debug
-        STDOUT << "Rx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
-      end
+      log "Rx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
 
       if msg.getbyte(0) == @slave
         return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
+        log "Ignore package: don't match CRC\n"
+	  else 
+        log "Ignore package: don't match slave ID\n"
       end
       loop do
         #waite timeout  

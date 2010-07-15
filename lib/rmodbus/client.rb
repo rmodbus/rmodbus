@@ -157,6 +157,7 @@ module ModBus
       begin
         timeout(1, ModBusTimeout) { pdu = read_pdu }
       rescue ModBusTimeout => err
+	    log "Timeout of read operation: (#{@read_retries - tried})"
         tried += 1
         retry unless tried >= @read_retries
         raise ModBusTimeout.new, "Timed out during read attempt"
@@ -184,6 +185,11 @@ module ModBus
     end
 
     private
+	def log(msg)
+	  if @debug
+	    STDOUT << msg
+	  end
+	end
     def logging_bytes(msg)
       result = ""
       msg.each_byte do |c|
