@@ -24,7 +24,7 @@ module ModBus
   class RTUClient < Client
 
     include CRC16
-    attr_reader :port, :baud, :slave, :data_bits, :stop_bits, :parity
+    attr_reader :port, :baud, :slave, :data_bits, :stop_bits, :parity, :read_timeout
     attr_accessor :debug
 
     # Connect with RTU server
@@ -81,19 +81,22 @@ module ModBus
     # :stop_bits => 1 or 2
     #
     # :parity => NONE, EVEN or ODD
+    #
+    # :read_timeout => default 5 ms
     def initialize(port, baud=9600, slaveaddr=1, options = {})
       @port, @baud, @slave = port, baud, slaveaddr
       
-      @data_bits, @stop_bits, @parity = 8, 1, SerialPort::NONE
+      @data_bits, @stop_bits, @parity, @read_timeout = 8, 1, SerialPort::NONE, 5
 
       @data_bits = options[:data_bits] unless options[:data_bits].nil?
       @stop_bits = options[:stop_bits] unless options[:stop_bits].nil?
       @parity = options[:parity] unless options[:parity].nil?
+      @read_timeout = options[:read_timeout] unless options[:read_timeout].nil?
 
       @debug = false
 
       @sp = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
-      @sp.read_timeout = 5
+      @sp.read_timeout = @read_timeout
 
       super()
     end

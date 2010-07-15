@@ -56,3 +56,5 @@
 	* lib/rmodbus/ext.rb: Fixed bug for	divisible 8 data in Array#pack_to_word 
 2010-02-6 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/client.rb, lib/rmodbus/tcp_client.rb:	Client#connection_retries don't use more 
+2010-07-16 Timin Aleksey <atimin@gmail.com>
+    * lib/rmodbus/rtu_client.rb: Added option read_timeout and accessor RTUClient#read_timeout
