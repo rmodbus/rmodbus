@@ -1,5 +1,5 @@
 # RModBus - free implementation of ModBus protocol on Ruby.
-# Copyright (C) 2008  Timin Aleksey
+# Copyright (C) 2010  Timin Aleksey
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -9,9 +9,15 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-require 'rmodbus/tcp_client'
-require 'rmodbus/tcp_server'
-require 'rmodbus/rtu_client'
-require 'rmodbus/rtu_server'
-require 'rmodbus/process'
 
+module ModBus
+  module Process
+    class Point
+      attr_reader :name, :parent
+      def initialize(name, parent = nil)
+        @name = name
+	    @parent = parent
+	  end
+    end
+  end
+end

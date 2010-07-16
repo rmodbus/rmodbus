@@ -4,15 +4,15 @@ rescue
 end
 require 'rmodbus'
 
-include ModBus
+include ModBus::Process
 
-describe ProcessImage do
+describe Image do
   
   before do
     @srv = ModBus::TCPServer.new(1501,1)
 	@srv.start
 
-    @img = ProcessImage.new "Process_1", TCPClient.new('127.0.0.1', 1501, 1) do |pi|
+    @img = Image.new "Process_1", TCPClient.new('127.0.0.1', 1501, 1) do |pi|
       pi.add_scanner "scan_1", :scanrate => 1000, 
 	                 :address => 0, 
 					 :size => 10, 
