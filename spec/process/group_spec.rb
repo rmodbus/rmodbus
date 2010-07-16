@@ -27,5 +27,10 @@ describe Group do
 	@grp.point_1.name.should == "point_1"
   end
 
+  it "should have parent" do
+    @grp.add_group("grp_1") 
+    @grp.grp_1.parent.should == @grp
+  end
+
 end
 
