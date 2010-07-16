@@ -17,9 +17,9 @@ describe Image do
 	                 :address => 0, 
 					 :size => 10, 
 					 :type => :holding_registers
-	  pi.add_group   "grp_1"
-	  pi.grp_1.add_group   "grp_2"
-	  pi.grp_1.grp_2.add_point   "point_1", :scanner => "scan_1"
+	  pi.add Group.new("grp_1")
+	  pi.grp_1.add Group.new("grp_2")
+	  pi.grp_1.grp_2.add Point.new("point_1")
 	end
   end
 

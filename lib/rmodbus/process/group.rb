@@ -10,31 +10,25 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+require "rmodbus/process/object"
+
 module ModBus
   module Process
-    class Group
-      attr_reader :name, :parent
+    class Group < ModBus::Process::Object
+      attr_accessor :parent
       def initialize(name, parent = nil)
-        @name = name
+		super(name)
         @childrens = {} 
-        @points = {} 
 	    @parent = parent
 	  end
 
-	  def add_group(name, options={})
-        @childrens.merge! name => Group.new(name, self) 
-	  end
-
-	  def add_point(name, options={})
-        @points.merge! name => Point.new(name, self) 
+	  def add(obj)
+	    obj.parent = self
+        @childrens.merge! obj.id => obj
 	  end
 
 	  def method_missing(name, *args)
-	    result = @childrens[name.to_s]
-	    if result.nil?
-	      result = @points[name.to_s]
-	    end
-	    result
+	    @childrens.values.find { |obj| obj.name == name.to_s } 
 	  end
 	end
   end

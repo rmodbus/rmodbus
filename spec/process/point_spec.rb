@@ -17,7 +17,7 @@ describe Point do
   
   it "should have parent" do
     grp = Group.new("grp")
-	grp.add_point("point")
+	grp.add Point.new("point")
 	grp.point.parent.should == grp
   end
 

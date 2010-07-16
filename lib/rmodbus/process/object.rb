@@ -9,8 +9,18 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-require 'rmodbus/process/image'
-require 'rmodbus/process/group'
-require 'rmodbus/process/point'
-require 'rmodbus/process/object'
 
+module ModBus
+  module Process
+    class Object
+	  attr_reader :id
+	  attr_accessor :name
+      @@id = 0
+	  def initialize(name)
+	    @@id += 1
+		@id = @@id
+		@name = name
+	  end
+    end
+  end
+end

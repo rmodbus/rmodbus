@@ -10,12 +10,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+require "rmodbus/process/object"
+
 module ModBus
   module Process
-    class Point
-      attr_reader :name, :parent
+    class Point < ModBus::Process::Object
+      attr_accessor :parent
       def initialize(name, parent = nil)
-        @name = name
+		super(name)
 	    @parent = parent
 	  end
     end
