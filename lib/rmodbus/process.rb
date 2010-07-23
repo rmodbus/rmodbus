@@ -10,6 +10,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 require 'rmodbus/process/image'
+require 'rmodbus/process/scanner'
 require 'rmodbus/process/group'
 require 'rmodbus/process/point'
 require 'rmodbus/process/object'

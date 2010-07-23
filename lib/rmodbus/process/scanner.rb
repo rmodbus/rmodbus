@@ -13,17 +13,10 @@
 require "rmodbus/process/object"
 
 module ModBus
-  module Process
-    class Point < ModBus::Process::Object
-      attr_accessor :parent
-	  attr_reader :value, :type, :timestamp, :scanner, :offset
-      def initialize(name, options = {})
-		super(name)
-	    @parent = options[:parent]
-		@scanner = options[:scanner]
-		@offset = options[:offset]
-		@type = options[:type]
-        @timestamp = Time.now 
+  module Process 
+    class Scanner < ModBus::Process::Object
+	  def initialize(name)
+	    super(name)
 	  end
     end
   end
