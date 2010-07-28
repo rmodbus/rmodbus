@@ -85,20 +85,22 @@ module ModBus
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
     end
 
-    def read_pdu
-      msg = @sock.read(7)
+		def read_pdu
+			# Get the slave id, function, and data length
+			header = @sock.read(3)
 
-      log "Rx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
-
-      if msg.getbyte(0) == @slave
-        return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
-        log "Ignore package: don't match CRC\n"
-	  else 
-        log "Ignore package: don't match slave ID\n"
-      end
-      loop do
-        #waite timeout  
-      end
-    end
-  end
+			# Get the rest o the packet + CRC check
+			msg = header + @sock.read(header.getbyte(2) + 2)
+			log "Rx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
+			if msg.getbyte(0) == @slave
+				return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
+				log "Ignore package: don't match CRC\n"
+			else 
+				log "Ignore package: don't match slave ID\n"
+			end
+			loop do
+				#waite timeout  
+			end
+	    end
+	end
 end
