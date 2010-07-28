@@ -2,7 +2,7 @@ require 'rubygems'
 spec = Gem::Specification.new do |s|
   s.name = "rmodbus"
   s.version = "0.4.0"
-  s.author  = 'A.Timin, J. Sanders'
+  s.author  = 'A.Timin, J. Sanders, K. Reynolds'
   s.email = "atimin@gmail.com"
   s.homepage = "http://rmodbus.heroku.com"
   s.rubyforge_project = "RModBus"

@@ -57,4 +57,6 @@
 2010-02-6 Timin Aleksey <atimin@gmail.com>
 	* lib/rmodbus/client.rb, lib/rmodbus/tcp_client.rb:	Client#connection_retries don't use more 
 2010-07-16 Timin Aleksey <atimin@gmail.com>
-    * lib/rmodbus/rtu_client.rb: Added option read_timeout and accessor RTUClient#read_timeout
+	* lib/rmodbus/rtu_client.rb: Added option read_timeout and accessor RTUClient#read_timeout
+2010-07-28 Kelley Reynolds <kelley@insidesystems.net>
+	* lib/rmodbus/rtu_via_tcp_client.rb: Added the ability to send RTU commands via TCP Serial Gateway
