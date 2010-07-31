@@ -1,19 +1,19 @@
 $:.unshift(File.dirname(__FILE__) + '/../lib/')
 require 'rmodbus'
 
-srv = ModBus::TCPServer.new(8502,1)
+srv = ModBus::RTUViaTCPServer.new(10002,1)
 srv.coils = [1,0,1,1]
-srv.discret_inputs = [1,1,0,0]
+srv.discrete_inputs = [1,1,0,0]
 srv.holding_registers = [1,2,3,4]
 srv.input_registers = [1,2,3,4]
 srv.debug = true
-srv.audit = true
 srv.start
 
-ModBus::TCPClient.connect('127.0.0.1', 8502, 1) do |cl|
+ModBus::RTUViaTCPClient.connect('127.0.0.1', 10002, 1) do |cl|
 	cl.debug = true
-	puts cl.read_holding_registers(0,4)
+	puts cl.read_holding_registers(0,4).inspect
 	cl.write_multiple_registers(0, [4,4,4])
-	puts cl.read_holding_registers(0,4)
+	puts cl.read_holding_registers(0,4).inspect
 end
-srv.stop
+
+srv.shutdown

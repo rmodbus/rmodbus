@@ -12,6 +12,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+require 'rmodbus/common'
 require 'rmodbus/exceptions'
 require 'rmodbus/ext'
 
@@ -21,6 +22,7 @@ module ModBus
   class Client
   
     include Errors
+	 include Common
     # Number of times to retry on connection and read timeouts
     attr_accessor :read_retries
 
@@ -64,7 +66,7 @@ module ModBus
 
     # Deprecated version of read_discrete_inputs
     def read_discret_inputs(addr, ncoils)
-      warn "[DEPRECATION] `read_discret_inputs` is deprecated.  Please use `read_discrete_inputs` instead."
+      #warn "[DEPRECATION] `read_discret_inputs` is deprecated.  Please use `read_discrete_inputs` instead."
       read_discrete_inputs(addr, ncoils)
     end
 
@@ -175,6 +177,7 @@ module ModBus
     end
 
     protected
+
     def send_pdu(pdu)
     end
 
@@ -183,26 +186,6 @@ module ModBus
 
     def close
     end
-
-    private
-	def log(msg)
-	  if @debug
-	    STDOUT << msg
-	  end
-	end
-    def logging_bytes(msg)
-      result = ""
-      msg.each_byte do |c|
-        byte = if c < 16
-          '0' + c.to_s(16)
-        else
-          c.to_s(16)
-        end
-        result << "[#{byte}]"
-      end
-      result
-    end
-
   end
 
 end
