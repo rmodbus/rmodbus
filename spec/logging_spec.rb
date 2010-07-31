@@ -20,8 +20,8 @@ describe TCPClient  do
     request, response = "\x3\x0\x6b\x0\x3", "\x3\x6\x2\x2b\x0\x0\x0\x64"
     mock_query(request,response)
     @mb_client.debug = true
-    STDOUT.should_receive("<<").with("Tx (12 bytes): [00][01][00][00][00][06][01][03][00][6b][00][03]\n")
-    STDOUT.should_receive("<<").with("Rx (15 bytes): [00][01][00][00][00][09][01][03][06][02][2b][00][00][00][64]\n")
+    $stdout.should_receive(:puts).with("Tx (12 bytes): [00][01][00][00][00][06][01][03][00][6b][00][03]")
+    $stdout.should_receive(:puts).with("Rx (15 bytes): [00][01][00][00][00][09][01][03][06][02][2b][00][00][00][64]")
     @mb_client.query(request)
   end
 
@@ -59,8 +59,8 @@ describe RTUClient do
     @sp.should_receive(:read).and_return("\x1\x3\x2\xff\xff\xb9\xf4")
 
     @mb_client.debug = true
-    STDOUT.should_receive("<<").with("Tx (8 bytes): [01][03][00][01][00][01][d5][ca]\n")
-    STDOUT.should_receive("<<").with("Rx (7 bytes): [01][03][02][ff][ff][b9][f4]\n")
+    $stdout.should_receive(:puts).with("Tx (8 bytes): [01][03][00][01][00][01][d5][ca]")
+    $stdout.should_receive(:puts).with("Rx (7 bytes): [01][03][02][ff][ff][b9][f4]")
 
     @mb_client.query(request).should == "\xff\xff"
   end

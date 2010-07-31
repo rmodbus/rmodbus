@@ -90,7 +90,7 @@ module ModBus
       msg = @@transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @slave.chr + pdu
       @sock.write msg
       
-      log "Tx (#{msg.size} bytes): " + logging_bytes(msg) + "\n"
+      log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
     end
 
     def read_pdu    
@@ -101,7 +101,7 @@ module ModBus
         len = header[4,2].unpack('n')[0]       
         msg = @sock.read(len-1)               
 
-        log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg) + "\n"
+        log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg)
         msg
       else
         raise Errors::ModBusException.new("Server did not respond")

@@ -60,3 +60,15 @@
 	* lib/rmodbus/rtu_client.rb: Added option read_timeout and accessor RTUClient#read_timeout
 2010-07-28 Kelley Reynolds <kelley@insidesystems.net>
 	* lib/rmodbus/rtu_via_tcp_client.rb: Added the ability to send RTU commands via TCP Serial Gateway
+2010-07-31 Kelley Reynolds <kelley@insidesystems.net>
+	* examples/use_rtu_via_tcp_modbus.rb: Added example for using RTUViaTCP client and server
+	* examples/use_tcp_modbus.rb: Misc cleanups
+	* lib/rmodbus.rb: Include the RTUViaTCPServer and Common files
+	* lib/rmodbus/client.rb: Move logging to Common
+	* lib/rmodbus/common.rb: File which houses common logging methods
+	* lib/rmodbus/rtu_client.rb: Logging updates
+	* lib/rmodbus/rtu_via_tcp_client.rb: Added RTUViaTCPClient#read_modbus_rtu_response() to abstract reading the correct number of bytes for RTU via TCP
+	* lib/rmodbus/rtu_via_tcp_server.rb: Added RTUViaTCPServer for use with testing RTUViaTCPClient
+	* lib/rmodbus/tcp_client.rb: Logging updates
+	* lib/rmodbus/tcp_server.rb: Logging updates
+	* spec/logging_spec.rb: Updated to new logging

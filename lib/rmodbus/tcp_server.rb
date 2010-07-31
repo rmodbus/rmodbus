@@ -14,49 +14,51 @@
 require 'rmodbus/parsers'
 require 'gserver'
 
-
 module ModBus
-  class TCPServer < GServer
-    include Parsers
-    
-    attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers
+	class TCPServer < GServer
+		include Parsers
+		include Common
 
-    def discret_inputs
-      warn "[DEPRECATION] `discret_inputs` is deprecated.  Please use `discrete_inputs` instead."
-      @discrete_inputs 
-    end
-  
-    def discret_inputs=(val)
-      warn "[DEPRECATION] `discret_inputs=` is deprecated.  Please use `discrete_inputs=` instead."
-      @discrete_inputs=val
-    end
-  
-   
-    def initialize(port = 502, uid = 1)
-      @coils = []
-      @discrete_inputs = []
-      @holding_registers =[]
-      @input_registers = []
-      @uid = uid
-      super(port)
-    end
+		attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers, :debug
 
-    def serve(io)
-      loop do
-        req = io.read(7)
-        if req[2,2] != "\x00\x00" or req.getbyte(6) != @uid
-          io.close
-          break
-        end
- 
-        tr = req[0,2]
-        len = req[4,2].unpack('n')[0]
-        req = io.read(len - 1)
+		def discret_inputs
+			warn "[DEPRECATION] `discret_inputs` is deprecated.  Please use `discrete_inputs` instead."
+			@discrete_inputs 
+		end
 
-        pdu = exec_req(req, @coils, @discrete_inputs, @holding_registers, @input_registers)
+		def discret_inputs=(val)
+			warn "[DEPRECATION] `discret_inputs=` is deprecated.  Please use `discrete_inputs=` instead."
+			@discrete_inputs=val
+		end
 
-        io.write tr + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
-    end
-    end
-  end
+		def initialize(port = 502, uid = 1)
+			@coils = []
+			@discrete_inputs = []
+			@holding_registers =[]
+			@input_registers = []
+			@uid = uid
+			super(port)
+		end
+
+		def serve(io)
+			loop do
+				req = io.read(7)
+				if req[2,2] != "\x00\x00" or req.getbyte(6) != @uid
+					io.close
+					break
+				end
+
+				tr = req[0,2]
+				len = req[4,2].unpack('n')[0]
+				req = io.read(len - 1)
+				log "Server RX (#{req.size} bytes): #{logging_bytes(req)}"
+
+				pdu = exec_req(req, @coils, @discrete_inputs, @holding_registers, @input_registers)
+
+				resp = tr + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
+				log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
+				io.write resp
+			end
+		end
+	end
 end
