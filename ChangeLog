@@ -72,3 +72,6 @@
 	* lib/rmodbus/tcp_client.rb: Logging updates
 	* lib/rmodbus/tcp_server.rb: Logging updates
 	* spec/logging_spec.rb: Updated to new logging
+2011-01-23 Mark Flocco <mflocco@gmail.com>
+	* lib/rmodbus/client.rb: Added method Client#read_dual_holding_registers
+	* lib/rmodbus/client.rb: Added method Client#read_dual_input_registers

@@ -73,8 +73,27 @@ module ModBus
     # Read value *nreg* holding registers starting with *addr*
     #
     # Return array of their values
-    def read_holding_registers(addr, nreg) 
+    def read_holding_registers(addr, nreg)
       query("\x3" + addr.to_word + nreg.to_word).unpack('n*')
+    end
+    
+    # Read *npairs* adjacent holding register pairs starting with *addr* 
+    # Returns integer unless float==true
+    # The method uses the convention that the first register provides the lower 16 bits and the second register provides the upper 16 bits
+    #
+    # Return array of their values 
+    def read_dual_holding_registers(addr, npairs, float=false)
+      @values = Array.new
+      result = query("\x3" + addr.to_word + (npairs * 2).to_word)
+      npairs.to_i.times do 
+        register = result.slice!(2..3) + result.slice!(0..1)
+        if float == false then
+          @values.push(register.unpack('N')[0])
+        else
+          @values.push(register.unpack('g')[0])
+        end
+      end
+      @values
     end
 
     # Read value *nreg* input registers starting with *addr*
@@ -84,6 +103,25 @@ module ModBus
       query("\x4" + addr.to_word + nreg.to_word).unpack('n*')
     end
 
+    # Read *npairs* adjacent input register pairs starting with *addr*
+    # Returns integer unless float==true
+    # The method uses the convention that the first register provides the lower 16 bits and the second register provides the upper 16 bits
+    #
+    # Return array of their values 
+    def read_dual_input_registers(addr, npairs, float=false)
+      @values = Array.new
+      result = query("\x4" + addr.to_word + (npairs * 2).to_word)
+      npairs.to_i.times do 
+        register = result.slice!(2..3) + result.slice!(0..1)
+        if float == false then
+          @values.push(register.unpack('N')[0])
+        else
+          @values.push(register.unpack('g')[0])
+        end
+      end
+      @values
+    end
+    
     # Write *val* in *addr* coil 
     #
     # if *val* lager 0 write 1
