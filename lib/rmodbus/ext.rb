@@ -22,8 +22,8 @@ class String
 
   def unpack_bits
     array_bit = []
-    self.unpack('b*')[0].each_byte do |b|
-        array_bit << b.chr.to_i
+    self.unpack('b*')[0].each_char do |c|
+        array_bit << c.to_i
     end
     array_bit
   end
