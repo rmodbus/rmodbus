@@ -33,7 +33,7 @@ describe TCPClient  do
 
 
   def mock_query(request, response)
-    @adu = TCPClient.transaction.next.to_word + "\x0\x0\x0\x9" + UID.chr + request
+    @adu = @mb_client.transaction.next.to_word + "\x0\x0\x0\x9" + UID.chr + request
     @sock.should_receive(:write).with(@adu[0,4] + "\0\6" + UID.chr + request)
     @sock.should_receive(:read).with(7).and_return(@adu[0,7])
     @sock.should_receive(:read).with(8).and_return(response)

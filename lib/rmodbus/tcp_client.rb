@@ -23,10 +23,8 @@ module ModBus
 
     include Timeout
 
-    attr_reader :ipaddr, :port, :slave
+    attr_reader :ipaddr, :port, :slave, :transaction
     attr_accessor :debug
-
-    @@transaction = 0
     
     # Connect with ModBus server
     #
@@ -55,6 +53,7 @@ module ModBus
     #
     # slaveaddr - slave ID of the server
     def initialize(ipaddr, port = 502, slaveaddr = 1)
+      @transaction = 0
       @ipaddr, @port = ipaddr, port
       tried = 0
       begin
@@ -79,15 +78,11 @@ module ModBus
       @sock.closed?
     end
 
-    def self.transaction 
-      @@transaction
-    end
-
     private
     def send_pdu(pdu)   
-      @@transaction = 0 if @@transaction.next > 65535
-      @@transaction += 1 
-      msg = @@transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @slave.chr + pdu
+      @transaction = 0 if @transaction.next > 65535
+      @transaction += 1 
+      msg = @transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @slave.chr + pdu
       @sock.write msg
       
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
@@ -97,7 +92,7 @@ module ModBus
       header = @sock.read(7)            
       if header
         tin = header[0,2].unpack('n')[0]
-        raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @@transaction
+        raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @transaction
         len = header[4,2].unpack('n')[0]       
         msg = @sock.read(len-1)               
 
