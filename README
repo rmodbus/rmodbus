@@ -5,7 +5,7 @@
 == Features
 
 * Support Ruby 1.8, Ruby 1.9
-* Support ModBus-TCP, ModBus-RTU protocol
+* Support TCP, RTU, RTU over TCP protocols
 * Support client(master) and server(slave)
 * Support functions:
   * 01 (0x01) Read Coils
@@ -28,11 +28,13 @@ $ gem install --remote rmodbus
 
 require 'rmodbus'
 
-cl = ModBus::TCPClient.new('127.0.0.1', 8502, 1)
+cl = ModBus::TCPClient.new('127.0.0.1', 8502, 1) do |cl|
 
-puts cl.read_holding_registers(0,4)
+  puts cl.read_holding_registers(0,4)
 
-cl.write_multiple_registers(0, [4,4,4])
+  cl.write_multiple_registers(0, [4,4,4])
+
+end
 
 == GitHub 
 
