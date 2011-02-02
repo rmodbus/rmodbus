@@ -188,7 +188,7 @@ module ModBus
     end
 
 	# We have to read specific amounts of numbers of bytes from the network depending on the function code and content
-    def read_modbus_rtu_response(io)
+    def read_rtu_response(io)
 	  # Read the slave_id and function code
 	  msg = io.read(2)
 	  function_code = msg.getbyte(1)

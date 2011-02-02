@@ -88,7 +88,7 @@ module ModBus
 
 		def read_pdu
 			# Read the response appropriately
-			msg = read_modbus_rtu_response(@sock)
+			msg = read_rtu_response(@sock)
 
 			log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
 			if msg.getbyte(0) == @slave
