@@ -22,7 +22,7 @@ module ModBus
   class Client
   
     include Errors
-	 include Common
+	include Common
     # Number of times to retry on connection and read timeouts
     attr_accessor :read_retries
 
@@ -186,6 +186,25 @@ module ModBus
 
     def close
     end
+
+	# We have to read specific amounts of numbers of bytes from the network depending on the function code and content
+    def read_modbus_rtu_response(io)
+	  # Read the slave_id and function code
+	  msg = io.read(2)
+	  function_code = msg.getbyte(1)
+	  if [1, 2, 3, 4].include?(function_code)
+	    # read the third byte to find out how much more we need to read + CRC
+		msg += io.read(1)
+		msg += io.read(msg.getbyte(2)+2)
+	  elsif [5, 6, 15, 16].include?(function_code)
+		# We just read in an additional 6 bytes
+		msg += io.read(6)
+	  else
+		raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
+	  end
+	  msg
+	end
+
   end
 
 end

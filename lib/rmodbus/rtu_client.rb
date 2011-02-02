@@ -119,10 +119,7 @@ module ModBus
     end
 
     def read_pdu
-      msg = ''
-      while msg.size == 0
-        msg =  @sp.read
-      end
+	  msg = read_modbus_rtu_response(@sp)
 
       log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
 

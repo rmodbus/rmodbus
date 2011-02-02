@@ -19,7 +19,7 @@ require 'rmodbus/exceptions'
 
 module ModBus
   
-	class RTUViaTCPClient < Client
+  class RTUViaTCPClient < Client
 
 		include CRC16
 		attr_reader :ipaddr, :port, :slave
@@ -101,25 +101,5 @@ module ModBus
 				#waite timeout  
 			end
 		end
-		
-		# We have to read specific amounts of numbers of bytes from the network depending on the function code and content
-		def read_modbus_rtu_response(io)
-			# Read the slave_id and function code
-			msg = io.read(2)
-			function_code = msg.getbyte(1)
-			if [1, 2, 3, 4].include?(function_code)
-				# read the third byte to find out how much more we need to read + CRC
-				msg += io.read(1)
-				msg += io.read(msg.getbyte(2)+2)
-			elsif [5, 6, 15, 16].include?(function_code)
-				# We just read in an additional 6 bytes
-				msg += io.read(6)
-			else
-				raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
-			end
-			
-			msg
-		end
-		
 	end
 end
