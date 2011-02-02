@@ -199,6 +199,10 @@ module ModBus
 	  elsif [5, 6, 15, 16].include?(function_code)
 		# We just read in an additional 6 bytes
 		msg += io.read(6)
+      elsif [22].include?(function_code)
+        msg += io.read(8)
+      elsif function_code > 0x80
+        msg += io.read(4)
 	  else
 		raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
 	  end
