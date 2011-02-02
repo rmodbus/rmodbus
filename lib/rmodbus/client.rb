@@ -192,21 +192,22 @@ module ModBus
 	  # Read the slave_id and function code
 	  msg = io.read(2)
 	  function_code = msg.getbyte(1)
-	  if [1, 2, 3, 4].include?(function_code)
-	    # read the third byte to find out how much more we need to read + CRC
-		msg += io.read(1)
-		msg += io.read(msg.getbyte(2)+2)
-	  elsif [5, 6, 15, 16].include?(function_code)
-		# We just read in an additional 6 bytes
-		msg += io.read(6)
-      elsif [22].include?(function_code)
-        msg += io.read(8)
-      elsif function_code > 0x80
-        msg += io.read(4)
-	  else
-		raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
-	  end
-	  msg
+      case function_code
+	    when 1,2,3,4 then
+	      # read the third byte to find out how much more 
+          # we need to read + CRC
+		  msg += io.read(1)
+		  msg += io.read(msg.getbyte(2)+2)
+	    when 5,6,15,16 then
+		  # We just read in an additional 6 bytes
+		  msg += io.read(6)
+        when 22 then
+          msg += io.read(8)
+        when 0x80..0xff then
+          msg += io.read(4)
+	    else
+		  raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
+	  end      
 	end
 
   end
