@@ -56,7 +56,9 @@ describe RTUClient do
   it 'should log rec\send bytes' do
     request = "\x3\x0\x1\x0\x1"
     @sp.should_receive(:write).with("\1#{request}\xd5\xca")
-    @sp.should_receive(:read).and_return("\x1\x3\x2\xff\xff\xb9\xf4")
+    @sp.should_receive(:read).with(2).and_return("\x1\x3")
+    @sp.should_receive(:read).with(1).and_return("\x2")
+    @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
 
     @mb_client.debug = true
     $stdout.should_receive(:puts).with("Tx (8 bytes): [01][03][00][01][00][01][d5][ca]")

@@ -12,6 +12,7 @@ describe RTUClient do
     @sp = mock('Serial port')
     SerialPort.should_receive(:new).with("/dev/port1", 9600, 8, 1, 0).and_return(@sp)    
     @sp.stub!(:read_timeout=)
+    @sp.stub!(:read)
 
     @mb_client = RTUClient.new("/dev/port1", 9600, 1, 
       :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)
@@ -21,21 +22,25 @@ describe RTUClient do
   it "should ignore frame with other UID" do
     request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
     @sp.should_receive(:write).with("\1#{request}\xA6\x31")
-    @sp.should_receive(:read).and_return("\x2\x10\x0\x1\x0\x1\x1C\x08")
+    @sp.should_receive(:read).with(2).and_return("\x2\x10")
+    @sp.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
     lambda {@mb_client.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
   end
 
   it "should ignored frame with incorrect CRC" do
     request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
     @sp.should_receive(:write).with("\1#{request}\xA6\x31")
-    @sp.should_receive(:read).and_return("\x1\x10\x0\x1\x0\x1\x1C\x08")
+    @sp.should_receive(:read).with(2).and_return("\x2\x10")
+    @sp.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
     lambda {@mb_client.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
   end
   
   it "should return value of registers"do
     request = "\x3\x0\x1\x0\x1"
     @sp.should_receive(:write).with("\1#{request}\xd5\xca")
-    @sp.should_receive(:read).and_return("\x1\x3\x2\xff\xff\xb9\xf4")
+    @sp.should_receive(:read).with(2).and_return("\x1\x3")
+    @sp.should_receive(:read).with(1).and_return("\x2")
+    @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
     @mb_client.query(request).should == "\xff\xff"
   end
 
