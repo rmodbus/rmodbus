@@ -79,3 +79,5 @@
 	* spec/rtu_via_tcp_client_spec.rb : add test for RTUViaTCP class
 2011-02-06 Kelley Reynolds <kelley@insidesystems.net>
   * Added a ModBus::ReadOnlyProxy and ModBus::ReadWriteProxy for interacting with modbus devices like a hash, both read and write (and some documentation updates)
+  * Speed up Integer#to_word by 22% by using native #pack
+  * Add 16bit/32bit conversion methods for 32bit registers
