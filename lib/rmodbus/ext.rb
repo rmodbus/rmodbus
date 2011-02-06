@@ -32,8 +32,9 @@ end
 
 class Integer
 
+  # Shortcut or turning an integer into a word
   def to_word
-    (self >> 8).chr + (self & 0xff).chr 
+    [self].pack('n')
   end
 
 end
