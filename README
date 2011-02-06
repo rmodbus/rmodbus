@@ -4,48 +4,69 @@
 
 == Features
 
-* Support Ruby 1.8, Ruby 1.9
-* Support ModBus-TCP, ModBus-RTU protocol
-* Support client(master) and server(slave)
-* Support functions:
-  * 01 (0x01) Read Coils
-  * 02 (0x02) Read Discrete Inputs
-  * 03 (0x03) Read Holding Registers
-  * 04 (0x04) Read Input Registers 
-  * 05 (0x05) Write Single Coil
-  * 06 (0x06) Write Single Register
-  * 15 (0x0F) Write Multiple Coils
-  * 16 (0x10) Write Multiple registers
-  * 22 (0x16) Mask Write register 
+  * Support Ruby 1.8, Ruby 1.9
+  * Support ModBus-TCP, ModBus-RTU protocol
+  * Support client(master) and server(slave)
+  * Support functions:
+    * 01 (0x01) Read Coils
+    * 02 (0x02) Read Discrete Inputs
+    * 03 (0x03) Read Holding Registers
+    * 04 (0x04) Read Input Registers 
+    * 05 (0x05) Write Single Coil
+    * 06 (0x06) Write Single Register
+    * 15 (0x0F) Write Multiple Coils
+    * 16 (0x10) Write Multiple registers
+    * 22 (0x16) Mask Write register 
 
 == Installation
 
 Download and install RModBus with the following
 
-$ gem install --remote rmodbus
+  $ gem install --remote rmodbus
 
 == Example
 
-require 'rmodbus'
+  require 'rmodbus'
 
-cl = ModBus::TCPClient.new('127.0.0.1', 8502, 1)
+  cl = ModBus::TCPClient.new('127.0.0.1', 8502, 1)
 
-puts cl.read_holding_registers(0,4)
+  puts cl.read_holding_registers(0,4)
 
-cl.write_multiple_registers(0, [4,4,4])
+  cl.write_multiple_registers(0, [4,4,4])
+
+== Hash Interface
+
+The hash interface takes a Fixnum or a range and assigns either a single value or the array of values.
+Note that when writing multiple values, the size of the range must match the size of the argument array
+
+  require 'rmodbus'
+
+  cl = ModBus::TCPClient.new('127.0.0.1', 8502, 1)
+
+  # Read a single holding register at address 16
+  cl.holding_registers[16]
+
+  # Write a single holding register at address 16
+  cl.holding_registers[16] = 123
+
+  # Read holding registers 16 through 20
+  cl.holding_registers[16..20]
+
+  # Write holding registers 16 through 20 with some values
+  cl.holding_registers[16..20] = [1, 2, 3, 4, 5]
 
 == GitHub 
 
-You can checkout source code from GitHub repositry 
+  You can checkout source code from GitHub repositry 
 
-$ git clone git://github.com/flipback/RModBus.git
+  $ git clone git://github.com/flipback/RModBus.git
 
 == Reference 
 
-Home page: http://rmodbus.heroku.com
+  Home page: http://rmodbus.heroku.com
 
-RModBus project: http://rubyforge.org/projects/rmodbus
+  RModBus project: http://rubyforge.org/projects/rmodbus
 
-RModBud on GitHub: http://github.com/flipback/RModBus
+  RModBud on GitHub: http://github.com/flipback/RModBus
 
-ModBus community: http://www.modbus-ida.org
+  ModBus community: http://www.modbus-ida.org
