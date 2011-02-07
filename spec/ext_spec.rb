@@ -38,5 +38,10 @@ describe Array do
     [384.620788].from_32f.should == [20342, 17344]
     [384.620788, 384.620788].from_32f.should == [20342, 17344, 20342, 17344]
   end
+
+  it "should raise exception if uneven number of elements" do
+   lambda { [20342, 17344, 123].to_32f }.should raise_error(StandardError)
+   lambda { [20342, 17344, 123].to_32i }.should raise_error(StandardError)
+  end
 end
 

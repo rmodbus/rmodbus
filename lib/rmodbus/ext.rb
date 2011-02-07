@@ -27,7 +27,7 @@ class String
     end
     array_bit
   end
-
+  
 end
 
 class Integer
@@ -43,6 +43,7 @@ class Array
 
   # Given an array of 16bit Fixnum, we turn it into 32bit Int in big-endian order, halving the size
   def to_32f
+    raise "Array requires an even number of elements to pack to 32bits: was #{self.size}" unless self.size.even?
     self.each_slice(2).map { |(lsb, msb)| [msb, lsb].pack('n*').unpack('g')[0] }
   end
     
@@ -53,6 +54,7 @@ class Array
 
   # Given an array of 16bit Fixnum, we turn it into 32bit Float in big-endian order, halving the size
   def to_32i
+    raise "Array requires an even number of elements to pack to 32bits: was #{self.size}" unless self.size.even?
     self.each_slice(2).map { |(lsb, msb)| [msb, lsb].pack('n*').unpack('N')[0] }
   end
 
