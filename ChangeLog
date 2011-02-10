@@ -79,3 +79,4 @@
 	* spec/rtu_via_tcp_client_spec.rb : add test for RTUViaTCP class
 2011-02-10 Timin Aleksey <atimin@gmail.com>
     * lib/rmodbus/client.rb : Fixed retry of request after end timeout. Added property #read_retry_timeout.
+    * rmodbus.gemspec : New 0.5.0 release 
