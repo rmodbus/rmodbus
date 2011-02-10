@@ -18,13 +18,11 @@ require 'rmodbus/ext'
 
 
 module ModBus
-
   class Client
-  
     include Errors
-	include Common
+    include Common
     # Number of times to retry on connection and read timeouts
-    attr_accessor :read_retries
+    attr_accessor :read_retries, :read_retry_timeout
 
     def connection_retries
       warn "[DEPRECATION] `connection_retries` is deprecated.  Please don't use it."
@@ -49,6 +47,7 @@ module ModBus
     def initialize
       @connection_retries = 10
       @read_retries = 10
+      @read_retry_timeout = 1
     end
     # Read value *ncoils* coils starting with *addr*
     #
@@ -153,13 +152,14 @@ module ModBus
     end
 
     def query(pdu)    
-      send_pdu(pdu)
-
       tried = 0
       begin
-        timeout(1, ModBusTimeout) { pdu = read_pdu }
+        timeout(@read_retry_timeout, ModBusTimeout) do 
+          send_pdu(pdu)
+          pdu = read_pdu
+        end
       rescue ModBusTimeout => err
-	    log "Timeout of read operation: (#{@read_retries - tried})"
+        log "Timeout of read operation: (#{@read_retries - tried})"
         tried += 1
         retry unless tried >= @read_retries
         raise ModBusTimeout.new, "Timed out during read attempt"
@@ -190,26 +190,24 @@ module ModBus
 	# We have to read specific amounts of numbers of bytes from the network depending on the function code and content
     def read_rtu_response(io)
 	  # Read the slave_id and function code
-	  msg = io.read(2)
-	  function_code = msg.getbyte(1)
+	  msg = io.read(2) 
+      function_code = msg.getbyte(1)
       case function_code
-	    when 1,2,3,4 then
-	      # read the third byte to find out how much more 
+        when 1,2,3,4 then
+          # read the third byte to find out how much more 
           # we need to read + CRC
-		  msg += io.read(1)
-		  msg += io.read(msg.getbyte(2)+2)
-	    when 5,6,15,16 then
-		  # We just read in an additional 6 bytes
-		  msg += io.read(6)
+          msg += io.read(1)
+          msg += io.read(msg.getbyte(2)+2)
+        when 5,6,15,16 then
+          # We just read in an additional 6 bytes
+          msg += io.read(6)
         when 22 then
           msg += io.read(8)
         when 0x80..0xff then
           msg += io.read(4)
-	    else
-		  raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
-	  end      
-	end
-
+        else
+          raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
+      end
+    end
   end
-
 end
