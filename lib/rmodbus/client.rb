@@ -20,7 +20,7 @@ require 'rmodbus/ext'
 module ModBus
   class Client
     include Errors
-    include Common
+  	include Common
     # Number of times to retry on connection and read timeouts
     attr_accessor :read_retries, :read_retry_timeout
 
@@ -49,45 +49,34 @@ module ModBus
       @read_retries = 10
       @read_retry_timeout = 1
     end
-    # Read value *ncoils* coils starting with *addr*
+
+    # Returns a ModBus::ReadWriteProxy hash interface for coils
     #
-    # Return array of their values
+    # call-seq:
+    #  coils[addr] => [1]
+    #  coils[addr1..addr2] => [1, 0, ..]
+    #  coils[addr] = 0 => [0]
+    #  coils[addr1..addr2] = [1, 0, ..] => [1, 0, ..]
+    #
+    def coils
+      ModBus::ReadWriteProxy.new(self, :coil)
+    end
+    
+    # Read +ncoils+ coils starting at address +addr+ and return their values as an array
+    # 
+    # call-seq:
+    #  read_coils(addr, ncoils) => [1, 0, ..]
+    #
     def read_coils(addr, ncoils)
       query("\x1" + addr.to_word + ncoils.to_word).unpack_bits[0..ncoils-1]
     end
-
-    # Read value *ncoils* discrete inputs starting with *addr*
+    alias_method :read_coil, :read_coils
+    
+    # Set the coil at address +addr+ to +val+
+    # 
+    # call-seq:
+    #  write_single_coil(addr, val) => self
     #
-    # Return array of their values
-    def read_discrete_inputs(addr, ncoils)
-      query("\x2" + addr.to_word + ncoils.to_word).unpack_bits[0..ncoils-1]
-    end
-
-    # Deprecated version of read_discrete_inputs
-    def read_discret_inputs(addr, ncoils)
-      #warn "[DEPRECATION] `read_discret_inputs` is deprecated.  Please use `read_discrete_inputs` instead."
-      read_discrete_inputs(addr, ncoils)
-    end
-
-    # Read value *nreg* holding registers starting with *addr*
-    #
-    # Return array of their values
-    def read_holding_registers(addr, nreg) 
-      query("\x3" + addr.to_word + nreg.to_word).unpack('n*')
-    end
-
-    # Read value *nreg* input registers starting with *addr*
-    #
-    # Return array of their values
-    def read_input_registers(addr, nreg)
-      query("\x4" + addr.to_word + nreg.to_word).unpack('n*')
-    end
-
-    # Write *val* in *addr* coil 
-    #
-    # if *val* lager 0 write 1
-    #
-    # Return self
     def write_single_coil(addr, val)
       if val == 0
         query("\x5" + addr.to_word + 0.to_word)
@@ -96,26 +85,19 @@ module ModBus
       end
       self
     end
+    alias_method :write_coil, :write_single_coil
 
-    # Write *val* in *addr* register
+    # Set the coils to +vals+ starting at address +addr+
+    # 
+    # call-seq:
+    #  write_multiple_coils(addr, vals) => self
     #
-    # Return self
-    def write_single_register(addr, val)
-      query("\x6" + addr.to_word + val.to_word)
-      self
-    end
-
-    # Write *val* in coils starting with *addr*
-    #
-    # *val* it is array of bits
-    #
-    # Return self
-    def write_multiple_coils(addr, val)
-      nbyte = ((val.size-1) >> 3) + 1
+    def write_multiple_coils(addr, vals)
+      nbyte = ((vals.size-1) >> 3) + 1
       sum = 0
-      (val.size - 1).downto(0) do |i|
+      (vals.size - 1).downto(0) do |i|
         sum = sum << 1
-        sum |= 1 if val[i] > 0
+        sum |= 1 if vals[i] > 0
       end
    
       s_val = ""
@@ -124,24 +106,109 @@ module ModBus
         sum >>= 8 
       end
 
-      query("\xf" + addr.to_word + val.size.to_word + nbyte.chr + s_val)
+      query("\xf" + addr.to_word + vals.size.to_word + nbyte.chr + s_val)
       self
     end
+    alias_method :write_coils, :write_multiple_coils
 
-    # Write *val* in registers starting with *addr*
+    # Returns a ModBus::ReadOnlyProxy hash interface for discrete inputs
     #
-    # *val* it is array of integer
+    # call-seq:
+    #  discrete_inputs[addr] => [1]
+    #  discrete_inputs[addr1..addr2] => [1, 0, ..]
     #
-    # Return self
-    def write_multiple_registers(addr, val)
+    def discrete_inputs
+      ModBus::ReadOnlyProxy.new(self, :discrete_input)
+    end
+
+    # Read +ninputs+ discrete inputs starting at address +addr+ and return their values as an array
+    # 
+    # call-seq:
+    #  read_discrete_inputs(addr, ninputs) => [1, 0, ..]
+    #
+    def read_discrete_inputs(addr, ninputs)
+      query("\x2" + addr.to_word + ninputs.to_word).unpack_bits[0..ninputs-1]
+    end
+    alias_method :read_discrete_input, :read_discrete_inputs
+    alias_method :read_discret_inputs, :read_discrete_inputs # Deprecated method call
+
+    # Returns a read/write ModBus::ReadOnlyProxy hash interface for coils
+    #
+    # call-seq:
+    #  input_registers[addr] => [1]
+    #  input_registers[addr1..addr2] => [1, 0, ..]
+    #
+    def input_registers
+      ModBus::ReadOnlyProxy.new(self, :input_register)
+    end
+
+    # Starting at a particular address, read +nregs+ coils and return their values as an array
+    # 
+    # call-seq:
+    #  read_input_registers(addr, nregs) => [1, 0, ..]
+    #
+    def read_input_registers(addr, nregs, &block)
+      if block_given?
+        yield query("\x4" + addr.to_word + nregs.to_word)
+      else
+        query("\x4" + addr.to_word + nregs.to_word).unpack('n*')
+      end
+    end
+    alias_method :read_input_register, :read_input_registers
+        
+    # Returns a ModBus::ReadWriteProxy hash interface for holding registers
+    #
+    # call-seq:
+    #  holding_registers[addr] => [123]
+    #  holding_registers[addr1..addr2] => [123, 234, ..]
+    #  holding_registers[addr] = 123 => 123
+    #  holding_registers[addr1..addr2] = [234, 345, ..] => [234, 345, ..]
+    #
+    def holding_registers
+      ModBus::ReadWriteProxy.new(self, :holding_register)
+    end
+
+    # Read +nregs+ registers starting at address +addr+ and return their values as an array
+    # 
+    # call-seq:
+    #  read_holding_registers(addr, nregs) => [1, 0, ..]
+    #
+    def read_holding_registers(addr, nregs, &block) 
+      if block_given?
+        yield query("\x3" + addr.to_word + nregs.to_word)
+      else
+        query("\x3" + addr.to_word + nregs.to_word).unpack('n*')
+      end
+    end
+    alias_method :read_holding_register, :read_holding_registers
+
+    # Set the holding register at address +addr+ to +val+
+    # 
+    # call-seq:
+    #  write_single_register(addr, val) => self
+    #
+    def write_single_register(addr, val)
+      query("\x6" + addr.to_word + val.to_word)
+      self
+    end
+    alias_method :write_holding_register, :write_single_register
+
+
+    # Set the registers to +vals+ starting at address +addr+
+    # 
+    # call-seq:
+    #  write_multiple_registers(addr, vals) => self
+    #
+    def write_multiple_registers(addr, vals)
       s_val = ""
-      val.each do |reg|
+      vals.each do |reg|
         s_val << reg.to_word
       end
 
-      query("\x10" + addr.to_word + val.size.to_word + (val.size * 2).chr + s_val)
+      query("\x10" + addr.to_word + vals.size.to_word + (vals.size * 2).chr + s_val)
       self
     end
+    alias_method :write_holding_registers, :write_multiple_registers
 
     # Write *current value & and_mask | or mask in *addr* register
     #

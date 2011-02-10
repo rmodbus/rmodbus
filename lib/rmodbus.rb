@@ -16,4 +16,4 @@ require 'rmodbus/rtu_client'
 require 'rmodbus/rtu_server'
 require 'rmodbus/rtu_via_tcp_client'
 require 'rmodbus/rtu_via_tcp_server'
-
+require 'rmodbus/proxy'

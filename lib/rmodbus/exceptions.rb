@@ -15,6 +15,9 @@ module ModBus
 
   module Errors
 
+    class ProxyException < StandardError
+    end
+
     class ModBusException < StandardError
     end
 

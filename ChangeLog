@@ -73,10 +73,21 @@
 	* lib/rmodbus/tcp_server.rb: Logging updates
 	* spec/logging_spec.rb: Updated to new logging
 2011-02-02 Timin Aleksey <atimin@gmail> 
+<<<<<<< HEAD
     * lib/rmodbus/client.rb, lib/rmodbus/rtu_client.rb : Remove RTUViaTCPClient#read_mb_rtu_response -> Client#read_rtu_response. Added support for exception and mask sunction.
 	* lib/rmodbus/rtu_client.rb : use #read_rtu_response for read pdu 
 	* spec/read_rtu_response_spec.rb : add test for Client#read_rtu_response method
 	* spec/rtu_via_tcp_client_spec.rb : add test for RTUViaTCP class
+    * lib/rmodbus/client.rb, lib/rmodbus/rtu_client.rb : Remove RTUViaTCPClient#read_mb_rtu_response -> Client#read_rtu_response. Added support for exception and mask function.
+	* lib/rmodbus/rtu_client.rb : use #read_rtu_response for read pdu 
+	* spec/read_rtu_response_spec.rb : add test for Client#read_rtu_response method
+	* spec/rtu_via_tcp_client_spec.rb : add test for RTUViaTCP class
+
+2011-02-06 Kelley Reynolds <kelley@insidesystems.net>
+    * Added a ModBus::ReadOnlyProxy and ModBus::ReadWriteProxy for interacting with modbus devices like a hash, both read and write (and some documentation updates)
+    * Speed up Integer#to_word by 22% by using native #pack
+    * Add 16bit/32bit conversion methods for 32bit registers
+
 2011-02-10 Timin Aleksey <atimin@gmail.com>
     * lib/rmodbus/client.rb : Fixed retry of request after end timeout. Added property #read_retry_timeout.
     * rmodbus.gemspec : New 0.5.0 release 
