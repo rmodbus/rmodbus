@@ -21,19 +21,8 @@ module ModBus
   class Client
     include Errors
   	include Common
-    # Number of times to retry on connection and read timeouts
+    # Number of times to retry on read and read timeouts
     attr_accessor :read_retries, :read_retry_timeout
-
-    def connection_retries
-      warn "[DEPRECATION] `connection_retries` is deprecated.  Please don't use it."
-      @connection_retries
-    end
-
-    def connection_retries=(value)
-      warn "[DEPRECATION] `connection_retries=` is deprecated.  Please don't use it."
-      @connection_retries = value
-    end
-
 
     Exceptions = { 
           1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
@@ -45,7 +34,6 @@ module ModBus
           8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
     }
     def initialize
-      @connection_retries = 10
       @read_retries = 10
       @read_retry_timeout = 1
     end
@@ -130,7 +118,6 @@ module ModBus
       query("\x2" + addr.to_word + ninputs.to_word).unpack_bits[0..ninputs-1]
     end
     alias_method :read_discrete_input, :read_discrete_inputs
-    alias_method :read_discret_inputs, :read_discrete_inputs # Deprecated method call
 
     # Returns a read/write ModBus::ReadOnlyProxy hash interface for coils
     #

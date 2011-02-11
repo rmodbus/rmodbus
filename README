@@ -4,7 +4,7 @@
 
 == Features
   * Support Ruby 1.8, Ruby 1.9
-  * Support ModBus-TCP, ModBus-RTU protocol
+  * Support TCP, RTU, RTU over TCP protocols
   * Support client(master) and server(slave)
   * Support functions:
     * 01 (0x01) Read Coils

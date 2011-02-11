@@ -30,17 +30,6 @@ module ModBus
     attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers
     attr_reader :port, :baud, :slave, :data_bits, :stop_bits, :parity
 
-     def discret_inputs
-      warn "[DEPRECATION] `discret_inputs` is deprecated.  Please use `discrete_inputs` instead."
-      @discrete_inputs 
-    end
-  
-    def discret_inputs=(val)
-      warn "[DEPRECATION] `discret_inputs=` is deprecated.  Please use `discrete_inputs=` instead."
-      @discrete_inputs=val
-    end
-
-
     def initialize(port, baud=9600, slaveaddr=1, options = {})
       Thread.abort_on_exception = true 
 

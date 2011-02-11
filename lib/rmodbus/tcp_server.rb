@@ -21,16 +21,6 @@ module ModBus
 
 		attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers, :debug
 
-		def discret_inputs
-			warn "[DEPRECATION] `discret_inputs` is deprecated.  Please use `discrete_inputs` instead."
-			@discrete_inputs 
-		end
-
-		def discret_inputs=(val)
-			warn "[DEPRECATION] `discret_inputs=` is deprecated.  Please use `discrete_inputs=` instead."
-			@discrete_inputs=val
-		end
-
 		def initialize(port = 502, uid = 1)
 			@coils = []
 			@discrete_inputs = []

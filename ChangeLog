@@ -73,7 +73,6 @@
 	* lib/rmodbus/tcp_server.rb: Logging updates
 	* spec/logging_spec.rb: Updated to new logging
 2011-02-02 Timin Aleksey <atimin@gmail> 
-<<<<<<< HEAD
     * lib/rmodbus/client.rb, lib/rmodbus/rtu_client.rb : Remove RTUViaTCPClient#read_mb_rtu_response -> Client#read_rtu_response. Added support for exception and mask sunction.
 	* lib/rmodbus/rtu_client.rb : use #read_rtu_response for read pdu 
 	* spec/read_rtu_response_spec.rb : add test for Client#read_rtu_response method
@@ -91,3 +90,7 @@
 2011-02-10 Timin Aleksey <atimin@gmail.com>
     * lib/rmodbus/client.rb : Fixed retry of request after end timeout. Added property #read_retry_timeout.
     * rmodbus.gemspec : New 0.5.0 release 
+
+2011-02-10 Timin Aleksey <atimin@gmail.com>
+   * lib/rmodbus/* : Deleted deprecated methods.
+
