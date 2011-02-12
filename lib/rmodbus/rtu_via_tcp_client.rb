@@ -12,18 +12,14 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-require 'rmodbus/crc16'
 require 'timeout'
-require 'rmodbus/client'
-require 'rmodbus/exceptions'
 
 module ModBus
   
   class RTUViaTCPClient < Client
 
-		include CRC16
+		include RTU 
 		attr_reader :ipaddr, :port, :slave
-		attr_accessor :debug
 
 		# Connect with Serial TCP Gateway (eg barionet-50)
 		#

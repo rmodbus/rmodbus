@@ -12,25 +12,16 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-require 'rmodbus/parsers'
-
-begin
-  require 'rubygems'
-rescue
-end
-
-require 'serialport'
-
 module ModBus
  
   class RTUServer
-    include Parsers
-    include CRC16
+    include Common 
+    include Server 
+    include RTU 
 
-    attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers
-    attr_reader :port, :baud, :slave, :data_bits, :stop_bits, :parity
+    attr_reader :port, :baud, :data_bits, :stop_bits, :parity
 
-    def initialize(port, baud=9600, slaveaddr=1, options = {})
+    def initialize(port, baud=9600, uid=1, options = {})
       Thread.abort_on_exception = true 
 
       @port, @baud = port, baud
@@ -43,26 +34,13 @@ module ModBus
       @sp = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
       @sp.read_timeout = 5
 
-      @coils = []
-      @discrete_inputs = []
-      @holding_registers = []
-      @input_registers = []
-      @slave = slaveaddr
+      @uid = uid
     end
 
     def start
       @serv = Thread.new do
-        loop do
-          req = '' 
-          while req.size == 0 
-            req = @sp.read
-          end
-          if req.getbyte(0) == @slave and req[-2,2].unpack('n')[0] == crc16(req[0..-3])
-            pdu = exec_req(req[1..-1], @coils, @discrete_inputs, @holding_registers, @input_registers)
-            resp = @slave.chr + pdu
-            resp << crc16(resp).to_word
-            @sp.write resp
-          end
+        serv_rtu_requests(@sp) do |msg|
+          exec_req(msg[1..-3], @coils, @discrete_inputs, @holding_registers, @input_registers)
         end
       end
     end

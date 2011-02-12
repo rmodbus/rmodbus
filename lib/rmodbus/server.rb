@@ -1,6 +1,7 @@
-# RModBus - free implementation of ModBus protocol in purge Ruby.
+# RModBus - free implementation of ModBus protocol in Ruby.
 #
 # Copyright (C) 2010  Timin Aleksey
+# Copyright (C) 2010  Kelley Reynolds
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,10 +14,17 @@
 # GNU General Public License for more details.
 
 module ModBus
-  module Parsers
-
+  module Server
     Funcs = [1,2,3,4,5,6,15,16]
 
+    attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers, :uid
+    @coils = []
+    @discrete_inputs = []
+    @holding_registers =[]
+    @input_registers = []
+
+    private 
+    
     def exec_req(req, coils, discrete_inputs, holding_registers, input_registers)
       func = req.getbyte(0)
         
@@ -80,7 +88,6 @@ module ModBus
       end
     end
 
-    private
     def parse_read_func(req, field)
       quant = req[3,2].unpack('n')[0]
 
@@ -129,5 +136,6 @@ module ModBus
       end
       params
     end
+
   end
 end

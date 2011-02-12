@@ -11,21 +11,14 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-require 'rmodbus/parsers'
 require 'gserver'
 
 module ModBus
 	class TCPServer < GServer
-		include Parsers
 		include Common
-
-		attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers, :debug
+		include Server 
 
 		def initialize(port = 502, uid = 1)
-			@coils = []
-			@discrete_inputs = []
-			@holding_registers =[]
-			@input_registers = []
 			@uid = uid
 			super(port)
 		end

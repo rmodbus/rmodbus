@@ -1,6 +1,7 @@
 # RModBus - free implementation of ModBus protocol in Ruby.
 #
 # Copyright (C) 2010  Timin Aleksey
+# Copyright (C) 2010  Kelley Reynolds
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,8 +13,83 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+begin
+  require 'rubygems'
+rescue
+end
+
+require 'serialport'
+
+
 module ModBus
-  module CRC16
+  module RTU 
+
+    private
+    # We have to read specific amounts of numbers of bytes from the network depending on the function code and content
+    def read_rtu_response(io)
+	    # Read the slave_id and function code
+	    msg = io.read(2) 
+      function_code = msg.getbyte(1)
+      case function_code
+        when 1,2,3,4 then
+          # read the third byte to find out how much more 
+          # we need to read + CRC
+          msg += io.read(1)
+          msg += io.read(msg.getbyte(2)+2)
+        when 5,6,15,16 then
+          # We just read in an additional 6 bytes
+          msg += io.read(6)
+        when 22 then
+          msg += io.read(8)
+        when 0x80..0xff then
+          msg += io.read(4)
+        else
+          raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
+      end
+    end
+
+    def read_rtu_request(io)
+			# Read the slave_id and function code
+			msg = io.read(2)
+
+			# If msg is nil, then our client never sent us anything and it's time to disconnect
+			return if msg.nil?
+			
+			function_code = msg.getbyte(1)
+			if [1, 2, 3, 4, 5, 6].include?(function_code)
+				# read 6 more bytes and return the message total message
+				msg += io.read(6)
+			elsif [15, 16].include?(function_code)
+				# Read in first register, register count, and data bytes
+				msg += io.read(5)
+				# Read in however much data we need to + 2 CRC bytes
+				msg += io.read(msg.getbyte(6) + 2)
+			else
+				raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
+			end
+			
+			log "Server RX (#{msg.size} bytes): #{logging_bytes(msg)}"
+
+			msg
+		end
+
+    def serv_rtu_requests(io, &blk)
+      loop do
+        # read the RTU message
+        msg = read_rtu_request(io)
+        # If there is no RTU message, we're done serving this client
+        break if msg.nil?
+
+        if msg.getbyte(0) == @uid and msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
+          pdu = yield msg
+          resp = @uid.chr + pdu
+          resp << crc16(resp).to_word
+          log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
+          io.write resp
+		    end
+	    end
+    end
+
     def crc16(msg)
       crc_lo = 0xff
       crc_hi = 0xff
@@ -65,5 +141,7 @@ module ModBus
         0x48, 0x49, 0x89, 0x4B, 0x8B, 0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C,
         0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80,
         0x40]
+
   end
 end
+

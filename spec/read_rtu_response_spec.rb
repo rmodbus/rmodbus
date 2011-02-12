@@ -5,6 +5,7 @@ include ModBus
 #Use public wrap method
 
 class Client
+  include RTU
   def test_read_method(msg)
     io = TestIO.new(msg)
     read_rtu_response(io)

@@ -13,8 +13,6 @@
 # GNU General Public License for more details.
 require 'socket'
 require 'timeout'
-require 'rmodbus/client'
-require 'rmodbus/exceptions'
 
 module ModBus
 
@@ -24,7 +22,6 @@ module ModBus
     include Timeout
 
     attr_reader :ipaddr, :port, :slave, :transaction
-    attr_accessor :debug
     
     # Connect with ModBus server
     #
@@ -64,7 +61,6 @@ module ModBus
         raise ModBusTimeout.new, 'Timed out attempting to create connection'
       end
       @slave = slaveaddr
-      @debug = false
       super()
     end
 

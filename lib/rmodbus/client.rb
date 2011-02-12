@@ -12,11 +12,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-require 'rmodbus/common'
-require 'rmodbus/exceptions'
-require 'rmodbus/ext'
-
-
 module ModBus
   class Client
     include Errors
@@ -239,29 +234,6 @@ module ModBus
     end
 
     def close
-    end
-
-	# We have to read specific amounts of numbers of bytes from the network depending on the function code and content
-    def read_rtu_response(io)
-	  # Read the slave_id and function code
-	  msg = io.read(2) 
-      function_code = msg.getbyte(1)
-      case function_code
-        when 1,2,3,4 then
-          # read the third byte to find out how much more 
-          # we need to read + CRC
-          msg += io.read(1)
-          msg += io.read(msg.getbyte(2)+2)
-        when 5,6,15,16 then
-          # We just read in an additional 6 bytes
-          msg += io.read(6)
-        when 22 then
-          msg += io.read(8)
-        when 0x80..0xff then
-          msg += io.read(4)
-        else
-          raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
-      end
     end
   end
 end

@@ -11,21 +11,12 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-require 'rmodbus/crc16'
-
-begin
-  require 'rubygems'
-rescue
-end
-require 'serialport'
-
 module ModBus
   
   class RTUClient < Client
 
-    include CRC16
+    include RTU 
     attr_reader :port, :baud, :slave, :data_bits, :stop_bits, :parity, :read_timeout
-    attr_accessor :debug
 
     # Connect with RTU server
     #
@@ -93,11 +84,8 @@ module ModBus
       @parity = options[:parity] unless options[:parity].nil?
       @read_timeout = options[:read_timeout] unless options[:read_timeout].nil?
 
-      @debug = false
-
       @sp = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
       @sp.read_timeout = @read_timeout
-
       super()
     end
 
@@ -126,7 +114,7 @@ module ModBus
       if msg.getbyte(0) == @slave
         return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
         log "Ignore package: don't match CRC"
-	  else 
+      else 
         log "Ignore package: don't match slave ID"
       end
       loop do

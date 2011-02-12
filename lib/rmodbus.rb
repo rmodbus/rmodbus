@@ -9,7 +9,12 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+require 'rmodbus/errors'
+require 'rmodbus/ext'
 require 'rmodbus/common'
+require 'rmodbus/rtu'
+require 'rmodbus/client'
+require 'rmodbus/server'
 require 'rmodbus/tcp_client'
 require 'rmodbus/tcp_server'
 require 'rmodbus/rtu_client'

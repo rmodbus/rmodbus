@@ -3,7 +3,7 @@ require 'rmodbus'
 
 srv = ModBus::TCPServer.new(8502,1)
 srv.coils = [1,0,1,1]
-srv.discret_inputs = [1,1,0,0]
+srv.discrete_inputs = [1,1,0,0]
 srv.holding_registers = [1,2,3,4]
 srv.input_registers = [1,2,3,4]
 srv.debug = true
