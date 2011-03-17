@@ -11,22 +11,19 @@ rescue Exception
 end
 
 begin
- require 'spec/rake/spectask'
+ require 'rspec/core/rake_task'
 
- Spec::Rake::SpecTask.new do |t|
-    t.spec_opts = ['-c']
-    t.libs << 'lib'
-    t.spec_files = FileList['spec/**/*_spec.rb']
+ RSpec::Core::RakeTask.new(:spec) do |t|
+    t.rspec_opts = ['-c']
     t.rcov = false 
   end
 rescue Exception 
-  puts 'RSpec not available. Install it with: sudo gem install rspec'
+  puts "RSpec not available. Install it with: sudo gem install rspec -v '>=2'"
 end
 
 include Config
 
 task :install do
-
   sitedir = CONFIG['sitelibdir']
   rmodbus_dest = File.join(sitedir, 'rmodbus')
 

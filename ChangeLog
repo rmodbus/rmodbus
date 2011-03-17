@@ -93,4 +93,5 @@
 
 2011-02-10 Timin Aleksey <atimin@gmail.com>
    * lib/rmodbus/* : Deleted deprecated methods.
-
+2011-03-09 Timin Aleksey <atimin@gmail.com>
+   * Rakefile : Use RSpec 2
