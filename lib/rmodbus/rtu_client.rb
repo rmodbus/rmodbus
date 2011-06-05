@@ -1,6 +1,6 @@
 # RModBus - free implementation of ModBus protocol in Ruby.
 #
-# Copyright (C) 2009  Timin Aleksey
+# Copyright (C) 2009-2011  Timin Aleksey
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,11 +12,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 module ModBus
-  
   class RTUClient < Client
-
     include RTU 
-    attr_reader :port, :baud, :slave, :data_bits, :stop_bits, :parity, :read_timeout
+    attr_reader :port, :baud, :data_bits, :stop_bits, :parity, :read_timeout
 
     # Connect with RTU server
     #
@@ -39,8 +37,8 @@ module ModBus
     #   put cl.read_holding_registers(0, 10)
     #
     # end
-    def self.connect(port, baud=9600, slaveaddr=1, options = {})
-      cl = RTUClient.new(port, baud, slaveaddr, options) 
+    def self.connect(port, baud=9600, options = {})
+      cl = RTUClient.new(port, baud, options) 
       yield cl
       cl.close
     end
@@ -74,8 +72,8 @@ module ModBus
     # :parity => NONE, EVEN or ODD
     #
     # :read_timeout => default 5 ms
-    def initialize(port, baud=9600, slaveaddr=1, options = {})
-      @port, @baud, @slave = port, baud, slaveaddr
+    def initialize(port, baud=9600, options = {})
+      @port, @baud = port, baud
       
       @data_bits, @stop_bits, @parity, @read_timeout = 8, 1, SerialPort::NONE, 5
 
@@ -89,37 +87,16 @@ module ModBus
       super()
     end
 
+    def with_slave(uid)
+      RTUSlave.new(uid, @sp)
+    end
+
     def close
       @sp.close unless @sp.closed?
     end
 
     def closed?
       @sp.closed?
-    end
-
-    protected
-    def send_pdu(pdu)
-      msg = @slave.chr + pdu 
-      msg << crc16(msg).to_word
-      @sp.write msg
-
-      log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
-    end
-
-    def read_pdu
-	  msg = read_rtu_response(@sp)
-
-      log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
-
-      if msg.getbyte(0) == @slave
-        return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
-        log "Ignore package: don't match CRC"
-      else 
-        log "Ignore package: don't match slave ID"
-      end
-      loop do
-        #waite timeout  
-      end
     end
   end
 end

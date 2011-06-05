@@ -1,6 +1,6 @@
 # RModBus - free implementation of ModBus protocol on Ruby.
 #
-# Copyright (C) 2008  Timin Aleksey
+# Copyright (C) 2008-2011  Timin Aleksey
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,13 +15,10 @@ require 'socket'
 require 'timeout'
 
 module ModBus
-
   # Implementation clients(master) ModBusTCP
   class TCPClient < Client
-
     include Timeout
-
-    attr_reader :ipaddr, :port, :slave, :transaction
+    attr_reader :ipaddr, :port
     
     # Connect with ModBus server
     #
@@ -29,15 +26,8 @@ module ModBus
     #
     # port - port TCP connections
     #
-    # slaveaddr - slave ID of the server
-    #
-    # TCPClient.connect('127.0.0.1') do |cl|
-    #
-    #   put cl.read_holding_registers(0, 10)
-    #
-    # end
-    def self.connect(ipaddr, port = 502, slaveaddr = 1)
-      cl = TCPClient.new(ipaddr, port, slaveaddr) 
+    def self.connect(ipaddr, port = 502)
+      cl = TCPClient.new(ipaddr, port) 
       yield cl
       cl.close
     end
@@ -47,9 +37,7 @@ module ModBus
     # ipaddr - ip of the server
     #
     # port - port TCP connections
-    #
-    # slaveaddr - slave ID of the server
-    def initialize(ipaddr, port = 502, slaveaddr = 1)
+    def initialize(ipaddr, port = 502)
       @transaction = 0
       @ipaddr, @port = ipaddr, port
       tried = 0
@@ -60,8 +48,11 @@ module ModBus
       rescue ModBusTimeout => err
         raise ModBusTimeout.new, 'Timed out attempting to create connection'
       end
-      @slave = slaveaddr
       super()
+    end
+
+    def with_slave(uid)
+      TCPSlave.new(uid, @sock)
     end
 
     # Close TCP connections
@@ -73,32 +64,5 @@ module ModBus
     def closed?
       @sock.closed?
     end
-
-    private
-    def send_pdu(pdu)   
-      @transaction = 0 if @transaction.next > 65535
-      @transaction += 1 
-      msg = @transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @slave.chr + pdu
-      @sock.write msg
-      
-      log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
-    end
-
-    def read_pdu    
-      header = @sock.read(7)            
-      if header
-        tin = header[0,2].unpack('n')[0]
-        raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @transaction
-        len = header[4,2].unpack('n')[0]       
-        msg = @sock.read(len-1)               
-
-        log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg)
-        msg
-      else
-        raise Errors::ModBusException.new("Server did not respond")
-      end
-    end
-
   end
-
 end

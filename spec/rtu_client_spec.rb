@@ -14,9 +14,9 @@ describe RTUClient do
     @sp.stub!(:read_timeout=)
     @sp.stub!(:read)
 
-    @mb_client = RTUClient.new("/dev/port1", 9600, 1, 
-      :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)
-    @mb_client.read_retries = 0
+    @cl = RTUClient.new("/dev/port1", 9600, :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)
+    @slave = @cl.with_slave(1)
+    @slave.read_retries = 0
   end
 
   it "should ignore frame with other UID" do
@@ -24,7 +24,7 @@ describe RTUClient do
     @sp.should_receive(:write).with("\1#{request}\xA6\x31")
     @sp.should_receive(:read).with(2).and_return("\x2\x10")
     @sp.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
-    lambda {@mb_client.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
+    lambda {@slave.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
   end
 
   it "should ignored frame with incorrect CRC" do
@@ -32,7 +32,7 @@ describe RTUClient do
     @sp.should_receive(:write).with("\1#{request}\xA6\x31")
     @sp.should_receive(:read).with(2).and_return("\x2\x10")
     @sp.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
-    lambda {@mb_client.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
+    lambda {@slave.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
   end
   
   it "should return value of registers"do
@@ -41,18 +41,17 @@ describe RTUClient do
     @sp.should_receive(:read).with(2).and_return("\x1\x3")
     @sp.should_receive(:read).with(1).and_return("\x2")
     @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
-    @mb_client.query(request).should == "\xff\xff"
+    @slave.query(request).should == "\xff\xff"
   end
 
- it 'should sugar connect method' do
-    port, baud, slave = "/dev/port1", 4800, 3
+  it 'should sugar connect method' do
+    port, baud = "/dev/port1", 4800
     SerialPort.should_receive(:new).with(port, baud, 8, 1, SerialPort::NONE).and_return(@sp)    
     @sp.should_receive(:closed?).and_return(false)
     @sp.should_receive(:close)
-    RTUClient.connect(port, baud, slave) do |cl|
+    RTUClient.connect(port, baud) do |cl|
       cl.port.should == port
       cl.baud.should == baud
-      cl.slave.should == slave
       cl.data_bits.should == 8
       cl.stop_bits.should == 1
       cl.parity.should == SerialPort::NONE
@@ -61,15 +60,15 @@ describe RTUClient do
 
   it 'should have closed? method' do
     @sp.should_receive(:closed?).and_return(false)
-    @mb_client.closed?.should == false
+    @cl.closed?.should == false
 
     @sp.should_receive(:closed?).and_return(false)
     @sp.should_receive(:close)
 
-    @mb_client.close
+    @cl.close
 
     @sp.should_receive(:closed?).and_return(true)
-    @mb_client.closed?.should == true
+    @cl.closed?.should == true
   end
 
 end
