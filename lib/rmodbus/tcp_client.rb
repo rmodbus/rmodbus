@@ -51,8 +51,13 @@ module ModBus
       super()
     end
 
-    def with_slave(uid)
-      TCPSlave.new(uid, @sock)
+    def with_slave(uid, &blk)
+      slave = TCPSlave.new(uid, @sock)
+      if blk
+        yield slave 
+      else
+        slave
+      end
     end
 
     # Close TCP connections

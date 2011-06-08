@@ -49,8 +49,13 @@ module ModBus
 			super()
 		end
 
-    def with_slave(uid)
-      RTUViaTCPSlave.new(uid, @sock)
+    def with_slave(uid, &blk)
+      slave = RTUViaTCPSlave.new(uid, @sock)
+      if blk
+        yield slave 
+      else
+        slave
+      end
     end
 
 		# Close TCP connections

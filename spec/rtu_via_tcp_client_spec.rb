@@ -1,5 +1,3 @@
-require 'rmodbus'
-
 include ModBus
 
 describe RTUViaTCPClient do
@@ -62,5 +60,10 @@ describe RTUViaTCPClient do
     @sock.should_receive(:closed?).and_return(true)
     @cl.closed?.should == true
   end
-end
 
+  it 'should give slave object in block' do
+    @cl.with_slave(1) do |slave|
+      slave.uid = 1
+    end
+  end
+end

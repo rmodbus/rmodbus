@@ -1,16 +1,15 @@
-require 'rmodbus'
-
 include ModBus
 
 describe TCPClient  do
   before(:each) do
+    @uid = 1
     @sock = mock("Socket")
     @adu = "\000\001\000\000\000\001\001"
 
     TCPSocket.should_receive(:new).with('127.0.0.1', 1502).and_return(@sock)
     @sock.stub!(:read).with(0).and_return('')
 
-    @slave = TCPClient.new('127.0.0.1', 1502).with_slave(1)
+    @slave = TCPClient.new('127.0.0.1', 1502).with_slave(@uid)
   end
 
   it 'should log rec\send bytes' do
@@ -28,14 +27,12 @@ describe TCPClient  do
     @slave.query(request)
   end
 
-
   def mock_query(request, response)
-    @adu = @slave.transaction.next.to_word + "\x0\x0\x0\x9" + UID.chr + request
-    @sock.should_receive(:write).with(@adu[0,4] + "\0\6" + UID.chr + request)
+    @adu = @slave.transaction.next.to_word + "\x0\x0\x0\x9" + @uid.chr + request
+    @sock.should_receive(:write).with(@adu[0,4] + "\0\6" + @uid.chr + request)
     @sock.should_receive(:read).with(7).and_return(@adu[0,7])
     @sock.should_receive(:read).with(8).and_return(response)
   end
-
 end
 
 describe RTUClient do

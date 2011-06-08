@@ -22,8 +22,6 @@ module ModBus
     #
     # baud - rate sp of connections with RTU server
     #
-    # slaveaddr - slave ID of the RTU server
-    #
     # Options:
     #
     # :data_bits => from 5 to 8
@@ -32,11 +30,6 @@ module ModBus
     #
     # :parity => NONE, EVEN or ODD
     #
-    # RTUClient.connect('/dev/port1') do |cl|
-    #
-    #   put cl.read_holding_registers(0, 10)
-    #
-    # end
     def self.connect(port, baud=9600, options = {})
       cl = RTUClient.new(port, baud, options) 
       yield cl
@@ -54,14 +47,6 @@ module ModBus
     # stop_bits - 1 or 2
     #
     # parity - NONE, EVEN or ODD
-    #
-    # slaveaddr - slave ID of the RTU server    # Connect with RTU server
-    #
-    # port - serial port of connections with RTU server
-    #
-    # baud - rate sp of connections with RTU server
-    #
-    # slaveaddr - slave ID of the RTU server
     #
     # Options:
     #
@@ -87,8 +72,13 @@ module ModBus
       super()
     end
 
-    def with_slave(uid)
-      RTUSlave.new(uid, @sp)
+    def with_slave(uid, &blk)
+      slave = RTUSlave.new(uid, @sp)
+      if blk
+        yield slave 
+      else
+        slave
+      end
     end
 
     def close

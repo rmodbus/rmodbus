@@ -14,8 +14,13 @@
 
 module ModBus
   class Client
-    def with_slave(uid)
-      Slave.new(uid)
+    def with_slave(uid, &blk)
+      slave = Slave.new(uid)
+      if blk
+        yield slave 
+      else
+        slave
+      end
     end
   end
 end

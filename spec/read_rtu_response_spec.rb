@@ -86,7 +86,6 @@ describe "#read_rtu_response" do
     }
   end
 
-
   def make_resp(msg)
     "\x1" + msg + "\x2\x2" # slave + msg + mock_crc
   end

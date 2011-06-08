@@ -1,13 +1,6 @@
-begin
-  require 'rubygems'
-rescue
-end
-require 'rmodbus'
-
 include ModBus
 
 describe RTUClient do
-    
   before do 
     @sp = mock('Serial port')
     SerialPort.should_receive(:new).with("/dev/port1", 9600, 8, 1, 0).and_return(@sp)    
@@ -71,5 +64,10 @@ describe RTUClient do
     @cl.closed?.should == true
   end
 
+  it 'should give slave object in block' do
+    @cl.with_slave(1) do |slave|
+      slave.uid = 1
+    end
+  end
 end
 
