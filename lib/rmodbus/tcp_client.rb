@@ -26,8 +26,8 @@ module ModBus
     #
     # port - port TCP connections
     #
-    def self.connect(ipaddr, port = 502)
-      cl = TCPClient.new(ipaddr, port) 
+    def self.connect(ipaddr, port = 502, opts = {})
+      cl = TCPClient.new(ipaddr, port, opts) 
       yield cl
       cl.close
     end
@@ -37,12 +37,14 @@ module ModBus
     # ipaddr - ip of the server
     #
     # port - port TCP connections
-    def initialize(ipaddr, port = 502)
+    def initialize(ipaddr, port = 502, opts = {})
       @transaction = 0
       @ipaddr, @port = ipaddr, port
-      tried = 0
+      
+      opts[:connect_timeout] ||= 1
+      
       begin
-        timeout(1, ModBusTimeout) do
+        timeout(opts[:connect_timeout], ModBusTimeout) do
           @sock = TCPSocket.new(@ipaddr, @port)
         end
       rescue ModBusTimeout => err

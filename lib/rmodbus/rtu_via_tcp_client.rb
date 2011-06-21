@@ -24,8 +24,8 @@ module ModBus
 		# ipaddr - ip of the server
 		#
 		# port - port TCP connections
-		def self.connect(ipaddr, port = 10002)
-			cl = RTUViaTCPClient.new(ipaddr, port) 
+		def self.connect(ipaddr, port = 10002, opts = {})
+			cl = RTUViaTCPClient.new(ipaddr, port, opts) 
 			yield cl
 			cl.close
 		end
@@ -35,11 +35,13 @@ module ModBus
 		# ipaddr - ip of the server
 		#
 		# port - port TCP connections
-		def initialize(ipaddr, port = 10002)
-			@ipaddr, @port = ipaddr, port
-			tried = 0
+		def initialize(ipaddr, port = 10002, opts = {})
+			@ipaddr, @port = ipaddr, port		
+      
+      opts[:connect_timeout] ||= 1
+        
 			begin
-				timeout(1, ModBusTimeout) do
+				timeout(opts[:connect_timeout], ModBusTimeout) do
 					@sock = TCPSocket.new(@ipaddr, @port)
 				end
 			rescue ModBusTimeout => err
