@@ -14,6 +14,8 @@
 
 module ModBus
   class Client
+    include Errors
+        
     def with_slave(uid, &blk)
       slave = Slave.new(uid)
       if blk
