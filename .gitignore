@@ -1,2 +1,4 @@
 *.sw?
 *.gem
+.redcar/
+coverage/
