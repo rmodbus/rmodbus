@@ -3,9 +3,10 @@
 *RModBus* - free implementation of protocol ModBus.
 
 == Features
-  * Support Ruby 1.8, Ruby 1.9
-  * Support TCP, RTU, RTU over TCP protocols
-  * Support client(master) and server(slave)
+  * Ruby 1.8, Ruby 1.9
+  * TCP, RTU, RTU over TCP protocols
+  * Client(master) and server(slave)
+  * 16 and 32 -bit registers (with float)
   * Support functions:
     * 01 (0x01) Read Coils
     * 02 (0x02) Read Discrete Inputs
@@ -21,40 +22,28 @@
 
 Download and install RModBus with the following
 
-  $ gem install --remote rmodbus
+  $ gem install rmodbus
 
 == Example
 
   require 'rmodbus'
 
-  ModBus::TCPClient.new('127.0.0.1', 8502, 1) do |cl|
+  ModBus::TCPClient.new('127.0.0.1', 8502) do |cl|
+    cl.with_slave(1) do |slave|
+      # Read a single holding register at address 16
+      slave.holding_registers[16]
 
-    puts cl.read_holding_registers(0,4)
+      # Write a single holding register at address 16
+      slave.holding_registers[16] = 123
 
-    cl.write_multiple_registers(0, [4,4,4])
+      # Read holding registers 16 through 20
+      slave.holding_registers[16..20]
 
+      # Write holding registers 16 through 20 with some values
+      slave.holding_registers[16..20] = [1, 2, 3, 4, 5]
+    end
   end
 
-== Hash Interface
-
-The hash interface takes a Fixnum or a range and assigns either a single value or the array of values.
-Note that when writing multiple values, the size of the range must match the size of the argument array
-
-  require 'rmodbus'
-
-  cl = ModBus::TCPClient.new('127.0.0.1', 8502, 1)
-
-  # Read a single holding register at address 16
-  cl.holding_registers[16]
-
-  # Write a single holding register at address 16
-  cl.holding_registers[16] = 123
-
-  # Read holding registers 16 through 20
-  cl.holding_registers[16..20]
-
-  # Write holding registers 16 through 20 with some values
-  cl.holding_registers[16..20] = [1, 2, 3, 4, 5]
 
 == Conversion to/from 32bit registers
 
@@ -63,7 +52,7 @@ RModbus provides some helper functions to go back and forth between these two th
 The built-in examples assume registers in a particular order but it's trivial to change.
 
   # Reading values in multiple registers (you can read more than 2 and convert them all so long as they are in multiples of 2)
-  res = cl.holding_registers[0..1]
+  res = slave.holding_registers[0..1]
   res.inspect => [20342, 17344]
   res.to_32i => [1136676726]
   res.to_32f => [384.620788574219]
