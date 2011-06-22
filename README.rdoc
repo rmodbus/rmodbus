@@ -3,7 +3,7 @@
 *RModBus* - free implementation of protocol ModBus.
 
 == Features
-  * Ruby 1.8, Ruby 1.9
+  * Ruby 1.8, Ruby 1.9, JRuby (without serial ModBus RTU)
   * TCP, RTU, RTU over TCP protocols
   * Client(master) and server(slave)
   * 16 and 32 -bit registers (with float)

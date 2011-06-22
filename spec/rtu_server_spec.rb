@@ -1,7 +1,6 @@
-require 'rmodbus'
-
 include ModBus
 
+unless PLATFORM == "java"
 describe RTUServer do
   before do
     @sp = mock "SerialPort"
@@ -27,5 +26,4 @@ describe RTUServer do
     @server.stop_bits.should == 2
     @server.parity.should == SerialPort::NONE
   end
-
-end
+  en

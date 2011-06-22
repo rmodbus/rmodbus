@@ -1,5 +1,5 @@
 # RModBus - free implementation of ModBus protocol on Ruby.
-# Copyright (C) 2008  Timin Aleksey
+# Copyright (C) 2008 - 2011 Timin Aleksey
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -19,9 +19,14 @@ require 'rmodbus/server'
 require 'rmodbus/tcp_slave'
 require 'rmodbus/tcp_client'
 require 'rmodbus/tcp_server'
-require 'rmodbus/rtu_slave'
-require 'rmodbus/rtu_client'
-require 'rmodbus/rtu_server'
+
+# jruby not support serial RTU protocol yet
+unless PLATFORM == "java"
+  require 'rmodbus/rtu_slave'
+  require 'rmodbus/rtu_client'
+  require 'rmodbus/rtu_server'
+end
+
 require 'rmodbus/rtu_via_tcp_slave'
 require 'rmodbus/rtu_via_tcp_client'
 require 'rmodbus/rtu_via_tcp_server'

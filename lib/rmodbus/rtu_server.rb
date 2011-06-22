@@ -1,6 +1,6 @@
 # RModBus - free implementation of ModBus protocol in Ruby.
 #
-# Copyright (C) 2010  Timin Aleksey
+# Copyright (C) 2010-2011 Timin Aleksey
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+require 'serialport'
 
 module ModBus
- 
   class RTUServer
     include Common 
     include Server 

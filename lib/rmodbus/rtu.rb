@@ -1,6 +1,6 @@
 # RModBus - free implementation of ModBus protocol in Ruby.
 #
-# Copyright (C) 2010  Timin Aleksey
+# Copyright (C) 2010 - 2011  Timin Aleksey
 # Copyright (C) 2010  Kelley Reynolds
 #
 # This program is free software: you can redistribute it and/or modify
@@ -13,17 +13,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-begin
-  require 'rubygems'
-rescue
-end
-
-require 'serialport'
-
-
 module ModBus
   module RTU 
-
     private
     # We have to read specific amounts of numbers of bytes from the network depending on the function code and content
     def read_rtu_response(io)
