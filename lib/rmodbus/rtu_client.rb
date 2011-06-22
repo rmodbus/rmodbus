@@ -18,26 +18,24 @@ module ModBus
     include RTU 
     attr_reader :port, :baud, :data_bits, :stop_bits, :parity, :read_timeout
 
-    # Connect with RTU server
-    #
-    # port - serial port of connections with RTU server
-    #
-    # baud - rate sp of connections with RTU server
-    #
-    # Options:
-    #
-    # :data_bits => from 5 to 8
-    #
-    # :stop_bits => 1 or 2
-    #
-    # :parity => NONE, EVEN or ODD
-    #
-    def self.connect(port, baud=9600, options = {})
-      cl = RTUClient.new(port, baud, options) 
-      yield cl
-      cl.close
+    def with_slave(uid, &blk)
+      slave = RTUSlave.new(uid, @sp)
+      if blk
+        yield slave 
+      else
+        slave
+      end
     end
 
+    def close
+      @sp.close unless @sp.closed?
+    end
+
+    def closed?
+      @sp.closed?
+    end
+    
+    protected
     # Connect with RTU server
     #
     # port - serial port of connections with RTU server
@@ -59,7 +57,7 @@ module ModBus
     # :parity => NONE, EVEN or ODD
     #
     # :read_timeout => default 5 ms
-    def initialize(port, baud=9600, options = {})
+    def open_connection(port, baud=9600, options = {})
       @port, @baud = port, baud
       
       @data_bits, @stop_bits, @parity, @read_timeout = 8, 1, SerialPort::NONE, 5
@@ -72,23 +70,6 @@ module ModBus
       @sp = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
       @sp.read_timeout = @read_timeout
       super()
-    end
-
-    def with_slave(uid, &blk)
-      slave = RTUSlave.new(uid, @sp)
-      if blk
-        yield slave 
-      else
-        slave
-      end
-    end
-
-    def close
-      @sp.close unless @sp.closed?
-    end
-
-    def closed?
-      @sp.closed?
     end
   end
 end

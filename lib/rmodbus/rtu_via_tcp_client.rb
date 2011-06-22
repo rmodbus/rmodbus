@@ -19,38 +19,6 @@ module ModBus
 		include RTU 
 		attr_reader :ipaddr, :port
 
-		# Connect with Serial TCP Gateway (eg barionet-50)
-		#
-		# ipaddr - ip of the server
-		#
-		# port - port TCP connections
-		def self.connect(ipaddr, port = 10002, opts = {})
-			cl = RTUViaTCPClient.new(ipaddr, port, opts) 
-			yield cl
-			cl.close
-		end
-
-		# Connect with a ModBus server
-		#
-		# ipaddr - ip of the server
-		#
-		# port - port TCP connections
-		def initialize(ipaddr, port = 10002, opts = {})
-			@ipaddr, @port = ipaddr, port		
-      
-      opts[:connect_timeout] ||= 1
-        
-			begin
-				timeout(opts[:connect_timeout], ModBusTimeout) do
-					@sock = TCPSocket.new(@ipaddr, @port)
-				end
-			rescue ModBusTimeout => err
-				raise ModBusTimeout.new, 'Timed out attempting to create connection'
-			end
-			@debug = false
-			super()
-		end
-
     def with_slave(uid, &blk)
       slave = RTUViaTCPSlave.new(uid, @sock)
       if blk
@@ -68,6 +36,28 @@ module ModBus
 		# Check TCP connections
 		def closed?
 			@sock.closed?
+		end
+    
+    protected
+		# Connect with a ModBus server
+		#
+		# ipaddr - ip of the server
+		#
+		# port - port TCP connections
+		def open_connection(ipaddr, port = 10002, opts = {})
+			@ipaddr, @port = ipaddr, port		
+      
+      opts[:connect_timeout] ||= 1
+        
+			begin
+				timeout(opts[:connect_timeout], ModBusTimeout) do
+					@sock = TCPSocket.new(@ipaddr, @port)
+				end
+			rescue ModBusTimeout => err
+				raise ModBusTimeout.new, 'Timed out attempting to create connection'
+			end
+			@debug = false
+			super()
 		end
 	end
 end

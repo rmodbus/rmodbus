@@ -16,6 +16,21 @@ module ModBus
   class Client
     include Errors
         
+    def initialize(*args, &blk)
+      open_connection(*args)
+      
+      if blk
+        yield self
+        close
+      else
+        self
+      end
+    end
+    
+    class << self
+      alias_method :connect, :new
+    end
+    
     def with_slave(uid, &blk)
       slave = Slave.new(uid)
       if blk
@@ -23,6 +38,16 @@ module ModBus
       else
         slave
       end
+    end
+    
+    def closed? 
+    end
+    
+    def close 
+    end
+    
+    protected
+    def open_connection(*args)    
     end
   end
 end
