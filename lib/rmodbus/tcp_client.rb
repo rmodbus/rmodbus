@@ -20,15 +20,6 @@ module ModBus
     include Timeout
     attr_reader :ipaddr, :port
     
-    def with_slave(uid, &blk)
-      slave = TCPSlave.new(uid, @sock)
-      if blk
-        yield slave 
-      else
-        slave
-      end
-    end
-
     # Close TCP connections
     def close
       @sock.close unless @sock.closed?
@@ -53,6 +44,10 @@ module ModBus
       rescue ModBusTimeout => err
         raise ModBusTimeout.new, 'Timed out attempting to create connection'
       end
+    end
+    
+    def get_slave(uid)
+      TCPSlave.new(uid, @sock)
     end
   end
 end

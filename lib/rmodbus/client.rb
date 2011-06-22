@@ -32,7 +32,7 @@ module ModBus
     end
     
     def with_slave(uid, &blk)
-      slave = Slave.new(uid)
+      slave = get_slave(uid)
       if blk
         yield slave 
       else
@@ -48,6 +48,10 @@ module ModBus
     
     protected
     def open_connection(*args)    
+    end
+    
+    def get_slave(uid)
+      Slave.new(uid)
     end
   end
 end

@@ -18,15 +18,6 @@ module ModBus
     include RTU 
     attr_reader :port, :baud, :data_bits, :stop_bits, :parity, :read_timeout
 
-    def with_slave(uid, &blk)
-      slave = RTUSlave.new(uid, @sp)
-      if blk
-        yield slave 
-      else
-        slave
-      end
-    end
-
     def close
       @sp.close unless @sp.closed?
     end
@@ -70,6 +61,10 @@ module ModBus
       @sp = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
       @sp.read_timeout = @read_timeout
       super()
+    end
+    
+    def get_slave(uid)
+      RTUSlave.new(uid, @sp)
     end
   end
 end

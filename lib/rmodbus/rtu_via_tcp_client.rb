@@ -19,15 +19,6 @@ module ModBus
 		include RTU 
 		attr_reader :ipaddr, :port
 
-    def with_slave(uid, &blk)
-      slave = RTUViaTCPSlave.new(uid, @sock)
-      if blk
-        yield slave 
-      else
-        slave
-      end
-    end
-
 		# Close TCP connections
 		def close
 			@sock.close unless @sock.closed?
@@ -59,5 +50,9 @@ module ModBus
 			@debug = false
 			super()
 		end
+    
+    def get_slave(uid)
+      RTUViaTCPSlave.new(uid, @sock)
+    end
 	end
 end
