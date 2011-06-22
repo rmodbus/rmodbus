@@ -1,7 +1,4 @@
-require 'lib/rmodbus'
-
 describe TCPServer do
-  
   before do
     @server = ModBus::TCPServer.new(8502,1)
     @server.coils = [1,0,1,1]

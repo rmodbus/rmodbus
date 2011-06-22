@@ -1,5 +1,3 @@
-include ModBus
-
 describe TCPClient do
   describe "method 'query'" do    
     before(:each) do
@@ -9,7 +7,7 @@ describe TCPClient do
   
       TCPSocket.should_receive(:new).with('127.0.0.1', 1502).and_return(@sock)
       @sock.stub!(:read).with(0).and_return('')
-      @cl = TCPClient.new('127.0.0.1', 1502)
+      @cl = ModBus::TCPClient.new('127.0.0.1', 1502)
       @slave = @cl.with_slave(@uid)
     end
     
@@ -75,7 +73,7 @@ describe TCPClient do
   
   it "should tune connection timeout" do
     timeout(0.5) do
-      lambda { TCPClient.new('81.123.231.11', 1999, :connect_timeout => 0.1) }.should raise_error(ModBusTimeout)
+      lambda { ModBus::TCPClient.new('81.123.231.11', 1999, :connect_timeout => 0.1) }.should raise_error(ModBusTimeout)
     end
   end
 end
