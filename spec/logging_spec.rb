@@ -36,7 +36,7 @@ describe TCPClient  do
   end
 end
 
-unless PLATFORM == "java"
+unless RUBY_PLATFORM == "java"
   describe RTUClient do
     before do 
       @sp = mock('Serial port')
