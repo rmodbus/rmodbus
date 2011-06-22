@@ -5,7 +5,7 @@ source "http://rubygems.org"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
-gem 'serialport', :platforms => [:ruby, :mswin, :rbx]
+gem 'serialport', :platforms => [:ruby, :mswin]
 
 group :development do
   gem "rspec", "~> 2.3.0"
