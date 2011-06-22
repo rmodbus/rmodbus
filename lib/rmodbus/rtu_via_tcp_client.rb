@@ -19,16 +19,6 @@ module ModBus
 		include RTU 
 		attr_reader :ipaddr, :port
 
-		# Close TCP connections
-		def close
-			@sock.close unless @sock.closed?
-		end
-
-		# Check TCP connections
-		def closed?
-			@sock.closed?
-		end
-    
     protected
 		# Connect with a ModBus server
 		#
@@ -36,23 +26,24 @@ module ModBus
 		#
 		# port - port TCP connections
 		def open_connection(ipaddr, port = 10002, opts = {})
-			@ipaddr, @port = ipaddr, port		
+			@ipaddr, @port = ipaddr, port	
+      @debug = false
+      opts[:connect_timeout] ||= 1        
+      io = nil
       
-      opts[:connect_timeout] ||= 1
-        
 			begin
 				timeout(opts[:connect_timeout], ModBusTimeout) do
-					@sock = TCPSocket.new(@ipaddr, @port)
+					io = TCPSocket.new(@ipaddr, @port)
 				end
 			rescue ModBusTimeout => err
 				raise ModBusTimeout.new, 'Timed out attempting to create connection'
 			end
-			@debug = false
-			super()
+					
+      io
 		end
     
-    def get_slave(uid)
-      RTUViaTCPSlave.new(uid, @sock)
+    def get_slave(uid, io)
+      RTUViaTCPSlave.new(uid, io)
     end
 	end
 end

@@ -16,10 +16,9 @@ module ModBus
     attr_reader :transaction
     
     # uid - uid ID of the server
-    def initialize(uid, sock)
-      @sock = sock
+    def initialize(uid, io)    
       @transaction = 0
-      super(uid)
+      super(uid, io)
     end
 
     private
@@ -27,18 +26,18 @@ module ModBus
       @transaction = 0 if @transaction.next > 65535
       @transaction += 1 
       msg = @transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
-      @sock.write msg
+      @io.write msg
       
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
     end
 
     def read_pdu    
-      header = @sock.read(7)            
+      header = @io.read(7)            
       if header
         tin = header[0,2].unpack('n')[0]
         raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @transaction
         len = header[4,2].unpack('n')[0]       
-        msg = @sock.read(len-1)               
+        msg = @io.read(len-1)               
 
         log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg)
         msg

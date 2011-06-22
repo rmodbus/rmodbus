@@ -15,22 +15,17 @@ module ModBus
   class RTUSlave < Slave 
     include RTU 
 
-    def initialize(uid, sp)
-      @sp = sp
-      super(uid)
-    end
-
     protected
     def send_pdu(pdu)
       msg = @uid.chr + pdu 
       msg << crc16(msg).to_word
-      @sp.write msg
+      @io.write msg
 
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
     end
 
     def read_pdu
-	  msg = read_rtu_response(@sp)
+	  msg = read_rtu_response(@io)
 
       log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
 

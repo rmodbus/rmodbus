@@ -18,14 +18,6 @@ module ModBus
     include RTU 
     attr_reader :port, :baud, :data_bits, :stop_bits, :parity, :read_timeout
 
-    def close
-      @sp.close unless @sp.closed?
-    end
-
-    def closed?
-      @sp.closed?
-    end
-    
     protected
     # Connect with RTU server
     #
@@ -58,13 +50,14 @@ module ModBus
       @parity = options[:parity] unless options[:parity].nil?
       @read_timeout = options[:read_timeout] unless options[:read_timeout].nil?
 
-      @sp = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
-      @sp.read_timeout = @read_timeout
-      super()
+      io = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
+      io.read_timeout = @read_timeout
+   
+      io
     end
     
-    def get_slave(uid)
-      RTUSlave.new(uid, @sp)
+    def get_slave(uid, io)
+      RTUSlave.new(uid, io)
     end
   end
 end

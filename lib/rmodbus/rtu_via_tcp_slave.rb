@@ -13,26 +13,20 @@
 # GNU General Public License for more details.
 module ModBus
   class RTUViaTCPSlave < Slave 
-		include RTU 
-
-    # uid - uid ID of the server
-    def initialize(uid, sock)
-      @sock = sock
-      super(uid)
-    end
+		include RTU   
 
 		protected
 		def send_pdu(pdu)
 			msg = @uid.chr + pdu 
 			msg << crc16(msg).to_word
-			@sock.write msg
+			@io.write msg
 
 			log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
 		end
 
 		def read_pdu
 			# Read the response appropriately
-			msg = read_rtu_response(@sock)
+			msg = read_rtu_response(@io)
 
 			log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
 			if msg.getbyte(0) == @uid

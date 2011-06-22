@@ -28,10 +28,11 @@ module ModBus
           6 => SlaveDeviceBus.new("The server is engaged in processing a long duration program command"),
           8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
     }
-    def initialize(uid)
-	  @uid = uid
+    def initialize(uid, io)
+	    @uid = uid
       @read_retries = 10
       @read_retry_timeout = 1
+      @io = io
     end
 
     # Returns a ModBus::ReadWriteProxy hash interface for coils

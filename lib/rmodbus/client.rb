@@ -17,8 +17,7 @@ module ModBus
     include Errors
         
     def initialize(*args, &blk)
-      open_connection(*args)
-      
+      @io = open_connection(*args)
       if blk
         yield self
         close
@@ -32,7 +31,7 @@ module ModBus
     end
     
     def with_slave(uid, &blk)
-      slave = get_slave(uid)
+      slave = get_slave(uid, @io)
       if blk
         yield slave 
       else
@@ -40,18 +39,31 @@ module ModBus
       end
     end
     
+    # Check connections
     def closed? 
+      @io.closed?
     end
     
-    def close 
+    # Close connections
+    def close
+      @io.close unless @io.closed?
     end
     
     protected
-    def open_connection(*args)    
+    def open_connection(*args)  
+      #Stub conn object
+      @io = Object.new
+      def @io.close
+      end
+      def @io.closed?
+        true
+      end
+      
+      @io
     end
     
-    def get_slave(uid)
-      Slave.new(uid)
+    def get_slave(uid,io)
+      Slave.new(uid, io)
     end
   end
 end

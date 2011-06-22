@@ -19,17 +19,7 @@ module ModBus
   class TCPClient < Client
     include Timeout
     attr_reader :ipaddr, :port
-    
-    # Close TCP connections
-    def close
-      @sock.close unless @sock.closed?
-    end
-
-    # Check TCP connections
-    def closed?
-      @sock.closed?
-    end
-    
+        
     protected
     def open_connection(ipaddr, port = 502, opts = {})
       @transaction = 0
@@ -37,17 +27,20 @@ module ModBus
       
       opts[:connect_timeout] ||= 1
       
+      io = nil
       begin
         timeout(opts[:connect_timeout], ModBusTimeout) do
-          @sock = TCPSocket.new(@ipaddr, @port)
+          io = TCPSocket.new(@ipaddr, @port)
         end
       rescue ModBusTimeout => err
         raise ModBusTimeout.new, 'Timed out attempting to create connection'
       end
+      
+      io
     end
     
-    def get_slave(uid)
-      TCPSlave.new(uid, @sock)
+    def get_slave(uid, io)
+      TCPSlave.new(uid, io)
     end
   end
 end
