@@ -16,6 +16,24 @@
 module ModBus
   module RTU 
     private
+    
+    unless RUBY_PLATFORM == "java"
+      def open_serial_port(port, baud, opts = {})
+        @port, @baud = port, baud
+        
+        @data_bits, @stop_bits, @parity, @read_timeout = 8, 1, SerialPort::NONE, 5
+  
+        @data_bits = opts[:data_bits] unless opts[:data_bits].nil?
+        @stop_bits = opts[:stop_bits] unless opts[:stop_bits].nil?
+        @parity = opts[:parity] unless opts[:parity].nil?
+        @read_timeout = options[:read_timeout] unless opts[:read_timeout].nil?
+  
+        io = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
+        io.read_timeout = @read_timeout
+        io
+      end
+    end
+    
     # We have to read specific amounts of numbers of bytes from the network depending on the function code and content
     def read_rtu_response(io)
 	    # Read the slave_id and function code

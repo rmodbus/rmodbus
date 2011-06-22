@@ -21,19 +21,9 @@ module ModBus
 
     attr_reader :port, :baud, :data_bits, :stop_bits, :parity
 
-    def initialize(port, baud=9600, uid=1, options = {})
+    def initialize(port, baud=9600, uid=1, opts = {})
       Thread.abort_on_exception = true 
-
-      @port, @baud = port, baud
-      @data_bits, @stop_bits, @parity = 8, 1, SerialPort::NONE
-
-      @data_bits = options[:data_bits] unless options[:data_bits].nil?
-      @stop_bits = options[:stop_bits] unless options[:stop_bits].nil?
-      @parity = options[:parity] unless options[:parity].nil?
-
-      @sp = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
-      @sp.read_timeout = 5
-
+      @sp = open_serial_port(port, baud, opts)
       @uid = uid
     end
 

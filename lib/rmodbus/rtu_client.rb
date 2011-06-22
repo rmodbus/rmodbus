@@ -40,20 +40,8 @@ module ModBus
     # :parity => NONE, EVEN or ODD
     #
     # :read_timeout => default 5 ms
-    def open_connection(port, baud=9600, options = {})
-      @port, @baud = port, baud
-      
-      @data_bits, @stop_bits, @parity, @read_timeout = 8, 1, SerialPort::NONE, 5
-
-      @data_bits = options[:data_bits] unless options[:data_bits].nil?
-      @stop_bits = options[:stop_bits] unless options[:stop_bits].nil?
-      @parity = options[:parity] unless options[:parity].nil?
-      @read_timeout = options[:read_timeout] unless options[:read_timeout].nil?
-
-      io = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
-      io.read_timeout = @read_timeout
-   
-      io
+    def open_connection(port, baud=9600, opts = {})
+      open_serial_port(port, baud, opts)
     end
     
     def get_slave(uid, io)
