@@ -12,12 +12,10 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-require 'timeout'
-
 module ModBus
   class RTUViaTCPClient < Client
 		include RTU 
-		attr_reader :ipaddr, :port
+		include TCP
 
     protected
 		# Connect with a ModBus server
@@ -25,21 +23,8 @@ module ModBus
 		# ipaddr - ip of the server
 		#
 		# port - port TCP connections
-		def open_connection(ipaddr, port = 10002, opts = {})
-			@ipaddr, @port = ipaddr, port	
-      @debug = false
-      opts[:connect_timeout] ||= 1        
-      io = nil
-      
-			begin
-				timeout(opts[:connect_timeout], ModBusTimeout) do
-					io = TCPSocket.new(@ipaddr, @port)
-				end
-			rescue ModBusTimeout => err
-				raise ModBusTimeout.new, 'Timed out attempting to create connection'
-			end
-					
-      io
+    def open_connection(ipaddr, port = 10002, opts = {})       
+      io = open_tcp_connection(ipaddr, port, opts)
 		end
     
     def get_slave(uid, io)
