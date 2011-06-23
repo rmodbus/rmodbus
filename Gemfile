@@ -13,4 +13,5 @@ group :development do
   gem "jeweler", "~> 1.6.0"
   gem "rcov"
   gem 'yard'
+  gem 'rdiscount'
 end

@@ -10,6 +10,7 @@ GEM
     rake (0.9.1)
     rcov (0.9.9)
     rcov (0.9.9-java)
+    rdiscount (1.6.8)
     rspec (2.3.0)
       rspec-core (~> 2.3.0)
       rspec-expectations (~> 2.3.0)
@@ -29,6 +30,7 @@ DEPENDENCIES
   bundler (~> 1.0.0)
   jeweler (~> 1.6.0)
   rcov
+  rdiscount
   rspec (~> 2.3.0)
   serialport
   yard
