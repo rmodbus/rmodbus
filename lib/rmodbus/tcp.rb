@@ -24,9 +24,9 @@ module ModBus
     #
     # @param [String] ipaddr IP address of remote server
     # @param [Integer] port connection port
-    # @param [Hash] opts
-    # @options opts [Float, Integer] :connect_timeout seconds timeout for open socket
-    # @remote [TCPSocket] socket
+    # @param [Hash] opts options of connection
+    # @option opts [Float, Integer] :connect_timeout seconds timeout for open socket
+    # @return [TCPSocket] socket
     #
     # @raise [ModBusTimeout] timed out attempting to create connection
     def open_tcp_connection(ipaddr, port, opts = {})

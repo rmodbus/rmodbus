@@ -69,17 +69,18 @@ module ModBus
     end
 
     protected
-    # Open connection
-    # @retrun [Object] io
     def open_connection(*args)
       #Stub conn object
       @io = Object.new
-      def @io.close
-      end
-      def @io.closed?
-        true
-      end
 
+      @io.instance_eval """
+        def close
+        end
+
+        def closed?
+          true
+        end
+        """
       @io
     end
 

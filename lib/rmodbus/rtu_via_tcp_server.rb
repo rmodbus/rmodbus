@@ -31,7 +31,7 @@ module ModBus
     include Server
 
     # Init server
-    # @params [Integer] port listen port
+    # @param [Integer] port listen port
     # @param [Integer] uid slave device
     def initialize(port = 10002, uid = 1)
       @uid = uid
