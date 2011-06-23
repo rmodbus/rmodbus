@@ -12,12 +12,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 module ModBus
-  class RTUSlave < Slave 
-    include RTU 
+  class RTUSlave < Slave
+    include RTU
 
     protected
     def send_pdu(pdu)
-      msg = @uid.chr + pdu 
+      msg = @uid.chr + pdu
       msg << crc16(msg).to_word
       @io.write msg
 
@@ -32,11 +32,11 @@ module ModBus
       if msg.getbyte(0) == @uid
         return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
         log "Ignore package: don't match CRC"
-      else 
+      else
         log "Ignore package: don't match uid ID"
       end
       loop do
-        #waite timeout  
+        #waite timeout
       end
     end
   end

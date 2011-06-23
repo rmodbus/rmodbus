@@ -14,34 +14,21 @@
 # GNU General Public License for more details.
 
 module ModBus
-  module RTU 
+  module RTU
     private
-    
+
     unless RUBY_PLATFORM == "java"
-      def open_serial_port(port, baud, opts = {})
-        @port, @baud = port, baud
-        
-        @data_bits, @stop_bits, @parity, @read_timeout = 8, 1, SerialPort::NONE, 5
-  
-        @data_bits = opts[:data_bits] unless opts[:data_bits].nil?
-        @stop_bits = opts[:stop_bits] unless opts[:stop_bits].nil?
-        @parity = opts[:parity] unless opts[:parity].nil?
-        @read_timeout = options[:read_timeout] unless opts[:read_timeout].nil?
-  
-        io = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
-        io.read_timeout = @read_timeout
-        io
-      end
+
     end
-    
+
     # We have to read specific amounts of numbers of bytes from the network depending on the function code and content
     def read_rtu_response(io)
 	    # Read the slave_id and function code
-	    msg = io.read(2) 
+	    msg = io.read(2)
       function_code = msg.getbyte(1)
       case function_code
         when 1,2,3,4 then
-          # read the third byte to find out how much more 
+          # read the third byte to find out how much more
           # we need to read + CRC
           msg += io.read(1)
           msg += io.read(msg.getbyte(2)+2)
@@ -63,7 +50,7 @@ module ModBus
 
 			# If msg is nil, then our client never sent us anything and it's time to disconnect
 			return if msg.nil?
-			
+
 			function_code = msg.getbyte(1)
 			if [1, 2, 3, 4, 5, 6].include?(function_code)
 				# read 6 more bytes and return the message total message
@@ -76,7 +63,7 @@ module ModBus
 			else
 				raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
 			end
-			
+
 			log "Server RX (#{msg.size} bytes): #{logging_bytes(msg)}"
 
 			msg
@@ -99,6 +86,7 @@ module ModBus
 	    end
     end
 
+    # Calc CRC16 for massage
     def crc16(msg)
       crc_lo = 0xff
       crc_hi = 0xff

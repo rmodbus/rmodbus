@@ -11,39 +11,16 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-require 'serialport'
-
 module ModBus
   class RTUClient < Client
-    include RTU 
-    attr_reader :port, :baud, :data_bits, :stop_bits, :parity, :read_timeout
+    include RTU
+    include SP
 
     protected
-    # Connect with RTU server
-    #
-    # port - serial port of connections with RTU server
-    #
-    # baud - rate sp of connections with RTU server
-    #
-    # data_bits - from 5 to 8
-    #
-    # stop_bits - 1 or 2
-    #
-    # parity - NONE, EVEN or ODD
-    #
-    # Options:
-    #
-    # :data_bits => from 5 to 8
-    #
-    # :stop_bits => 1 or 2
-    #
-    # :parity => NONE, EVEN or ODD
-    #
-    # :read_timeout => default 5 ms
     def open_connection(port, baud=9600, opts = {})
       open_serial_port(port, baud, opts)
     end
-    
+
     def get_slave(uid, io)
       RTUSlave.new(uid, io)
     end

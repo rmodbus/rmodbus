@@ -15,14 +15,15 @@ require 'serialport'
 
 module ModBus
   class RTUServer
-    include Common 
-    include Server 
-    include RTU 
+    include Common
+    include Server
+    include RTU
+    include SP
 
     attr_reader :port, :baud, :data_bits, :stop_bits, :parity
 
     def initialize(port, baud=9600, uid=1, opts = {})
-      Thread.abort_on_exception = true 
+      Thread.abort_on_exception = true
       @sp = open_serial_port(port, baud, opts)
       @uid = uid
     end
@@ -37,7 +38,7 @@ module ModBus
 
     def stop
       Thread.kill(@serv)
-      @sp.close 
+      @sp.close
     end
 
     def join

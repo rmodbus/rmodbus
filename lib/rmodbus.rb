@@ -23,6 +23,7 @@ require 'rmodbus/tcp_server'
 
 # jruby not support serial RTU protocol yet
 unless RUBY_PLATFORM == "java"
+  require 'rmodbus/sp'
   require 'rmodbus/rtu_slave'
   require 'rmodbus/rtu_client'
   require 'rmodbus/rtu_server'
