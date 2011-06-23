@@ -1,9 +1,7 @@
-require 'rmodbus/client'
-
+require 'rmodbus'
 include ModBus
 
 #Use public wrap method
-
 class Client
   include RTU
   def test_read_method(msg)

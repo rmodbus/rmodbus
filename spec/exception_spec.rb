@@ -1,6 +1,5 @@
 require 'rmodbus'
 
-include ModBus
 include ModBus::Errors
 
 describe ModBus::TCPClient do

@@ -1,3 +1,5 @@
+require 'rmodbus'
+
 describe TCPClient do
   describe "method 'query'" do    
     before(:each) do

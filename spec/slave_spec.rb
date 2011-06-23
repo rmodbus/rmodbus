@@ -1,3 +1,4 @@
+require 'rmodbus'
 include ModBus
 
 describe Slave do

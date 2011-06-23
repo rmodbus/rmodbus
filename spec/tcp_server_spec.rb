@@ -1,3 +1,5 @@
+require 'rmodbus'
+
 describe TCPServer do
   before do
     @server = ModBus::TCPServer.new(8502,1)

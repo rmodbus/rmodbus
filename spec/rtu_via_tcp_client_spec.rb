@@ -1,7 +1,7 @@
+require 'rmodbus'
 include ModBus
 
 describe RTUViaTCPClient do
-  
   describe "method 'query'" do    
     before do 
       @sock = mock('Socked')

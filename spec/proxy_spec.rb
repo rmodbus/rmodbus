@@ -1,7 +1,6 @@
-require 'rmodbus/proxy'
+require 'rmodbus'
 
 describe Array do
-
   before do
     @slave = mock('ModBus Slave')
     @coil_proxy = ModBus::ReadWriteProxy.new(@slave, :coil)
