@@ -25,9 +25,9 @@ module ModBus
     # @param *args depends on implementation
     # @yield return client object and close it before exit
     # @return [Client] client object
-    def initialize(*args, &blk)
+    def initialize(*args, &block)
       @io = open_connection(*args)
-      if blk
+      if block_given?
         yield self
         close
       else
@@ -48,9 +48,9 @@ module ModBus
     #
     # @param [Integer, #read] uid slave devise
     # @return [Slave] slave object
-    def with_slave(uid, &blk)
+    def with_slave(uid, &block)
       slave = get_slave(uid, @io)
-      if blk
+      if block_given?
         yield slave
       else
         slave
