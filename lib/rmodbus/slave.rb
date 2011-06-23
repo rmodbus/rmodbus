@@ -1,6 +1,7 @@
 # RModBus - free implementation of ModBus protocol on Ruby.
 #
-# Copyright (C) 2011  Timin Aleksey
+# Copyright (C) 2008-2011  Timin Aleksey
+# Copyright (C) 2010  Kelley Reynolds
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -233,9 +234,6 @@ module ModBus
     end
 
     def read_pdu
-    end
-
-    def close
     end
   end
 end
