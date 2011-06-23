@@ -12,10 +12,24 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 module ModBus
+  # RTU slave implementation
+  # @example
+  #   RTUClient.connect(port, baud, opts) do |cl|
+  #     cl.with_slave(uid) do |slave|
+  #       slave.holding_registers[0..100]
+  #     end
+  #   end
+  #
+  # @see RTUClient#open_connection
+  # @see Client#with_slave
+  # @see Slave
   class RTUSlave < Slave
     include RTU
 
     protected
+
+    # overide method for RTU implamentaion
+    # @see Slave#query
     def send_pdu(pdu)
       msg = @uid.chr + pdu
       msg << crc16(msg).to_word
@@ -24,8 +38,10 @@ module ModBus
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
     end
 
+    # overide method for RTU implamentaion
+    # @see Slave#query
     def read_pdu
-	  msg = read_rtu_response(@io)
+	    msg = read_rtu_response(@io)
 
       log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
 

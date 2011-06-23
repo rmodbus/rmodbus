@@ -14,6 +14,7 @@
 # GNU General Public License for more details.
 
 module ModBus
+  # Module for implementation ModBus server
   module Server
     Funcs = [1,2,3,4,5,6,15,16]
 
@@ -23,15 +24,15 @@ module ModBus
     @holding_registers =[]
     @input_registers = []
 
-    private 
-    
+    private
+
     def exec_req(req, coils, discrete_inputs, holding_registers, input_registers)
       func = req.getbyte(0)
-        
+
       unless Funcs.include?(func)
         params = { :err => 1 }
       end
-        
+
       case func
         when 1
           params = parse_read_func(req, coils)
@@ -55,7 +56,7 @@ module ModBus
           if params[:err] == 0
             pdu = func.chr + (params[:quant] * 2).chr + input_registers[params[:addr],params[:quant]].pack('n*')
           end
-        when 5 
+        when 5
           params = parse_write_coil_func(req)
           if params[:err] == 0
             coils[params[:addr]] = params[:val]
@@ -80,9 +81,9 @@ module ModBus
             pdu = req[0,5]
           end
       end
-      
+
       if params[:err] == 0
-        pdu 
+        pdu
       else
         pdu = (func | 0x80).chr + params[:err].chr
       end
@@ -92,11 +93,11 @@ module ModBus
       quant = req[3,2].unpack('n')[0]
 
       return { :err => 3} unless quant <= 0x7d
-        
+
       addr = req[1,2].unpack('n')[0]
       return { :err => 2 } unless addr + quant <= field.size
-        
-      return { :err => 0, :quant => quant, :addr => addr }    
+
+      return { :err => 0, :quant => quant, :addr => addr }
     end
 
     def parse_write_coil_func(req)
@@ -105,9 +106,9 @@ module ModBus
 
       val = req[3,2].unpack('n')[0]
       return { :err => 3 } unless val == 0 or val == 0xff00
-      
+
       val = 1 if val == 0xff00
-      return { :err => 0, :addr => addr, :val => val }  
+      return { :err => 0, :addr => addr, :val => val }
     end
 
     def parse_write_register_func(req)
@@ -116,7 +117,7 @@ module ModBus
 
       val = req[3,2].unpack('n')[0]
 
-      return { :err => 0, :addr => addr, :val => val }  
+      return { :err => 0, :addr => addr, :val => val }
 	  end
 
     def parse_write_multiple_coils_func(req)

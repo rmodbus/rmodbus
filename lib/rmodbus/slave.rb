@@ -20,7 +20,7 @@ module ModBus
     # Number of times to retry on read and read timeouts
     attr_accessor :read_retries, :read_retry_timeout, :uid
 
-    Exceptions = { 
+    Exceptions = {
           1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
           2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),
           3 => IllegalDataValue.new("A value contained in the query data field is not an allowable value for server"),
@@ -38,46 +38,55 @@ module ModBus
 
     # Returns a ModBus::ReadWriteProxy hash interface for coils
     #
-    # call-seq:
+    # @example
     #  coils[addr] => [1]
     #  coils[addr1..addr2] => [1, 0, ..]
     #  coils[addr] = 0 => [0]
     #  coils[addr1..addr2] = [1, 0, ..] => [1, 0, ..]
     #
+    # @return [ReadWriteProxy] proxy object
     def coils
       ModBus::ReadWriteProxy.new(self, :coil)
     end
-    
-    # Read +ncoils+ coils starting at address +addr+ and return their values as an array
-    # 
-    # call-seq:
+
+    # Read coils
+    #
+    # @example
     #  read_coils(addr, ncoils) => [1, 0, ..]
     #
+    # @param [Integer] addr address first coil
+    # @param [Integer] ncoils number coils
+    # @return [Array] coils
     def read_coils(addr, ncoils)
       query("\x1" + addr.to_word + ncoils.to_word).unpack_bits[0..ncoils-1]
     end
     alias_method :read_coil, :read_coils
-    
-    # Set the coil at address +addr+ to +val+
-    # 
-    # call-seq:
-    #  write_single_coil(addr, val) => self
+
+    # Write a single coil
     #
+    # @example
+    #  write_single_coil(1, 0) => self
+    #
+    # @param [Integer] addr address coil
+    # @param [Integer] val value coil (0 or other)
+    # @return self
     def write_single_coil(addr, val)
       if val == 0
         query("\x5" + addr.to_word + 0.to_word)
       else
-        query("\x5" + addr.to_word + 0xff00.to_word) 
+        query("\x5" + addr.to_word + 0xff00.to_word)
       end
       self
     end
     alias_method :write_coil, :write_single_coil
 
-    # Set the coils to +vals+ starting at address +addr+
-    # 
-    # call-seq:
-    #  write_multiple_coils(addr, vals) => self
+    # Write multiple coils
     #
+    # @example
+    #  write_multiple_coils(1, [0,1,0,1]) => self
+    #
+    # @param [Integer] addr address first coil
+    # @param [Array] vals written coils
     def write_multiple_coils(addr, vals)
       nbyte = ((vals.size-1) >> 3) + 1
       sum = 0
@@ -85,11 +94,11 @@ module ModBus
         sum = sum << 1
         sum |= 1 if vals[i] > 0
       end
-   
+
       s_val = ""
       nbyte.times do
         s_val << (sum & 0xff).chr
-        sum >>= 8 
+        sum >>= 8
       end
 
       query("\xf" + addr.to_word + vals.size.to_word + nbyte.chr + s_val)
@@ -99,19 +108,23 @@ module ModBus
 
     # Returns a ModBus::ReadOnlyProxy hash interface for discrete inputs
     #
-    # call-seq:
+    # @example
     #  discrete_inputs[addr] => [1]
     #  discrete_inputs[addr1..addr2] => [1, 0, ..]
     #
+    # @return [ReadOnlyProxy] proxy object
     def discrete_inputs
       ModBus::ReadOnlyProxy.new(self, :discrete_input)
     end
 
-    # Read +ninputs+ discrete inputs starting at address +addr+ and return their values as an array
-    # 
-    # call-seq:
+    # Read discrete inputs
+    #
+    # @example
     #  read_discrete_inputs(addr, ninputs) => [1, 0, ..]
     #
+    # @param [Integer] addr address first input
+    # @param[Integer] ninputs number inputs
+    # @return [Array] inputs
     def read_discrete_inputs(addr, ninputs)
       query("\x2" + addr.to_word + ninputs.to_word).unpack_bits[0..ninputs-1]
     end
@@ -119,19 +132,23 @@ module ModBus
 
     # Returns a read/write ModBus::ReadOnlyProxy hash interface for coils
     #
-    # call-seq:
+    # @example
     #  input_registers[addr] => [1]
     #  input_registers[addr1..addr2] => [1, 0, ..]
     #
+    # @return [ReadOnlyProxy] proxy object
     def input_registers
       ModBus::ReadOnlyProxy.new(self, :input_register)
     end
 
-    # Starting at a particular address, read +nregs+ coils and return their values as an array
-    # 
-    # call-seq:
-    #  read_input_registers(addr, nregs) => [1, 0, ..]
+    # Read input registers
     #
+    # @example
+    #  read_input_registers(1, 5) => [1, 0, ..]
+    #
+    # @param [Integer] addr address first registers
+    # @param [Integer] nregs number registers
+    # @return [Array] registers
     def read_input_registers(addr, nregs, &block)
       if block_given?
         yield query("\x4" + addr.to_word + nregs.to_word)
@@ -140,25 +157,29 @@ module ModBus
       end
     end
     alias_method :read_input_register, :read_input_registers
-        
+
     # Returns a ModBus::ReadWriteProxy hash interface for holding registers
     #
-    # call-seq:
+    # @example
     #  holding_registers[addr] => [123]
     #  holding_registers[addr1..addr2] => [123, 234, ..]
     #  holding_registers[addr] = 123 => 123
     #  holding_registers[addr1..addr2] = [234, 345, ..] => [234, 345, ..]
     #
+    # @return [ReadWriteProxy] proxy object
     def holding_registers
       ModBus::ReadWriteProxy.new(self, :holding_register)
     end
 
-    # Read +nregs+ registers starting at address +addr+ and return their values as an array
-    # 
-    # call-seq:
-    #  read_holding_registers(addr, nregs) => [1, 0, ..]
+    # Read holding registers
     #
-    def read_holding_registers(addr, nregs, &block) 
+    # @example
+    #  read_holding_registers(1, 5) => [1, 0, ..]
+    #
+    # @param [Integer] addr address first registers
+    # @param [Integer] nregs number registers
+    # @return [Array] registers
+    def read_holding_registers(addr, nregs, &block)
       if block_given?
         yield query("\x3" + addr.to_word + nregs.to_word)
       else
@@ -167,11 +188,14 @@ module ModBus
     end
     alias_method :read_holding_register, :read_holding_registers
 
-    # Set the holding register at address +addr+ to +val+
-    # 
-    # call-seq:
-    #  write_single_register(addr, val) => self
+    # Write a single holding register
     #
+    # @example
+    #  write_single_register(1, 0xaa) => self
+    #
+    # @param [Integer] addr address registers
+    # @param [Integer] val written to register
+    # @return self
     def write_single_register(addr, val)
       query("\x6" + addr.to_word + val.to_word)
       self
@@ -179,11 +203,14 @@ module ModBus
     alias_method :write_holding_register, :write_single_register
 
 
-    # Set the registers to +vals+ starting at address +addr+
-    # 
-    # call-seq:
-    #  write_multiple_registers(addr, vals) => self
+    # Write multiple holding registers
     #
+    # @example
+    #  write_multiple_registers(1, [0xaa, 0]) => self
+    #
+    # @param [Integer] addr address first registers
+    # @param [Array] val written registers
+    # @return self
     def write_multiple_registers(addr, vals)
       s_val = ""
       vals.each do |reg|
@@ -195,18 +222,36 @@ module ModBus
     end
     alias_method :write_holding_registers, :write_multiple_registers
 
-    # Write *current value & and_mask | or mask in *addr* register
+    # Mask a holding register
     #
-    # Return self
+    # @example
+    #   mask_write_register(1, 0xAAAA, 0x00FF) => self
+    # @param [Integer] addr address registers
+    # @param [Integer] and_mask mask for AND operation
+    # @param [Integer] or_mask mask for OR operation
     def mask_write_register(addr, and_mask, or_mask)
       query("\x16" + addr.to_word + and_mask.to_word + or_mask.to_word)
-      self  
+      self
     end
 
-    def query(pdu)    
+    # Request pdu to slave device
+    #
+    # @param [String] pdu request to slave
+    # @return [String] received data
+    #
+    # @raise [ModBusTimeout] timed out during read attempt
+    # @raise [ModBusException] unknown error
+    # @raise [IllegalFunction] function code received in the query is not an allowable action for the server
+    # @raise [IllegalDataAddress] data address received in the query is not an allowable address for the server
+    # @raise [IllegalDataValue] value contained in the query data field is not an allowable value for server
+    # @raise [SlaveDeviceFailure] unrecoverable error occurred while the server was attempting to perform the requested action
+    # @raise [Acknowledge] server has accepted the request and is processing it, but a long duration of time will be required to do so
+    # @raise [SlaveDeviceBus] server is engaged in processing a long duration program command
+    # @raise [MemoryParityError] extended file area failed to pass a consistency check
+    def query(pdu)
       tried = 0
       begin
-        timeout(@read_retry_timeout, ModBusTimeout) do 
+        timeout(@read_retry_timeout, ModBusTimeout) do
           send_pdu(pdu)
           pdu = read_pdu
         end
@@ -216,7 +261,7 @@ module ModBus
         retry unless tried >= @read_retries
         raise ModBusTimeout.new, "Timed out during read attempt"
       end
-    
+
       return nil if pdu.size == 0
 
       if pdu.getbyte(0) >= 0x80
@@ -226,14 +271,6 @@ module ModBus
         raise ModBusException.new, "Unknown error"
       end
       pdu[2..-1]
-    end
-
-    protected
-
-    def send_pdu(pdu)
-    end
-
-    def read_pdu
     end
   end
 end

@@ -18,13 +18,22 @@ module ModBus
   module TCP
     include Timeout
     attr_reader :ipaddr, :port
-    
+
     private
+    # Open TCP socket
+    #
+    # @param [String] ipaddr IP address of remote server
+    # @param [Integer] port connection port
+    # @param [Hash] opts
+    # @options opts [Float, Integer] :connect_timeout seconds timeout for open socket
+    # @remote [TCPSocket] socket
+    #
+    # @raise [ModBusTimeout] timed out attempting to create connection
     def open_tcp_connection(ipaddr, port, opts = {})
       @ipaddr, @port = ipaddr, port
-      
+
       opts[:connect_timeout] ||= 1
-      
+
       io = nil
       begin
         timeout(opts[:connect_timeout], ModBusTimeout) do
@@ -33,8 +42,8 @@ module ModBus
       rescue ModBusTimeout => err
         raise ModBusTimeout.new, 'Timed out attempting to create connection'
       end
-      
+
       io
     end
-  end  
+  end
 end

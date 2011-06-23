@@ -15,15 +15,25 @@
 
 module ModBus
   module Common
-   attr_accessor :debug
+    # @return [Boolean] debug mode
+    # default false
+    attr_accessor :debug
 
-   @debug = false
-   private
-   def log(msg)
-     $stdout.puts msg if @debug
-   end
+    @debug = false
 
-   def logging_bytes(msg)
+    private
+    # Put log message on standart output
+    # @param [String] msg message for log
+    def log(msg)
+      $stdout.puts msg if @debug
+    end
+
+    # Convert string of byte to string for log
+    # @example
+    #   logging_bytes("\x1\xa\x8") => "[01][0a][08]"
+    # @param [String] msg input string
+    # @return [String] readable string of bytes
+    def logging_bytes(msg)
      result = ""
      msg.each_byte do |c|
        byte = if c < 16

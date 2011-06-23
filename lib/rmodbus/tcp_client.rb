@@ -12,15 +12,26 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 module ModBus
-  # Implementation clients(master) ModBusTCP
+  # TCP client implementation
+  # @example
+  #   TCPClient.connect('127.0.0.1', 502) do |cl|
+  #     cl.with_slave(uid) do |slave|
+  #       slave.holding_registers[0..100]
+  #     end
+  #   end
+  #
+  # @see TCPClient#open_connection
+  # @see Client#initialize
   class TCPClient < Client
     include TCP
-        
+
     protected
+    # Open TCP\IP connection
+    # @see TCP::open_connection
     def open_connection(ipaddr, port = 502, opts = {})
       open_tcp_connection(ipaddr, port, opts)
     end
-    
+
     def get_slave(uid, io)
       TCPSlave.new(uid, io)
     end

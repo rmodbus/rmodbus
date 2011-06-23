@@ -13,9 +13,18 @@
 # GNU General Public License for more details.
 
 module ModBus
+  # @abstract
   class Client
     include Errors
-        
+
+    # Initialized client (alias :connect)
+    # @example
+    #   Client.new(any_args) do |client|
+    #     client.closed? #=> false
+    #   end
+    # @param *args depends on implementation
+    # @yield return client object and close it before exit
+    # @return [Client] client object
     def initialize(*args, &blk)
       @io = open_connection(*args)
       if blk
@@ -25,32 +34,44 @@ module ModBus
         self
       end
     end
-    
+
     class << self
       alias_method :connect, :new
     end
-    
+
+    # Given slave object
+    # @example
+    #   cl = Client.new
+    #   cl.with_slave(1) do |slave|
+    #     slave.holding_registers[0..100]
+    #   end
+    #
+    # @param [Integer, #read] uid slave devise
+    # @return [Slave] slave object
     def with_slave(uid, &blk)
       slave = get_slave(uid, @io)
       if blk
-        yield slave 
+        yield slave
       else
         slave
       end
     end
-    
+
     # Check connections
-    def closed? 
+    # @return [Boolean]
+    def closed?
       @io.closed?
     end
-    
+
     # Close connections
     def close
       @io.close unless @io.closed?
     end
-    
+
     protected
-    def open_connection(*args)  
+    # Open connection
+    # @retrun [Object] io
+    def open_connection(*args)
       #Stub conn object
       @io = Object.new
       def @io.close
@@ -58,10 +79,10 @@ module ModBus
       def @io.closed?
         true
       end
-      
+
       @io
     end
-    
+
     def get_slave(uid,io)
       Slave.new(uid, io)
     end

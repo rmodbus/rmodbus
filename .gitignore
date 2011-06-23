@@ -2,3 +2,7 @@
 *.gem
 .redcar/
 coverage/
+.yardoc/
+html/
+.yardopts
+doc/

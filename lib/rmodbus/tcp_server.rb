@@ -14,15 +14,29 @@
 require 'gserver'
 
 module ModBus
+  # TCP server implementation
+  # @example
+  #   srv = TCPServer.new(10002, 1)
+  #   srv.coils = [1,0,1,1]
+  #   srv.discrete_inputs = [1,1,0,0]
+  #   srv.holding_registers = [1,2,3,4]
+  #   srv.input_registers = [1,2,3,4]
+  #   srv.debug = true
+  #   srv.start
 	class TCPServer < GServer
 		include Common
 		include Server 
-
+    
+    # Init server
+    # @params [Integer] port listen port
+    # @param [Integer] uid slave device
 		def initialize(port = 502, uid = 1)
 			@uid = uid
 			super(port)
 		end
 
+    # Serve requests
+    # @param [TCPSocket] io socket
 		def serve(io)
 			loop do
 				req = io.read(7)

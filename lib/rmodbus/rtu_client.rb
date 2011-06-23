@@ -12,15 +12,28 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 module ModBus
+  # RTU client implementation
+  # @example
+  #   RTUClient.connect('/dev/ttyS1', 9600) do |cl|
+  #     cl.with_slave(uid) do |slave|
+  #       slave.holding_registers[0..100]
+  #     end
+  #   end
+  #
+  # @see RTUClient#open_connection
+  # @see Client#initialize
   class RTUClient < Client
     include RTU
     include SP
 
     protected
+    # Open serial port
+    # @see SP#open_serial_port
     def open_connection(port, baud=9600, opts = {})
       open_serial_port(port, baud, opts)
     end
 
+    # @private
     def get_slave(uid, io)
       RTUSlave.new(uid, io)
     end
