@@ -149,12 +149,8 @@ module ModBus
     # @param [Integer] addr address first registers
     # @param [Integer] nregs number registers
     # @return [Array] registers
-    def read_input_registers(addr, nregs, &block)
-      if block_given?
-        yield query("\x4" + addr.to_word + nregs.to_word)
-      else
-        query("\x4" + addr.to_word + nregs.to_word).unpack('n*')
-      end
+    def read_input_registers(addr, nregs)
+      query("\x4" + addr.to_word + nregs.to_word).unpack('n*')
     end
     alias_method :read_input_register, :read_input_registers
 
@@ -179,12 +175,8 @@ module ModBus
     # @param [Integer] addr address first registers
     # @param [Integer] nregs number registers
     # @return [Array] registers
-    def read_holding_registers(addr, nregs, &block)
-      if block_given?
-        yield query("\x3" + addr.to_word + nregs.to_word)
-      else
-        query("\x3" + addr.to_word + nregs.to_word).unpack('n*')
-      end
+    def read_holding_registers(addr, nregs)
+      query("\x3" + addr.to_word + nregs.to_word).unpack('n*')
     end
     alias_method :read_holding_register, :read_holding_registers
 
