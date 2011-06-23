@@ -10,7 +10,7 @@ TIMES = 100
 
 srv = RTUServer.new 'com3', BAUD 
 srv.coils = [0,1]  * 50
-srv.discret_inputs = [1,0]  * 50
+srv.discrete_inputs = [1,0]  * 50
 srv.holding_registers = [0,1,2,3,4,5,6,7,8,9]  * 10
 srv.input_registers = [0,1,2,3,4,5,6,7,8,9]  * 10
 srv.start
