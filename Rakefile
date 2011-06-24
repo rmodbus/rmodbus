@@ -11,22 +11,6 @@ rescue Bundler::BundlerError => e
 end
 
 require 'rake'
-
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  gem.name = "rmodbus"
-  gem.author  = 'A.Timin, J. Sanders, K. Reynolds'
-  gem.email = "atimin@gmail.com"
-  gem.homepage = "http://rmodbus.heroku.com"
-  gem.rubyforge_project = "RModBus"
-  gem.platform = Gem::Platform::RUBY
-  gem.summary = "RModBus - free implementation of protocol ModBus"
-  gem.files = Dir['lib/**/*.rb','examples/*.rb','spec/*.rb','doc/*/*', 'Rakefile']
-  gem.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README"]
-  gem.extra_rdoc_files = ["README", "AUTHORS", "LICENSE", "ChangeLog"]
-end
-Jeweler::RubygemsDotOrgTasks.new
-
 require 'rspec/core'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec) do |spec|

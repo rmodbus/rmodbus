@@ -5,4 +5,4 @@ coverage/
 .yardoc/
 html/
 doc/
-.*.lock
+Gemfile.lock
