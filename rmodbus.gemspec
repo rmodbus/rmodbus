@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.summary = "RModBus - free implementation of protocol ModBus"
   gem.files = Dir['lib/**/*.rb','examples/*.rb','spec/*.rb', 'Rakefile']
   gem.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README.md"]
-  gem.extra_rdoc_files = ["README.md", "AUTHORS", "LICENSE"]
+  gem.extra_rdoc_files = ["README.md", "NEWS.md"]
 
   if RUBY_PLATFORM == 'java'
     gem.platform = Gem::Platform.new("java")
@@ -21,6 +21,7 @@ Gem::Specification.new do |gem|
     gem.add_dependency 'serialport'
   end
 
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'rcov'

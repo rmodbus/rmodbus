@@ -28,6 +28,4 @@ end
 task :default => :spec
 
 require 'yard'
-YARD::Rake::YardocTask.new do |t|
-  t.files   = ['lib/**/*.rb', 'README', 'AUTHORS', 'LICENSE']
-end
+YARD::Rake::YardocTask.new
