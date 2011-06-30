@@ -20,8 +20,8 @@ module ModBus
   #     end
   #   end
   #
-  # @see TCPClient#open_connection
-  # @see TCP::open_connection
+  # @see TCP#open_tcp_connection
+  # @see Client#initialize
   class TCPClient < Client
     include TCP
 
