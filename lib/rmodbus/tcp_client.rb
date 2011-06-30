@@ -21,13 +21,12 @@ module ModBus
   #   end
   #
   # @see TCPClient#open_connection
-  # @see Client#initialize
+  # @see TCP::open_connection
   class TCPClient < Client
     include TCP
 
     protected
     # Open TCP\IP connection
-    # @see TCP::open_connection
     def open_connection(ipaddr, port = 502, opts = {})
       open_tcp_connection(ipaddr, port, opts)
     end

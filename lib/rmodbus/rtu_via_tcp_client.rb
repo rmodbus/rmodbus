@@ -21,7 +21,7 @@ module ModBus
   #     end
   #   end
   #
-  # @see RTUViaTCPClient#open_connection
+  # @see TCP#open_tcp_connection
   # @see Client#initialize
   class RTUViaTCPClient < Client
 		include RTU
@@ -29,7 +29,6 @@ module ModBus
 
     protected
 		# Open TCP\IP connection
-    # @see TCP#open_tcp_connection
     def open_connection(ipaddr, port = 10002, opts = {})
       io = open_tcp_connection(ipaddr, port, opts)
 		end

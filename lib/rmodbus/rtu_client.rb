@@ -20,7 +20,7 @@ module ModBus
   #     end
   #   end
   #
-  # @see RTUClient#open_connection
+  # @see SP#open_serial_port
   # @see Client#initialize
   class RTUClient < Client
     include RTU
@@ -28,12 +28,10 @@ module ModBus
 
     protected
     # Open serial port
-    # @see SP#open_serial_port
     def open_connection(port, baud=9600, opts = {})
       open_serial_port(port, baud, opts)
     end
 
-    # @private
     def get_slave(uid, io)
       RTUSlave.new(uid, io)
     end
