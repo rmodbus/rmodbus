@@ -20,7 +20,11 @@ module ModBus
     # We have to read specific amounts of numbers of bytes from the network depending on the function code and content
     def read_rtu_response(io)
 	    # Read the slave_id and function code
-	    msg = io.read(2)
+      msg = nil
+      while msg.nil?
+	      msg = io.read(2)
+      end
+
       function_code = msg.getbyte(1)
       case function_code
         when 1,2,3,4 then
