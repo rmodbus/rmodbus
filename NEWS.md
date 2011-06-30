@@ -1,4 +1,8 @@
-Release 1.0.0
+2011-06-30 Release 1.0.1
+
+1. Fixed issue #8
+
+2011-06-27 Release 1.0.0
 =====================================
 New API for client part of library
 ---------------------------------------
