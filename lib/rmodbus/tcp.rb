@@ -16,6 +16,7 @@ require 'timeout'
 
 module ModBus
   module TCP
+    include Errors
     include Timeout
     attr_reader :ipaddr, :port
     # Open TCP socket
