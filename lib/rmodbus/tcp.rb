@@ -18,8 +18,6 @@ module ModBus
   module TCP
     include Timeout
     attr_reader :ipaddr, :port
-
-    private
     # Open TCP socket
     #
     # @param [String] ipaddr IP address of remote server
