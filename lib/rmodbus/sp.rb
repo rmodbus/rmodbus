@@ -35,7 +35,7 @@ module ModBus
       @data_bits = opts[:data_bits] unless opts[:data_bits].nil?
       @stop_bits = opts[:stop_bits] unless opts[:stop_bits].nil?
       @parity = opts[:parity] unless opts[:parity].nil?
-      @read_timeout = options[:read_timeout] unless opts[:read_timeout].nil?
+      @read_timeout = opts[:read_timeout] unless opts[:read_timeout].nil?
 
       io = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
       io.read_timeout = @read_timeout
