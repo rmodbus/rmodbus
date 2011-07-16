@@ -33,10 +33,15 @@ module ModBus
     # Init server
     # @param [Integer] port listen port
     # @param [Integer] uid slave device
-    def initialize(port = 10002, uid = 1)
-      @uid = uid
-      super(port)
-    end
+    # @param [Hash] opts options of server
+    # @option opts [String] :host host of server default '127.0.0.1'
+    # @option opts [Float, Integer] :max_connection max of TCP connection with server default 4
+    def initialize(port = 10002, uid = 1, opts = {})
+			@uid = uid
+      opts[:host] = DEFAULT_HOST unless opts[:host]
+      opts[:max_connection] = 4 unless opts[:max_connection]
+			super(port, host = opts[:host], maxConnection = opts[:max_connection])
+		end
 
     protected
     # Serve requests
