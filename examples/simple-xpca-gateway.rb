@@ -1,6 +1,5 @@
-#!/usr/bin/env ruby
 =begin
-It's very simple example of implementation REST-PCA server (see http://www.xpca.org/rest-pca/)
+It's very simple example of implementation XPCA gateway (see http://www.xpca.org)
 for communication with TCP ModBus devices
 It receives  REST requests (e.g http://127.0.0.1:4567/mb/127.0.0.1/8502/1/coils/6/17 )
 and returns data in JSON format addr : data:
@@ -79,7 +78,7 @@ get '/mb/:ip/:port/:slave/:dataplace/:firstaddr/:lastaddr' do
       :message => e.message }
     }
   end
-  
+
   content_type "application/json"
   resp.to_json
 end
