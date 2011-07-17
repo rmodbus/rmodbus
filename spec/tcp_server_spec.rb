@@ -17,7 +17,7 @@ describe TCPServer do
     @cl.close
     ModBus::TCPClient.connect('127.0.0.1', 8502) do |cl|
       lambda { cl.with_slave(2).read_coils(1,3) }.should raise_exception(
-        ModBus::Errors::ModBusException, 
+        ModBus::Errors::ModBusException,
         "Server did not respond"
       )
     end
@@ -26,20 +26,20 @@ describe TCPServer do
   it "should send exception if function not supported" do
     lambda { @slave.query('0x43') }.should raise_exception(
       ModBus::Errors::IllegalFunction,
-      "The function code received in the query is not an allowable action for the server" 
+      "The function code received in the query is not an allowable action for the server"
     )
   end
 
   it "should send exception if quanity of out more 0x7d" do
     lambda { @slave.read_coils(0, 0x7e) }.should raise_exception(
-      ModBus::Errors::IllegalDataValue, 
+      ModBus::Errors::IllegalDataValue,
       "A value contained in the query data field is not an allowable value for server"
     )
   end
 
   it "should send exception if addr not valid" do
     lambda { @slave.read_coils(2, 8) }.should raise_exception(
-      ModBus::Errors::IllegalDataAddress, 
+      ModBus::Errors::IllegalDataAddress,
       "The data address received in the query is not an allowable address for the server"
     )
   end
@@ -90,10 +90,22 @@ describe TCPServer do
     @server.holding_registers.should == [1,2,3,1,2,3,4,5,9]
   end
 
+  it "should have options :host" do
+    host = '192.168.0.1'
+    srv = ModBus::TCPServer.new(1010, 1, :host => '192.168.0.1')
+    srv.host.should eql(host)
+  end
+
+  it "should have options :max_connection" do
+    max_conn = 5
+    srv = ModBus::TCPServer.new(1010, 1, :max_connection => 5)
+    srv.maxConnections.should eql(max_conn)
+  end
+
   after do
-    @cl.close 
+    @cl.close
     @server.stop unless @server.stopped?
-    while GServer.in_service?(8502) 
+    while GServer.in_service?(8502)
     end
   end
 end
