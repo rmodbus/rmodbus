@@ -1,3 +1,11 @@
+2011-07-17 Release 1.0.3
+====================================
+
+1. Fixed issue #10
+2. Added new options for TCPServer#new and RTUViaTCPServer#new
+   :host - ip of host server (default 127.0.0.1)
+   :max_connection - maximum (client default 4)
+
 2011-07-1 Release 1.0.2
 ====================================
 
