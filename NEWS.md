@@ -1,6 +1,6 @@
 2011-08-10 Release 1.0.4
 ====================================
-1. Fixed issue [#11](https://github.com/flipback/rmodbus/issues/9)
+1. Fixed issue [#11](https://github.com/flipback/rmodbus/issues/11)
 
 
 2011-07-17 Release 1.0.3
