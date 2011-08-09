@@ -38,7 +38,7 @@ module ModBus
         when 22 then
           msg += io.read(8)
         when 0x80..0xff then
-          msg += io.read(4)
+          msg += io.read(3)
         else
           raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
       end
