@@ -29,6 +29,9 @@ module ModBus
           6 => SlaveDeviceBus.new("The server is engaged in processing a long duration program command"),
           8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
     }
+
+    RESPONSE_FCODES_WITHOUT_LENGTH_BYTE = [0x05, 0x06, 0x07, 0x08, 0x0B, 0x0F, 0x10, 0x16]
+
     def initialize(uid, io)
 	    @uid = uid
       @read_retries = 10
@@ -69,14 +72,13 @@ module ModBus
     #
     # @param [Integer] addr address coil
     # @param [Integer] val value coil (0 or other)
-    # @return self
+    # @return the device response. As per the standard, the "normal response is an echo of the request".
     def write_single_coil(addr, val)
       if val == 0
         query("\x5" + addr.to_word + 0.to_word)
       else
         query("\x5" + addr.to_word + 0xff00.to_word)
       end
-      self
     end
     alias_method :write_coil, :write_single_coil
 
@@ -87,6 +89,7 @@ module ModBus
     #
     # @param [Integer] addr address first coil
     # @param [Array] vals written coils
+    # @return the device response. As per the standard, the "normal response is an echo of the request".
     def write_multiple_coils(addr, vals)
       nbyte = ((vals.size-1) >> 3) + 1
       sum = 0
@@ -102,7 +105,6 @@ module ModBus
       end
 
       query("\xf" + addr.to_word + vals.size.to_word + nbyte.chr + s_val)
-      self
     end
     alias_method :write_coils, :write_multiple_coils
 
@@ -187,10 +189,9 @@ module ModBus
     #
     # @param [Integer] addr address registers
     # @param [Integer] val written to register
-    # @return self
+    # @return [Array] the device response. As per the standard, the "normal response is an echo of the request".
     def write_single_register(addr, val)
-      query("\x6" + addr.to_word + val.to_word)
-      self
+      query("\x6" + addr.to_word + val.to_word).unpack('n*')
     end
     alias_method :write_holding_register, :write_single_register
 
@@ -202,15 +203,14 @@ module ModBus
     #
     # @param [Integer] addr address first registers
     # @param [Array] val written registers
-    # @return self
+    # @return the device response. As per the standard, the "normal response is an echo of the request".
     def write_multiple_registers(addr, vals)
       s_val = ""
       vals.each do |reg|
         s_val << reg.to_word
       end
 
-      query("\x10" + addr.to_word + vals.size.to_word + (vals.size * 2).chr + s_val)
-      self
+      query("\x10" + addr.to_word + vals.size.to_word + (vals.size * 2).chr + s_val).unpack('n*')
     end
     alias_method :write_holding_registers, :write_multiple_registers
 
@@ -223,7 +223,6 @@ module ModBus
     # @param [Integer] or_mask mask for OR operation
     def mask_write_register(addr, and_mask, or_mask)
       query("\x16" + addr.to_word + and_mask.to_word + or_mask.to_word)
-      self
     end
 
     # Request pdu to slave device
@@ -256,13 +255,18 @@ module ModBus
 
       return nil if pdu.size == 0
 
-      if pdu.getbyte(0) >= 0x80
+      fcode = pdu.getbyte(0)
+
+      if fcode >= 0x80
         exc_id = pdu.getbyte(1)
         raise Exceptions[exc_id] unless Exceptions[exc_id].nil?
-
         raise ModBusException.new, "Unknown error"
+      elsif RESPONSE_FCODES_WITHOUT_LENGTH_BYTE.include? fcode
+        return pdu[1..-1]
+      else
+        return pdu[2..-1]
       end
-      pdu[2..-1]
+      
     end
   end
 end
