@@ -224,6 +224,7 @@ module ModBus
     # @param [Integer] or_mask mask for OR operation
     def mask_write_register(addr, and_mask, or_mask)
       write_query("\x16" + addr.to_word + and_mask.to_word + or_mask.to_word)
+      self
     end
 
     # Request pdu to slave device
@@ -277,7 +278,7 @@ module ModBus
         fcode = response.getbyte(0)
         if fcode >= 0x80
           exc_id = response.getbyte(1)
-          raise_modbus_exception()
+          raise_modbus_exception(exc_id)
         end
       end
 
