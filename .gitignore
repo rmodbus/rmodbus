@@ -6,3 +6,4 @@ coverage/
 html/
 doc/
 Gemfile.lock
+.rvmrc
