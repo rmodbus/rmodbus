@@ -14,7 +14,6 @@
 module ModBus
 
   module Errors
-
     class ProxyException < StandardError
     end
 
@@ -45,6 +44,13 @@ module ModBus
     class ModBusTimeout < ModBusException
     end
 
+    class ResponseMismatch < ModBusException
+      attr_reader :request, :response
+      def initialize(msg, request, response)
+        super(msg)
+        @request = request
+        @response = response
+      end 
+    end
   end
-
 end

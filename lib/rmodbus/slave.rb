@@ -18,7 +18,7 @@ module ModBus
     include Errors
   	include Common
     # Number of times to retry on read and read timeouts
-    attr_accessor :read_retries, :read_retry_timeout, :uid
+    attr_accessor :read_retries, :read_retry_timeout, :uid, :raise_exception_on_mismatch
 
     Exceptions = {
           1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
@@ -34,6 +34,7 @@ module ModBus
       @read_retries = 10
       @read_retry_timeout = 1
       @io = io
+      @raise_exception_on_mismatch = false
     end
 
     # Returns a ModBus::ReadWriteProxy hash interface for coils
@@ -240,12 +241,13 @@ module ModBus
     # @raise [Acknowledge] server has accepted the request and is processing it, but a long duration of time will be required to do so
     # @raise [SlaveDeviceBus] server is engaged in processing a long duration program command
     # @raise [MemoryParityError] extended file area failed to pass a consistency check
-    def query(pdu)
+    def query(request)
       tried = 0
+      response = ""
       begin
         timeout(@read_retry_timeout, ModBusTimeout) do
-          send_pdu(pdu)
-          pdu = read_pdu
+          send_pdu(request)
+          response = read_pdu
         end
       rescue ModBusTimeout => err
         log "Timeout of read operation: (#{@read_retries - tried})"
@@ -254,15 +256,26 @@ module ModBus
         raise ModBusTimeout.new, "Timed out during read attempt"
       end
 
-      return nil if pdu.size == 0
+      return nil if response.size == 0
 
-      if pdu.getbyte(0) >= 0x80
-        exc_id = pdu.getbyte(1)
+      read_func = response.getbyte(0)
+      if read_func >= 0x80
+        exc_id = response.getbyte(1)
         raise Exceptions[exc_id] unless Exceptions[exc_id].nil?
 
         raise ModBusException.new, "Unknown error"
       end
-      pdu[2..-1]
+
+      if raise_exception_on_mismatch
+        #Mismatch functional code
+        send_func = request[0]
+        if read_func != send_func
+          raise ResponseMismatch.new("Function code is mismatch: expected #{send_func}, got #{read_func}",
+            request, response)
+        end
+      end
+
+      response[2..-1]
     end
   end
 end
