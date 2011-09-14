@@ -232,6 +232,7 @@ module ModBus
     # @param [String] pdu request to slave
     # @return [String] received data
     #
+    # @raise [ResponseMismatch] the received echo response differs from the request
     # @raise [ModBusTimeout] timed out during read attempt
     # @raise [ModBusException] unknown error
     # @raise [IllegalFunction] function code received in the query is not an allowable action for the server
@@ -266,16 +267,28 @@ module ModBus
         raise ModBusException.new, "Unknown error"
       end
 
+      data = response[2..-1]
       if raise_exception_on_mismatch
         #Mismatch functional code
         send_func = request[0]
         if read_func != send_func
-          raise ResponseMismatch.new("Function code is mismatch: expected #{send_func}, got #{read_func}",
+          raise ResponseMismatch.new(
+            "Function code is mismatch (expected #{send_func}, got #{read_func})",
             request, response)
+        end
+
+        case read_func
+        when 1
+          bc = request.getbyte(2)/8 + 1
+          if data.size != bc
+            raise ResponseMismatch.new(
+            "Byte count is mismatch (expected #{bc}, got #{data.size} bytes)",
+            request, response)
+          end
         end
       end
 
-      response[2..-1]
+      data
     end
   end
 end

@@ -23,7 +23,7 @@ class RaiseResponseMismatch
 
   def failure_message
     unless @with_expected_message
-      return "Expected message #{@expected_message}, got #{@actual_message}"
+      return "Expected message '#{@expected_message}', got '#{@actual_message}'"
     end
 
     unless @with_expected_request
