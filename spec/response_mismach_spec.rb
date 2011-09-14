@@ -28,4 +28,16 @@ describe "response mismach" do
         request, response)
     end
   end
+
+  describe "read discrete inputs" do
+    it "should raise error if count of byte is mismatch" do
+      request = "\x2\x0\x13\x0\x12"
+      response = "\x2\x2\xcd\xb6"
+      @slave.should_receive(:send_pdu).with(request)
+      @slave.should_receive(:read_pdu).and_return(response)
+      lambda{ @slave.read_discrete_inputs(0x13,0x12) }.should raise_response_mismatch(
+        "Byte count is mismatch (expected 3, got 2 bytes)",
+        request, response)
+    end
+  end
 end
