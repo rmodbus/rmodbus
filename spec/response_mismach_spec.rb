@@ -42,7 +42,7 @@ describe "response mismach" do
   end
 
   describe "read holding registesrs" do
-    it "should raise error if count of byte is mismatch" do
+    it "should raise error if count of registers is mismatch" do
       request = "\x3\x0\x8\x0\x1"
       response = "\x3\x4\x0\xa\x0\xb"
       mock_query!(request, response)
@@ -55,7 +55,7 @@ describe "response mismach" do
   end
 
   describe "read input registesrs" do
-    it "should raise error if count of byte is mismatch" do
+    it "should raise error if count of registers is mismatch" do
       request = "\x4\x0\x8\x0\x2"
       response = "\x4\x2\xa\x0"
       mock_query!(request, response)
@@ -65,6 +65,31 @@ describe "response mismach" do
         "Register count is mismatch (expected 2, got 1 regs)",
         request, response)
     end
+  end
+
+  describe "write single coil" do
+    it "should raise error if address of coil is mismatch" do
+      request = "\x5\x0\x8\xff\x0"
+      response = "\x5\x0\x9\xff\x0"
+      mock_query!(request, response)
+
+
+      lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
+        "Address of coil is mismatch (expected 8, got 9)",
+        request, response)
+    end
+
+    it "should raise error if value of coil is mismatch" do
+      request = "\x5\x0\x8\xff\x0"
+      response = "\x5\x0\x8\x0\x0"
+      mock_query!(request, response)
+
+
+      lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
+        "Value of coil is mismatch (expected 0xff00, got 0x0)",
+        request, response)
+    end
+
   end
 
 

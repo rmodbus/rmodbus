@@ -279,20 +279,36 @@ module ModBus
 
         case read_func
         when 1,2
-          bc = request[3,2].unpack("n")[0]/8 + 1
+          bc = request.getword(3)/8 + 1
           if data.size != bc
             raise ResponseMismatch.new(
             "Byte count is mismatch (expected #{bc}, got #{data.size} bytes)",
             request, response)
           end
         when 3,4
-          rc = request[3,2].unpack("n")[0] 
+          rc = request.getword(3) 
           if data.size/2 != rc
             raise ResponseMismatch.new(
             "Register count is mismatch (expected #{rc}, got #{data.size/2} regs)",
             request, response)
           end
+        when 5
+          exp_addr = request.getword(1)
+          got_addr = response.getword(1)
+          if exp_addr != got_addr
+            raise ResponseMismatch.new(
+            "Address of coil is mismatch (expected #{exp_addr}, got #{got_addr})",
+            request, response)
+          end
 
+          exp_coil = request.getword(3)
+          got_coil = response.getword(3)
+          if exp_coil != got_coil
+            raise ResponseMismatch.new(
+            "Value of coil is mismatch (expected 0x#{exp_coil.to_s(16)}, got 0x#{got_coil.to_s(16)})",
+            request, response)
+          end
+       
         end
       end
 
