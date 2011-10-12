@@ -49,10 +49,24 @@ describe "response mismach" do
 
 
       lambda{ @slave.read_holding_registers(0x8,0x1) }.should raise_response_mismatch(
-        "Byte count is mismatch (expected 2, got 4 bytes)",
+        "Register count is mismatch (expected 1, got 2 regs)",
         request, response)
     end
   end
+
+  describe "read input registesrs" do
+    it "should raise error if count of byte is mismatch" do
+      request = "\x4\x0\x8\x0\x2"
+      response = "\x4\x2\xa\x0"
+      mock_query!(request, response)
+
+
+      lambda{ @slave.read_input_registers(0x8,0x2) }.should raise_response_mismatch(
+        "Register count is mismatch (expected 2, got 1 regs)",
+        request, response)
+    end
+  end
+
 
   private
   def mock_query!(request, response)

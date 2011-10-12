@@ -278,13 +278,21 @@ module ModBus
         end
 
         case read_func
-        when 1,2,3
-          bc = request.getbyte(2)/8 + 1
+        when 1,2
+          bc = request[3,2].unpack("n")[0]/8 + 1
           if data.size != bc
             raise ResponseMismatch.new(
             "Byte count is mismatch (expected #{bc}, got #{data.size} bytes)",
             request, response)
           end
+        when 3,4
+          rc = request[3,2].unpack("n")[0] 
+          if data.size/2 != rc
+            raise ResponseMismatch.new(
+            "Register count is mismatch (expected #{rc}, got #{data.size/2} regs)",
+            request, response)
+          end
+
         end
       end
 
