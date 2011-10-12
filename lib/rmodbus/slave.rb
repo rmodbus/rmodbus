@@ -278,7 +278,7 @@ module ModBus
         end
 
         case read_func
-        when 1,2
+        when 1,2,3
           bc = request.getbyte(2)/8 + 1
           if data.size != bc
             raise ResponseMismatch.new(

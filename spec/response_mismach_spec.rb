@@ -10,8 +10,8 @@ describe "response mismach" do
   it "should raise error if function code is mismatch" do
     request = "\x1\x0\x13\x0\x12"
     response = "\x2\x3\xcd\xb6\x5"
-    @slave.should_receive(:send_pdu).with(request)
-    @slave.should_receive(:read_pdu).and_return(response)
+    mock_query!(request, response)
+
     lambda{ @slave.read_coils(0x13,0x12) }.should raise_response_mismatch(
       "Function code is mismatch (expected 1, got 2)",
       request, response)
@@ -21,8 +21,8 @@ describe "response mismach" do
     it "should raise error if count of byte is mismatch" do
       request = "\x1\x0\x13\x0\x12"
       response = "\x1\x2\xcd\xb6"
-      @slave.should_receive(:send_pdu).with(request)
-      @slave.should_receive(:read_pdu).and_return(response)
+      mock_query!(request, response)
+
       lambda{ @slave.read_coils(0x13,0x12) }.should raise_response_mismatch(
         "Byte count is mismatch (expected 3, got 2 bytes)",
         request, response)
@@ -33,11 +33,30 @@ describe "response mismach" do
     it "should raise error if count of byte is mismatch" do
       request = "\x2\x0\x13\x0\x12"
       response = "\x2\x2\xcd\xb6"
-      @slave.should_receive(:send_pdu).with(request)
-      @slave.should_receive(:read_pdu).and_return(response)
+      mock_query!(request, response)
+
       lambda{ @slave.read_discrete_inputs(0x13,0x12) }.should raise_response_mismatch(
         "Byte count is mismatch (expected 3, got 2 bytes)",
         request, response)
     end
+  end
+
+  describe "read holding registesrs" do
+    it "should raise error if count of byte is mismatch" do
+      request = "\x3\x0\x8\x0\x1"
+      response = "\x3\x4\x0\xa\x0\xb"
+      mock_query!(request, response)
+
+
+      lambda{ @slave.read_holding_registers(0x8,0x1) }.should raise_response_mismatch(
+        "Byte count is mismatch (expected 2, got 4 bytes)",
+        request, response)
+    end
+  end
+
+  private
+  def mock_query!(request, response)
+    @slave.should_receive(:send_pdu).with(request)
+    @slave.should_receive(:read_pdu).and_return(response)
   end
 end
