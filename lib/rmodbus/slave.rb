@@ -272,44 +272,36 @@ module ModBus
         #Mismatch functional code
         send_func = request[0]
         if read_func != send_func
-          raise ResponseMismatch.new(
-            "Function code is mismatch (expected #{send_func}, got #{read_func})",
-            request, response)
+          msg = "Function code is mismatch (expected #{send_func}, got #{read_func})"
         end
 
         case read_func
         when 1,2
           bc = request.getword(3)/8 + 1
           if data.size != bc
-            raise ResponseMismatch.new(
-            "Byte count is mismatch (expected #{bc}, got #{data.size} bytes)",
-            request, response)
+            msg = "Byte count is mismatch (expected #{bc}, got #{data.size} bytes)"
           end
         when 3,4
           rc = request.getword(3) 
           if data.size/2 != rc
-            raise ResponseMismatch.new(
-            "Register count is mismatch (expected #{rc}, got #{data.size/2} regs)",
-            request, response)
+            msg = "Register count is mismatch (expected #{rc}, got #{data.size/2} regs)"
           end
         when 5
           exp_addr = request.getword(1)
           got_addr = response.getword(1)
           if exp_addr != got_addr
-            raise ResponseMismatch.new(
-            "Address of coil is mismatch (expected #{exp_addr}, got #{got_addr})",
-            request, response)
+            msg = "Address of coil is mismatch (expected #{exp_addr}, got #{got_addr})"
           end
 
           exp_coil = request.getword(3)
           got_coil = response.getword(3)
           if exp_coil != got_coil
-            raise ResponseMismatch.new(
-            "Value of coil is mismatch (expected 0x#{exp_coil.to_s(16)}, got 0x#{got_coil.to_s(16)})",
-            request, response)
+            msg = "Value of coil is mismatch (expected 0x#{exp_coil.to_s(16)}, got 0x#{got_coil.to_s(16)})"
           end
        
         end
+
+        raise ResponseMismatch.new(msg, request, response) if msg
       end
 
       data
