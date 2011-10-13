@@ -47,7 +47,6 @@ describe "response mismach" do
       response = "\x3\x4\x0\xa\x0\xb"
       mock_query!(request, response)
 
-
       lambda{ @slave.read_holding_registers(0x8,0x1) }.should raise_response_mismatch(
         "Register count is mismatch (expected 1, got 2 regs)",
         request, response)
@@ -59,7 +58,6 @@ describe "response mismach" do
       request = "\x4\x0\x8\x0\x2"
       response = "\x4\x2\xa\x0"
       mock_query!(request, response)
-
 
       lambda{ @slave.read_input_registers(0x8,0x2) }.should raise_response_mismatch(
         "Register count is mismatch (expected 2, got 1 regs)",
@@ -73,7 +71,6 @@ describe "response mismach" do
       response = "\x5\x0\x9\xff\x0"
       mock_query!(request, response)
 
-
       lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
         "Address of coil is mismatch (expected 8, got 9)",
         request, response)
@@ -84,13 +81,34 @@ describe "response mismach" do
       response = "\x5\x0\x8\x0\x0"
       mock_query!(request, response)
 
-
       lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
         "Value of coil is mismatch (expected 0xff00, got 0x0)",
         request, response)
     end
-
   end
+
+  describe "write single register" do
+    it "should raise error if address of register is mismatch" do
+      request = "\x6\x0\x8\xa\xb"
+      response = "\x6\x0\x9\xa\xb"
+      mock_query!(request, response)
+
+      lambda{ @slave.write_single_register(8,0x0a0b) }.should raise_response_mismatch(
+        "Address of register is mismatch (expected 8, got 9)",
+        request, response)
+    end
+
+    it "should raise error if value of register is mismatch" do
+      request = "\x6\x0\x8\xa\xb"
+      response = "\x6\x0\x8\x9\xb"
+      mock_query!(request, response)
+
+      lambda{ @slave.write_single_register(8,0x0a0b) }.should raise_response_mismatch(
+        "Value of register is mismatch (expected 0xa0b, got 0x90b)",
+        request, response)
+    end
+  end
+
 
 
   private

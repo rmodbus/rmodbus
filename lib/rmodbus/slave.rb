@@ -298,7 +298,18 @@ module ModBus
           if exp_coil != got_coil
             msg = "Value of coil is mismatch (expected 0x#{exp_coil.to_s(16)}, got 0x#{got_coil.to_s(16)})"
           end
-       
+        when 6
+          exp_addr = request.getword(1)
+          got_addr = response.getword(1)
+          if exp_addr != got_addr
+            msg = "Address of register is mismatch (expected #{exp_addr}, got #{got_addr})"
+          end
+
+          exp_reg = request.getword(3)
+          got_reg = response.getword(3)
+          if exp_reg != got_reg
+            msg = "Value of register is mismatch (expected 0x#{exp_reg.to_s(16)}, got 0x#{got_reg.to_s(16)})"
+          end
         end
 
         raise ResponseMismatch.new(msg, request, response) if msg
