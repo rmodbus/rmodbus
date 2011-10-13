@@ -286,29 +286,17 @@ module ModBus
           if data.size/2 != rc
             msg = "Register count is mismatch (expected #{rc}, got #{data.size/2} regs)"
           end
-        when 5
+        when 5,6
           exp_addr = request.getword(1)
           got_addr = response.getword(1)
           if exp_addr != got_addr
-            msg = "Address of coil is mismatch (expected #{exp_addr}, got #{got_addr})"
+            msg = "Address is mismatch (expected #{exp_addr}, got #{got_addr})"
           end
 
-          exp_coil = request.getword(3)
-          got_coil = response.getword(3)
-          if exp_coil != got_coil
-            msg = "Value of coil is mismatch (expected 0x#{exp_coil.to_s(16)}, got 0x#{got_coil.to_s(16)})"
-          end
-        when 6
-          exp_addr = request.getword(1)
-          got_addr = response.getword(1)
-          if exp_addr != got_addr
-            msg = "Address of register is mismatch (expected #{exp_addr}, got #{got_addr})"
-          end
-
-          exp_reg = request.getword(3)
-          got_reg = response.getword(3)
-          if exp_reg != got_reg
-            msg = "Value of register is mismatch (expected 0x#{exp_reg.to_s(16)}, got 0x#{got_reg.to_s(16)})"
+          exp_val = request.getword(3)
+          got_val = response.getword(3)
+          if exp_val != got_val
+            msg = "Value is mismatch (expected 0x#{exp_val.to_s(16)}, got 0x#{got_val.to_s(16)})"
           end
         end
 

@@ -72,7 +72,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
-        "Address of coil is mismatch (expected 8, got 9)",
+        "Address is mismatch (expected 8, got 9)",
         request, response)
     end
 
@@ -82,7 +82,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
-        "Value of coil is mismatch (expected 0xff00, got 0x0)",
+        "Value is mismatch (expected 0xff00, got 0x0)",
         request, response)
     end
   end
@@ -94,7 +94,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_single_register(8,0x0a0b) }.should raise_response_mismatch(
-        "Address of register is mismatch (expected 8, got 9)",
+        "Address is mismatch (expected 8, got 9)",
         request, response)
     end
 
@@ -104,7 +104,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_single_register(8,0x0a0b) }.should raise_response_mismatch(
-        "Value of register is mismatch (expected 0xa0b, got 0x90b)",
+        "Value is mismatch (expected 0xa0b, got 0x90b)",
         request, response)
     end
   end
