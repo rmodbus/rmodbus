@@ -80,7 +80,7 @@ You can checkout source code from GitHub repositry
 Reference
 ----------------------------------
 
-Home page: http://rmodbus.heroku.com
+Home page: http://rmodbus.flipback.net
 
 RModBud on GitHub: http://github.com/flipback/RModBus
 
