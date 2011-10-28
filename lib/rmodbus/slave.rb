@@ -298,7 +298,7 @@ module ModBus
           if exp_val != got_val
             msg = "Value is mismatch (expected 0x#{exp_val.to_s(16)}, got 0x#{got_val.to_s(16)})"
           end
-        when 15
+        when 15,16
           exp_addr = request.getword(1)
           got_addr = response.getword(1)
           if exp_addr != got_addr

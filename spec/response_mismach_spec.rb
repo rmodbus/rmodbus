@@ -129,8 +129,30 @@ describe "response mismach" do
         "Quantity is mismatch (expected 10, got 9)",
         request, response)
     end
- 
   end
+
+  describe "write multiple registers" do
+    it "should raise error if address of first register is mismatch" do
+      request = "\x10\x0\x1\x0\x2\x4\x0\xa\x1\x2"
+      response = "\x10\x0\x2\x0\x2"
+      mock_query!(request, response)
+
+      lambda{ @slave.write_holding_registers(0x1,[0xa,0x102]) }.should raise_response_mismatch(
+        "Address is mismatch (expected 1, got 2)",
+        request, response)
+   end
+
+   it "should raise error if quantity of registers is mismatch" do
+      request = "\x10\x0\x1\x0\x2\x4\x0\xa\x1\x2"
+      response = "\x10\x0\x2\x0\x1"
+      mock_query!(request, response)
+
+      lambda{ @slave.write_holding_registers(0x1,[0xa,0x102]) }.should raise_response_mismatch(
+        "Quantity is mismatch (expected 2, got 1)",
+        request, response)
+    end
+  end
+
 
   private
   def mock_query!(request, response)
