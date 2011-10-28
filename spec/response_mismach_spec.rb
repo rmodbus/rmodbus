@@ -109,7 +109,28 @@ describe "response mismach" do
     end
   end
 
+  describe "write multiple coils" do
+    it "should raise error if address of first coil is mismatch" do
+      request = "\xf\x0\x13\x0\xa\2\xcd\x01"
+      response = "\xf\x0\x14\x0\xa"
+      mock_query!(request, response)
 
+      lambda{ @slave.write_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]) }.should raise_response_mismatch(
+        "Address is mismatch (expected 19, got 20)",
+        request, response)
+   end
+
+   it "should raise error if quantity of coils is mismatch" do
+      request = "\xf\x0\x13\x0\xa\2\xcd\x01"
+      response = "\xf\x0\x13\x0\x9"
+      mock_query!(request, response)
+
+      lambda{ @slave.write_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]) }.should raise_response_mismatch(
+        "Quantity is mismatch (expected 10, got 9)",
+        request, response)
+    end
+ 
+  end
 
   private
   def mock_query!(request, response)
