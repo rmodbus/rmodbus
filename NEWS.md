@@ -1,3 +1,8 @@
+Next Release 1.1.0
+===================================
+1. Added option Slave#raise_exception_on_mismatch to turn to check response and raise exception
+   if it's mismatch.1
+
 2011-08-10 Release 1.0.4
 ====================================
 1. Fixed issue [#11](https://github.com/flipback/rmodbus/issues/11)
@@ -27,7 +32,7 @@ New API for client part of library
 ---------------------------------------
 
 Example:
-
+  `ruby
     require 'rmodbus'
 
     ModBus::TCPClient.new('127.0.0.1', 8502) do |cl|
@@ -45,7 +50,7 @@ Example:
         slave.holding_registers[16..20] = [1, 2, 3, 4, 5]
       end
     end
-
+  `
 for more information [see](http://rdoc.info/gems/rmodbus/1.0.0/frames)
 
 Conversion to/from 32bit registers
@@ -54,7 +59,7 @@ Conversion to/from 32bit registers
 Some modbus devices use two registers to store 32bit values.
 RModbus provides some helper functions to go back and forth between these two things when reading/writing.
 The built-in examples assume registers in a particular order but it's trivial to change.
-
+  `ruby
     # Reading values in multiple registers (you can read more than 2 and convert them all so long as they are in multiples of 2)
     res = slave.holding_registers[0..1]
     res.inspect => [20342, 17344]
@@ -66,7 +71,7 @@ The built-in examples assume registers in a particular order but it's trivial to
     cl.holding_registers[0..1] => [20342, 17344]
     cl.holding_registers[2..3] = [384.620788574219].from_32f
     cl.holding_registers[2..3] => [20342, 17344]
-
+  `
 Support JRuby
 --------------------------------------
 Now you could use RModBus on JRuby without RTU implementation.
