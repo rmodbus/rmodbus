@@ -74,8 +74,6 @@ describe ModBus::TCPClient do
   end  
   
   it "should tune connection timeout" do
-    timeout(0.5) do
-      lambda { ModBus::TCPClient.new('81.123.231.11', 1999, :connect_timeout => 0.1) }.should raise_error(ModBus::Errors::ModBusTimeout)
-    end
+    lambda { ModBus::TCPClient.new('81.123.231.11', 1999, :connect_timeout => 0.001) }.should raise_error(ModBus::Errors::ModBusTimeout)
   end
 end
