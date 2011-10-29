@@ -10,7 +10,7 @@ describe RTUClient do
 
     @cl = RTUClient.new("/dev/port1", 9600, :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)
     @slave = @cl.with_slave(1)
-    @slave.read_retries = 0
+    @slave.read_retries = 1
   end
 
   it "should ignore frame with other UID" do

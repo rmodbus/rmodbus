@@ -273,7 +273,7 @@ module ModBus
       read_func = response.getbyte(0)
       data = response[2..-1]
       #Mismatch functional code
-      send_func = request[0]
+      send_func = request.getbyte(0)
       if read_func != send_func
         msg = "Function code is mismatch (expected #{send_func}, got #{read_func})"
       end

@@ -11,32 +11,11 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+
 module ModBus
-  # RTU slave implementation
-  # @example
-  #   RTUClient.connect(port, baud, opts) do |cl|
-  #     cl.with_slave(uid) do |slave|
-  #       slave.holding_registers[0..100]
-  #     end
-  #   end
-  #
-  # @see RTUClient#open_connection
-  # @see Client#with_slave
-  # @see Slave
-  class RTUSlave < Slave
-    include RTU
-
-    private
-    # overide method for RTU implamentaion
-    # @see Slave#query
-    def send_pdu(pdu)
-      send_rtu_pdu(pdu)
-    end
-
-    # overide method for RTU implamentaion
-    # @see Slave#query
-    def read_pdu
-      read_rtu_pdu
-    end
+  module Options
+    attr_accessor :raise_exception_on_mismatch, 
+                  :read_retries, :read_retry_timeout 
   end
 end
+

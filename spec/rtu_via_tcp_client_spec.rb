@@ -11,7 +11,7 @@ describe RTUViaTCPClient do
       
       @cl = RTUViaTCPClient.new("127.0.0.1")
       @slave = @cl.with_slave(1)
-      @slave.read_retries = 0
+      @slave.read_retries = 1
     end
     
     it "should ignore frame with other UID" do

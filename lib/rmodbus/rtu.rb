@@ -23,6 +23,7 @@ module ModBus
       msg = nil
       while msg.nil?
 	      msg = io.read(2)
+        sleep(0.01)
       end
 
       function_code = msg.getbyte(1)
@@ -43,6 +44,32 @@ module ModBus
           raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
       end
     end
+
+    def send_rtu_pdu(pdu)
+      msg = @uid.chr + pdu
+      msg << crc16(msg).to_word
+      @io.write msg
+
+      log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
+    end
+
+    def read_rtu_pdu
+	    msg = read_rtu_response(@io)
+
+      log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
+
+      if msg.getbyte(0) == @uid
+        return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
+        log "Ignore package: don't match CRC"
+      else
+        log "Ignore package: don't match uid ID"
+      end
+      loop do
+        #waite timeout
+        sleep(0.1)
+      end
+    end
+
 
     def read_rtu_request(io)
 			# Read the slave_id and function code
@@ -83,6 +110,7 @@ module ModBus
           log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
           io.write resp
 		    end
+        sleep(0.01)
 	    end
     end
 

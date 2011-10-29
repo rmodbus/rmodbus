@@ -1,7 +1,8 @@
+require "timeout"
 require "rmodbus"
 
+
 class RaiseResponseMismatch
-  include ModBus::Debug
   def initialize(message, request, response)
     @expected_message, @expected_request, @expected_response = message, request, response
   end

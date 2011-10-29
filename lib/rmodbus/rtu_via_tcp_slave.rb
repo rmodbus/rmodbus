@@ -26,33 +26,17 @@ module ModBus
   class RTUViaTCPSlave < Slave
 		include RTU
 
-		protected
-    # overide method for RTU over TCP implamentaion
+    private
+    # overide method for RTU implamentaion
     # @see Slave#query
-		def send_pdu(pdu)
-			msg = @uid.chr + pdu
-			msg << crc16(msg).to_word
-			@io.write msg
+    def send_pdu(pdu)
+      send_rtu_pdu(pdu)
+    end
 
-			log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
-		end
-
-    # overide method for RTU over TCP implamentaion
+    # overide method for RTU implamentaion
     # @see Slave#query
-		def read_pdu
-			# Read the response appropriately
-			msg = read_rtu_response(@io)
-
-			log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
-			if msg.getbyte(0) == @uid
-				return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
-				log "Ignore package: don't match CRC"
-			else
-				log "Ignore package: don't match uid ID"
-			end
-			loop do
-				#waite timeout
-			end
-		end
+    def read_pdu
+      read_rtu_pdu
+    end
 	end
 end
