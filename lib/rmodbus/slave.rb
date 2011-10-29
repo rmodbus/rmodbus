@@ -18,8 +18,7 @@ module ModBus
     include Errors
   	include Common
     # Number of times to retry on read and read timeouts
-    attr_accessor :read_retries, :read_retry_timeout, :uid, :raise_exception_on_mismatch
-
+    attr_accessor :uid
     Exceptions = {
           1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
           2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),
@@ -31,10 +30,7 @@ module ModBus
     }
     def initialize(uid, io)
 	    @uid = uid
-      @read_retries = 10
-      @read_retry_timeout = 1
       @io = io
-      @raise_exception_on_mismatch = false
     end
 
     # Returns a ModBus::ReadWriteProxy hash interface for coils

@@ -28,4 +28,52 @@ describe Client do
       cl.should be_instance_of(Client)
     end
   end
+
+  it 'should common for all slaves :debug flag' do
+    @cl.debug = true
+    @cl.with_slave(1) do |slave_1|
+      slave_1.debug.should be_true
+    end
+    @cl.with_slave(2) do |slave_2|
+      slave_2.debug = false
+      slave_2.debug.should be_false
+    end
+  end
+
+  it 'should common for all slaves :raise_exception_on_mismatch flag' do
+    @cl.raise_exception_on_mismatch = true
+    @cl.with_slave(1) do |slave_1|
+      slave_1.raise_exception_on_mismatch.should be_true
+    end
+
+    @cl.with_slave(2) do |slave_2|
+      slave_2.raise_exception_on_mismatch = false
+      slave_2.raise_exception_on_mismatch.should be_false
+    end
+  end
+  
+  it 'should common for all slaves :read_retries options' do
+   @cl.read_retries = 5
+    @cl.with_slave(1) do |slave_1|
+      slave_1.read_retries.should eql(5)
+    end
+
+    @cl.with_slave(2) do |slave_2|
+      slave_2.read_retries = 15
+      slave_2.read_retries.should eql(15)
+    end
+  end
+
+  it 'should common for all slaves :read_retry_timeout options' do
+   @cl.read_retry_timeout = 5
+    @cl.with_slave(1) do |slave_1|
+      slave_1.read_retry_timeout.should eql(5)
+    end
+
+    @cl.with_slave(2) do |slave_2|
+      slave_2.read_retry_timeout = 15
+      slave_2.read_retry_timeout.should eql(15)
+    end
+  end
+
 end

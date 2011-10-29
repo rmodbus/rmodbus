@@ -2,6 +2,17 @@ Next Release 1.1.0
 ===================================
 1. Fixed issue [#12](https://github.com/flipback/rmodbus/issues/12). Added option Slave#raise_exception_on_mismatch to turn to check response and raise exception
    if it's mismatch.
+2. Added pass options :debug, :raise_exception_on_mismatch, :read_retry_timeout, :read_retries from clients to slaves
+  `ruby
+    @cl.debug = true
+    @cl.with_slave(1) do |slave_1|
+      slave_1.debug #=> true
+    end
+    @cl.with_slave(2) do |slave_2|
+      slave_2.debug = false
+      slave_2.debug #=> false
+    end
+  ` 
 
 2011-08-10 Release 1.0.4
 ====================================
