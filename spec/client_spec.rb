@@ -1,9 +1,8 @@
 require 'rmodbus'
-include ModBus
 
-describe Client do
+describe ModBus::Client do
   before do
-    @cl = Client.new
+    @cl = ModBus::Client.new
   end
 
   it "should give object provider for slave" do
@@ -18,14 +17,14 @@ describe Client do
   end
   
   it "should connect with TCP server" do
-    Client.connect do |cl|
-      cl.should be_instance_of(Client)
+    ModBus::Client.connect do |cl|
+      cl.should be_instance_of(ModBus::Client)
     end
   end
   
   it ":new alias :connect" do
-    Client.new do |cl|
-      cl.should be_instance_of(Client)
+    ModBus::Client.new do |cl|
+      cl.should be_instance_of(ModBus::Client)
     end
   end
 

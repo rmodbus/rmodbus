@@ -1,13 +1,6 @@
 require "rmodbus"
-require "timeout"
 
-describe TCPServer do
-  around(:each) do |example|
-    Timeout::timeout(1.1) {
-      example.run
-    }
-  end
-
+describe ModBus::TCPServer do
   before do
     @server = ModBus::TCPServer.new(8502,1)
     @server.coils = [1,0,1,1]

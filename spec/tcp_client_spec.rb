@@ -1,6 +1,6 @@
 require 'rmodbus'
 
-describe TCPClient do
+describe ModBus::TCPClient do
   describe "method 'query'" do    
     before(:each) do
       @uid = 1
@@ -27,7 +27,7 @@ describe TCPClient do
       begin
         @slave.query('').should == nil
       rescue Exception => ex
-        ex.class.should == Errors::ModBusException
+        ex.class.should == ModBus::Errors::ModBusException
       end
     end
     
@@ -47,7 +47,7 @@ describe TCPClient do
         TCPSocket.should_receive(:new).with(ipaddr, port).and_return(@sock)
         @sock.should_receive(:closed?).and_return(false)
         @sock.should_receive(:close)
-        TCPClient.connect(ipaddr, port) do |cl|
+        ModBus::TCPClient.connect(ipaddr, port) do |cl|
           cl.ipaddr.should == ipaddr
           cl.port.should == port
         end
