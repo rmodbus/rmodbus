@@ -26,7 +26,7 @@ module ModBus
   #   srv.debug = true
   #   srv.start
   class RTUViaTCPServer < GServer
-    include Common
+    include Debug
     include RTU
     include Server
 

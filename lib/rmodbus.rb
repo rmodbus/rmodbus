@@ -11,7 +11,8 @@
 # GNU General Public License for more details.
 require 'rmodbus/errors'
 require 'rmodbus/ext'
-require 'rmodbus/common'
+require 'rmodbus/debug'
+require 'rmodbus/options'
 require 'rmodbus/rtu'
 require 'rmodbus/tcp'
 require 'rmodbus/slave'

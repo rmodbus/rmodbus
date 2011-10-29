@@ -16,7 +16,8 @@ module ModBus
   # @abstract
   class Client
     include Errors
-    include Common
+    include Debug
+    include Options
 
     # Initialized client (alias :connect)
     # @example

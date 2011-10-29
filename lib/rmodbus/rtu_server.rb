@@ -23,7 +23,7 @@ module ModBus
   #   srv.debug = true
   #   srv.start
   class RTUServer
-    include Common
+    include Debug
     include Server
     include RTU
     include SP

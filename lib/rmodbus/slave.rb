@@ -16,7 +16,8 @@
 module ModBus
   class Slave
     include Errors
-  	include Common
+    include Debug
+    include Options
     # Number of times to retry on read and read timeouts
     attr_accessor :uid
     Exceptions = {
