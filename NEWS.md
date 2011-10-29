@@ -1,4 +1,4 @@
-Next Release 1.1.0
+2011-10-29 Release 1.1.0
 ===================================
 1. Fixed issue [#12](https://github.com/flipback/rmodbus/issues/12). Added option Slave#raise_exception_on_mismatch to turn to check response and raise exception
    if it's mismatch.

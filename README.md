@@ -50,25 +50,6 @@ Example
       end
     end
 
-Conversion to/from 32bit registers
------------------------------------
-
-Some modbus devices use two registers to store 32bit values.
-RModbus provides some helper functions to go back and forth between these two things when reading/writing.
-The built-in examples assume registers in a particular order but it's trivial to change.
-
-    # Reading values in multiple registers (you can read more than 2 and convert them all so long as they are in multiples of 2)
-    res = slave.holding_registers[0..1]
-    res.inspect => [20342, 17344]
-    res.to_32i => [1136676726]
-    res.to_32f => [384.620788574219]
-
-    # Writing 32b values to multiple registers
-    cl.holding_registers[0..1] = [1136676726].from_32i
-    cl.holding_registers[0..1] => [20342, 17344]
-    cl.holding_registers[2..3] = [384.620788574219].from_32f
-    cl.holding_registers[2..3] => [20342, 17344]
-
 GitHub
 ----------------------------------
 
