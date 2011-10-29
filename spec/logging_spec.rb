@@ -36,7 +36,8 @@ describe TCPClient  do
   end
 end
 
-unless RUBY_PLATFORM == "java"
+begin
+  require "serialport"
   describe RTUClient do
     before do 
       @sp = mock('Serial port')
@@ -62,4 +63,5 @@ unless RUBY_PLATFORM == "java"
       @slave.query(request).should == "\xff\xff"
     end
   end
+rescue LoadError
 end

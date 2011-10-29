@@ -12,8 +12,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-require 'serialport'
-
 module ModBus
   module SP
     attr_reader :port, :baud, :data_bits, :stop_bits, :parity, :read_timeout
@@ -43,3 +41,4 @@ module ModBus
     end
   end
 end
+

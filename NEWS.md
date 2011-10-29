@@ -13,6 +13,7 @@ Next Release 1.1.0
       slave_2.debug #=> false
     end
   ` 
+3. Deleted dependency with `serialport` gem. Install it manual for using RTU
 
 2011-08-10 Release 1.0.4
 ====================================

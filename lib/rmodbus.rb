@@ -21,12 +21,14 @@ require 'rmodbus/tcp_slave'
 require 'rmodbus/tcp_client'
 require 'rmodbus/tcp_server'
 
-# jruby doesn't support serial RTU protocol yet
-unless RUBY_PLATFORM == "java"
+begin
+  require 'serialport'
   require 'rmodbus/sp'
   require 'rmodbus/rtu_slave'
   require 'rmodbus/rtu_client'
   require 'rmodbus/rtu_server'
+rescue Exception => e
+  warn "[WARNING] Install `serialport` gem for use RTU protocols"
 end
 
 require 'rmodbus/rtu_via_tcp_slave'
