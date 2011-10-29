@@ -16,6 +16,8 @@ module ModBus
   # @abstract
   class Client
     include Errors
+    include Debug
+    include Options
 
     # Initialized client (alias :connect)
     # @example
@@ -26,6 +28,12 @@ module ModBus
     # @yield return client object and close it before exit
     # @return [Client] client object
     def initialize(*args, &block)
+      # Defaults 
+      @debug = false
+      @raise_exception_on_mismatch = false
+      @read_retry_timeout = 1
+      @read_retries = 10
+
       @io = open_connection(*args)
       if block_given?
         yield self
@@ -50,6 +58,10 @@ module ModBus
     # @return [Slave] slave object
     def with_slave(uid, &block)
       slave = get_slave(uid, @io)
+      slave.debug = debug
+      slave.raise_exception_on_mismatch = raise_exception_on_mismatch
+      slave.read_retries = read_retries
+      slave.read_retry_timeout = read_retry_timeout
       if block_given?
         yield slave
       else

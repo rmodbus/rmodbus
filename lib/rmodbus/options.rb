@@ -1,4 +1,4 @@
-# RModBus - free implementation of ModBus protocol on Ruby.
+# RModBus - free implementation of ModBus protocol in Ruby.
 #
 # Copyright (C) 2011  Timin Aleksey
 #
@@ -11,7 +11,11 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+
 module ModBus
-  # Package version
-  VERSION = '1.1.0dev'
+  module Options
+    attr_accessor :raise_exception_on_mismatch, 
+                  :read_retries, :read_retry_timeout 
+  end
 end
+

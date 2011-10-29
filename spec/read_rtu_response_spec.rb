@@ -1,9 +1,8 @@
 require 'rmodbus'
-include ModBus
 
 #Use public wrap method
-class Client
-  include RTU
+class ModBus::Client
+  include ModBus::RTU
   def test_read_method(msg)
     io = TestIO.new(msg)
     read_rtu_response(io)
@@ -25,7 +24,7 @@ end
 
 describe "#read_rtu_response" do
   before do
-    @cl_mb = Client.new   
+    @cl_mb = ModBus::Client.new   
   end
 
   it "should read response for 'read coils'" do

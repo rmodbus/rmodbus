@@ -11,7 +11,8 @@
 # GNU General Public License for more details.
 require 'rmodbus/errors'
 require 'rmodbus/ext'
-require 'rmodbus/common'
+require 'rmodbus/debug'
+require 'rmodbus/options'
 require 'rmodbus/rtu'
 require 'rmodbus/tcp'
 require 'rmodbus/slave'
@@ -21,12 +22,14 @@ require 'rmodbus/tcp_slave'
 require 'rmodbus/tcp_client'
 require 'rmodbus/tcp_server'
 
-# jruby not support serial RTU protocol yet
-unless RUBY_PLATFORM == "java"
+begin
+  require 'serialport'
   require 'rmodbus/sp'
   require 'rmodbus/rtu_slave'
   require 'rmodbus/rtu_client'
   require 'rmodbus/rtu_server'
+rescue Exception => e
+  warn "[WARNING] Install `serialport` gem for use RTU protocols"
 end
 
 require 'rmodbus/rtu_via_tcp_slave'

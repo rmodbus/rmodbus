@@ -1,7 +1,5 @@
 require 'rmodbus'
 
-include ModBus::Errors
-
 describe ModBus::TCPClient do
   before(:all) do
     @srv = ModBus::TCPServer.new(1502, 1)
@@ -11,7 +9,7 @@ describe ModBus::TCPClient do
     @srv.input_registers = [0] * 8
     @srv.start
 
-    @cl = TCPClient.new('127.0.0.1', 1502)
+    @cl = ModBus::TCPClient.new('127.0.0.1', 1502)
     @slave = @cl.with_slave(1)
   end
 
@@ -21,11 +19,11 @@ describe ModBus::TCPClient do
   end
 
   it "should raise exception if illegal data address" do
-   lambda { @slave.read_coils(501, 34) }.should raise_error(IllegalDataAddress)
+   lambda { @slave.read_coils(501, 34) }.should raise_error(ModBus::Errors::IllegalDataAddress)
   end
 
   it "should raise exception if too many data" do
-   lambda { @slave.read_coils(0, 0x07D1) }.should raise_error(IllegalDataValue)
+   lambda { @slave.read_coils(0, 0x07D1) }.should raise_error(ModBus::Errors::IllegalDataValue)
   end
 
   # Read input status
@@ -34,11 +32,11 @@ describe ModBus::TCPClient do
   end
 
   it "should raise exception if illegal data address" do
-   lambda { @slave.read_discrete_inputs(50, 23) }.should raise_error(IllegalDataAddress)
+   lambda { @slave.read_discrete_inputs(50, 23) }.should raise_error(ModBus::Errors::IllegalDataAddress)
   end
 
   it "should raise exception if too many data" do
-   lambda { @slave.read_discrete_inputs(0, 0x07D1) }.should raise_error(IllegalDataValue)
+   lambda { @slave.read_discrete_inputs(0, 0x07D1) }.should raise_error(ModBus::Errors::IllegalDataValue)
   end
 
   # Read holding registers
@@ -47,12 +45,12 @@ describe ModBus::TCPClient do
   end
 
   it "should raise exception if illegal data address" do
-   lambda { @slave.read_holding_registers(402, 99) }.should raise_error(IllegalDataAddress)
+   lambda { @slave.read_holding_registers(402, 99) }.should raise_error(ModBus::Errors::IllegalDataAddress)
   end
 
 
   it "should raise exception if too many data" do
-   lambda { @slave.read_holding_registers(0, 0x007E) }.should raise_error(IllegalDataValue)
+   lambda { @slave.read_holding_registers(0, 0x007E) }.should raise_error(ModBus::Errors::IllegalDataValue)
   end
 
   # Read input registers
@@ -61,11 +59,11 @@ describe ModBus::TCPClient do
   end
 
   it "should raise exception if illegal data address" do
-   lambda { @slave.read_input_registers(402, 9) }.should raise_error(IllegalDataAddress)
+   lambda { @slave.read_input_registers(402, 9) }.should raise_error(ModBus::Errors::IllegalDataAddress)
   end
 
   it "should raise exception if too many data" do
-   lambda { @slave.read_input_registers(0, 0x007E) }.should raise_error(IllegalDataValue)
+   lambda { @slave.read_input_registers(0, 0x007E) }.should raise_error(ModBus::Errors::IllegalDataValue)
   end
 
   # Force single coil
@@ -75,7 +73,7 @@ describe ModBus::TCPClient do
   end
 
   it "should raise exception if illegal data address" do
-   lambda { @slave.write_single_coil(501, true) }.should raise_error(IllegalDataAddress)
+   lambda { @slave.write_single_coil(501, true) }.should raise_error(ModBus::Errors::IllegalDataAddress)
   end
 
   # Preset single register
@@ -85,7 +83,7 @@ describe ModBus::TCPClient do
   end
 
   it "should raise exception if illegal data address" do
-   lambda { @slave.write_single_register(501, 0x0AA0) }.should raise_error(IllegalDataAddress)
+   lambda { @slave.write_single_register(501, 0x0AA0) }.should raise_error(ModBus::Errors::IllegalDataAddress)
   end
 
   # Force multiple coils
@@ -95,7 +93,7 @@ describe ModBus::TCPClient do
   end
 
   it "should raise exception if illegal data address" do
-   lambda { @slave.write_multiple_coils(501, [1,0]) }.should raise_error(IllegalDataAddress)
+   lambda { @slave.write_multiple_coils(501, [1,0]) }.should raise_error(ModBus::Errors::IllegalDataAddress)
   end
 
   # Preset multiple registers
@@ -105,7 +103,7 @@ describe ModBus::TCPClient do
   end
 
   it "should raise exception if illegal data address" do
-   lambda { @slave.write_multiple_registers(501, [1, 2]) }.should raise_error(IllegalDataAddress)
+   lambda { @slave.write_multiple_registers(501, [1, 2]) }.should raise_error(ModBus::Errors::IllegalDataAddress)
   end
 
   after(:all) do

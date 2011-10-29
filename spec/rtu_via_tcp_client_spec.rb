@@ -1,7 +1,6 @@
 require 'rmodbus'
-include ModBus
 
-describe RTUViaTCPClient do
+describe ModBus::RTUViaTCPClient do
   describe "method 'query'" do    
     before do 
       @sock = mock('Socked')
@@ -9,9 +8,9 @@ describe RTUViaTCPClient do
       @sock.stub!(:read_timeout=)
       @sock.stub!(:read)
       
-      @cl = RTUViaTCPClient.new("127.0.0.1")
+      @cl = ModBus::RTUViaTCPClient.new("127.0.0.1")
       @slave = @cl.with_slave(1)
-      @slave.read_retries = 0
+      @slave.read_retries = 1
     end
     
     it "should ignore frame with other UID" do
@@ -44,7 +43,7 @@ describe RTUViaTCPClient do
       TCPSocket.should_receive(:new).with(ipaddr, port).and_return(@sock)
       @sock.should_receive(:closed?).and_return(false)
       @sock.should_receive(:close)
-      RTUViaTCPClient.connect(ipaddr, port) do |cl|
+      ModBus::RTUViaTCPClient.connect(ipaddr, port) do |cl|
         cl.ipaddr.should == ipaddr
         cl.port.should == port
       end
@@ -71,8 +70,6 @@ describe RTUViaTCPClient do
   end  
   
   it "should tune connection timeout" do
-    timeout(0.5) do
-      lambda { RTUViaTCPClient.new('81.123.231.11', 1999, :connect_timeout => 0.1) }.should raise_error(ModBusTimeout)
-    end
+    lambda { ModBus::RTUViaTCPClient.new('81.123.231.11', 1999, :connect_timeout => 0.001) }.should raise_error(ModBus::Errors::ModBusTimeout)
   end
 end

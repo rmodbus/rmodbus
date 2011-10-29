@@ -1,7 +1,6 @@
 require 'rmodbus'
-include ModBus
 
-describe TCPClient  do
+describe ModBus::TCPClient  do
   before(:each) do
     @uid = 1
     @sock = mock("Socket")
@@ -10,7 +9,7 @@ describe TCPClient  do
     TCPSocket.should_receive(:new).with('127.0.0.1', 1502).and_return(@sock)
     @sock.stub!(:read).with(0).and_return('')
 
-    @slave = TCPClient.new('127.0.0.1', 1502).with_slave(@uid)
+    @slave = ModBus::TCPClient.new('127.0.0.1', 1502).with_slave(@uid)
   end
 
   it 'should log rec\send bytes' do
@@ -36,15 +35,16 @@ describe TCPClient  do
   end
 end
 
-unless RUBY_PLATFORM == "java"
-  describe RTUClient do
+begin
+  require "serialport"
+  describe ModBus::RTUClient do
     before do 
       @sp = mock('Serial port')
       SerialPort.should_receive(:new).with("/dev/port1", 9600, 7, 2, SerialPort::ODD).and_return(@sp)    
       
       @sp.stub!(:read_timeout=)
       
-      @slave = RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => SerialPort::ODD).with_slave(1)
+      @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => SerialPort::ODD).with_slave(1)
       @slave.read_retries = 0
     end
     
@@ -62,4 +62,5 @@ unless RUBY_PLATFORM == "java"
       @slave.query(request).should == "\xff\xff"
     end
   end
+rescue LoadError
 end

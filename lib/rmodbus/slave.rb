@@ -16,10 +16,10 @@
 module ModBus
   class Slave
     include Errors
-  	include Common
+    include Debug
+    include Options
     # Number of times to retry on read and read timeouts
-    attr_accessor :read_retries, :read_retry_timeout, :uid
-
+    attr_accessor :uid
     Exceptions = {
           1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
           2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),
@@ -31,8 +31,6 @@ module ModBus
     }
     def initialize(uid, io)
 	    @uid = uid
-      @read_retries = 10
-      @read_retry_timeout = 1
       @io = io
     end
 
@@ -231,6 +229,7 @@ module ModBus
     # @param [String] pdu request to slave
     # @return [String] received data
     #
+    # @raise [ResponseMismatch] the received echo response differs from the request
     # @raise [ModBusTimeout] timed out during read attempt
     # @raise [ModBusException] unknown error
     # @raise [IllegalFunction] function code received in the query is not an allowable action for the server
@@ -240,12 +239,13 @@ module ModBus
     # @raise [Acknowledge] server has accepted the request and is processing it, but a long duration of time will be required to do so
     # @raise [SlaveDeviceBus] server is engaged in processing a long duration program command
     # @raise [MemoryParityError] extended file area failed to pass a consistency check
-    def query(pdu)
+    def query(request)
       tried = 0
+      response = ""
       begin
         timeout(@read_retry_timeout, ModBusTimeout) do
-          send_pdu(pdu)
-          pdu = read_pdu
+          send_pdu(request)
+          response = read_pdu
         end
       rescue ModBusTimeout => err
         log "Timeout of read operation: (#{@read_retries - tried})"
@@ -254,15 +254,70 @@ module ModBus
         raise ModBusTimeout.new, "Timed out during read attempt"
       end
 
-      return nil if pdu.size == 0
+      return nil if response.size == 0
 
-      if pdu.getbyte(0) >= 0x80
-        exc_id = pdu.getbyte(1)
+      read_func = response.getbyte(0)
+      if read_func >= 0x80
+        exc_id = response.getbyte(1)
         raise Exceptions[exc_id] unless Exceptions[exc_id].nil?
 
         raise ModBusException.new, "Unknown error"
       end
-      pdu[2..-1]
+
+      check_response_mismatch(request, response) if raise_exception_on_mismatch
+      response[2..-1]
+    end
+
+    private
+    def check_response_mismatch(request, response)
+      read_func = response.getbyte(0)
+      data = response[2..-1]
+      #Mismatch functional code
+      send_func = request.getbyte(0)
+      if read_func != send_func
+        msg = "Function code is mismatch (expected #{send_func}, got #{read_func})"
+      end
+
+      case read_func
+      when 1,2
+        bc = request.getword(3)/8 + 1
+        if data.size != bc
+          msg = "Byte count is mismatch (expected #{bc}, got #{data.size} bytes)"
+        end
+      when 3,4
+        rc = request.getword(3) 
+        if data.size/2 != rc
+          msg = "Register count is mismatch (expected #{rc}, got #{data.size/2} regs)"
+        end
+      when 5,6
+        exp_addr = request.getword(1)
+        got_addr = response.getword(1)
+        if exp_addr != got_addr
+          msg = "Address is mismatch (expected #{exp_addr}, got #{got_addr})"
+        end
+
+        exp_val = request.getword(3)
+        got_val = response.getword(3)
+        if exp_val != got_val
+          msg = "Value is mismatch (expected 0x#{exp_val.to_s(16)}, got 0x#{got_val.to_s(16)})"
+        end
+      when 15,16
+        exp_addr = request.getword(1)
+        got_addr = response.getword(1)
+        if exp_addr != got_addr
+          msg = "Address is mismatch (expected #{exp_addr}, got #{got_addr})"
+        end
+      
+        exp_quant = request.getword(3)
+        got_quant = response.getword(3)
+        if exp_quant != got_quant
+          msg = "Quantity is mismatch (expected #{exp_quant}, got #{got_quant})"
+        end
+      else
+        warn "Fuiction (#{read_func}) is not supported raising response mismatch"
+      end
+
+      raise ResponseMismatch.new(msg, request, response) if msg
     end
   end
 end

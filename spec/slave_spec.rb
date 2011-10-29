@@ -1,9 +1,8 @@
 require 'rmodbus'
-include ModBus
 
-describe Slave do
+describe ModBus::Slave do
   before do
-    @slave = Client.new.with_slave(1)
+    @slave = ModBus::Client.new.with_slave(1)
 
     @slave.stub!(:query).and_return('')
   end
