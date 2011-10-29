@@ -54,7 +54,7 @@ module ModBus
     end
 
     def read_rtu_pdu
-	    msg = read_rtu_response(@io)
+      msg = read_rtu_response(@io)
 
       log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
 

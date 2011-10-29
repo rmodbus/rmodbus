@@ -22,4 +22,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rdiscount'
   gem.add_development_dependency 'pry'
   gem.add_development_dependency 'serialport' unless RUBY_PLATFORM == 'java'
+  gem.add_development_dependency 'guard-rspec'
 end
