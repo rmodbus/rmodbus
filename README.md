@@ -1,4 +1,4 @@
-RModBus
+RModBus [![Build Status](https://secure.travis-ci.org/[flipback]/[rmodbus.png)](http://travis-ci.org/[flipback]/[rmodbus])
 ==========================
 
 **RModBus** - free implementation of protocol ModBus.
@@ -49,7 +49,6 @@ Example
         slave.holding_registers[16..20] = [1, 2, 3, 4, 5]
       end
     end
-
 
 Conversion to/from 32bit registers
 -----------------------------------
