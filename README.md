@@ -1,4 +1,4 @@
-RModBus [![Build Status](https://secure.travis-ci.org/[flipback]/[rmodbus.png)](http://travis-ci.org/[flipback]/[rmodbus])
+RModBus [![Build Status](https://secure.travis-ci.org/flipback/rmodbus.png)](http://travis-ci.org/flipback/rmodbus)
 ==========================
 
 **RModBus** - free implementation of protocol ModBus.
