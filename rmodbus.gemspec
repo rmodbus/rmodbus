@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.version = ModBus::VERSION
   gem.author  = 'A.Timin, J. Sanders, K. Reynolds'
   gem.email = "atimin@gmail.com"
-  gem.homepage = "http://rmodbus.heroku.com"
+  gem.homepage = "http://rmodbus.flipback.net"
   gem.summary = "RModBus - free implementation of protocol ModBus"
   gem.files = Dir['lib/**/*.rb','examples/*.rb','spec/*.rb', 'Rakefile']
   gem.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README.md"]
