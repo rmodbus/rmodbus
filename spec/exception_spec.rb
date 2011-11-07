@@ -13,6 +13,10 @@ describe ModBus::TCPClient do
     @slave = @cl.with_slave(1)
   end
 
+  it "should raise ProxException" do
+    lambda { @slave.holding_registers[0..2] = [0,0] }.should raise_error(ModBus::Errors::ProxyException)
+  end
+
   # Read coil status
   it "should read coil status" do
     @slave.read_coils(0, 4).should == [0] * 4
