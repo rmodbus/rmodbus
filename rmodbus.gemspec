@@ -16,8 +16,8 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'bundler'
-  gem.add_development_dependency 'rspec'
-  gem.add_development_dependency 'rcov'
+  gem.add_development_dependency 'rspec', '~>2.9.0'
+  gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'rdiscount'
   gem.add_development_dependency 'pry'

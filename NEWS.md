@@ -1,4 +1,4 @@
-NEXT Release
+2012-04-12 Release 1.1.1
 ==================================
 1. Fixed issue [#15](https://github.com/flipback/rmodbus/issues/15) 
 
