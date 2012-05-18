@@ -28,6 +28,15 @@ describe ModBus::Client do
     end
   end
 
+  it "should close the connection when an exception is raised in the given block" do
+    expect {
+      ModBus::Client.new do |client|
+        client.should_receive(:close)
+        raise
+      end
+    }.to raise_error
+  end
+
   it 'should common for all slaves :debug flag' do
     @cl.debug = true
     @cl.with_slave(1) do |slave_1|
