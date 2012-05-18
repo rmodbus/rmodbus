@@ -36,8 +36,11 @@ module ModBus
 
       @io = open_connection(*args)
       if block_given?
-        yield self
-        close
+        begin
+          yield self
+        ensure
+          close
+        end
       else
         self
       end
