@@ -51,6 +51,7 @@ begin
     it 'should log rec\send bytes' do
       request = "\x3\x0\x1\x0\x1"
       @sp.should_receive(:write).with("\1#{request}\xd5\xca")
+      @sp.should_receive(:read).and_return("\xff\xff") # Clean a garbage
       @sp.should_receive(:read).with(2).and_return("\x1\x3")
       @sp.should_receive(:read).with(1).and_return("\x2")
       @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")

@@ -1,3 +1,7 @@
+Next Release 1.1.3
+==================================
+1. Fixed issue [#22](https://github.com/flipback/rmodbus/issues/22) 
+
 2012-05-12 Release 1.1.2
 ==================================
 1. Fixed issue [#20](https://github.com/flipback/rmodbus/issues/20) 

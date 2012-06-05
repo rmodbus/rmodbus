@@ -48,6 +48,8 @@ module ModBus
     def send_rtu_pdu(pdu)
       msg = @uid.chr + pdu
       msg << crc16(msg).to_word
+      
+      @io.read # Clean input buffer
       @io.write msg
 
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
