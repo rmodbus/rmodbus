@@ -45,11 +45,19 @@ module ModBus
       end
     end
 
+    def clean_input_buff
+      rt = @io.read_timeout
+      @io.read_timeout = -1
+      @io.read # Clean input buffer
+
+      @io.read_timeout = rt
+    end
+
     def send_rtu_pdu(pdu)
       msg = @uid.chr + pdu
       msg << crc16(msg).to_word
       
-      @io.read # Clean input buffer
+      clean_input_buff  
       @io.write msg
 
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
@@ -71,7 +79,6 @@ module ModBus
         sleep(0.1)
       end
     end
-
 
     def read_rtu_request(io)
 			# Read the slave_id and function code
