@@ -5,6 +5,7 @@ describe ModBus::RTUClient do
     @sp = mock('Serial port')
     SerialPort.should_receive(:new).with("/dev/port1", 9600, 8, 1, 0).and_return(@sp)    
     @sp.stub!(:read_timeout=)
+    @sp.stub!(:read_timeout)
     @sp.stub!(:read)
 
     @cl = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)

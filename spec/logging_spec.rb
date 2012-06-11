@@ -43,6 +43,7 @@ begin
       SerialPort.should_receive(:new).with("/dev/port1", 9600, 7, 2, SerialPort::ODD).and_return(@sp)    
       
       @sp.stub!(:read_timeout=)
+      @sp.stub!(:read_timeout)
       
       @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => SerialPort::ODD).with_slave(1)
       @slave.read_retries = 0
