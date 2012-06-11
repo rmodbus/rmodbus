@@ -1,13 +1,17 @@
-2012-06-06 Release 1.1.3
-==================================
+###Next Release
+
+1. Optimized a clearing of buffer before sending in RTU module.
+
+###2012-06-06 Release 1.1.3
+
 1. Fixed issue [#22](https://github.com/flipback/rmodbus/issues/22) 
 
-2012-05-12 Release 1.1.2
-==================================
+###2012-05-12 Release 1.1.2
+
 1. Fixed issue [#20](https://github.com/flipback/rmodbus/issues/20) 
 
-2012-04-12 Release 1.1.1
-==================================
+###2012-04-12 Release 1.1.1
+
 1. Fixed issue [#15](https://github.com/flipback/rmodbus/issues/15) 
 
 2011-10-29 Release 1.1.0
@@ -31,26 +35,23 @@
 
 3. Deleted dependency with `serialport` gem. Install it manual for using RTU
 
-2011-08-10 Release 1.0.4
-====================================
+###2011-08-10 Release 1.0.4
+
 1. Fixed issue [#11](https://github.com/flipback/rmodbus/issues/11)
 
 
-2011-07-17 Release 1.0.3
-====================================
+###2011-07-17 Release 1.0.3
 
 1. Fixed issue #10
 2. Added new options for TCPServer#new and RTUViaTCPServer#new
    :host - ip of host server (default 127.0.0.1)
    :max_connection - maximum (client default 4)
 
-2011-07-1 Release 1.0.2
-====================================
+###2011-07-1 Release 1.0.2
 
 1. Fixed issue #9
 
-2011-06-30 Release 1.0.1
-====================================
+###2011-06-30 Release 1.0.1
 
 1. Fixed issue #8
 
