@@ -32,6 +32,7 @@ Download and install RModBus with the following
 Example
 ------------------------------------
 
+  ```ruby
     require 'rmodbus'
 
     ModBus::TCPClient.new('127.0.0.1', 8502) do |cl|
@@ -49,6 +50,7 @@ Example
         slave.holding_registers[16..20] = [1, 2, 3, 4, 5]
       end
     end
+  ```
 
 GitHub
 ----------------------------------
