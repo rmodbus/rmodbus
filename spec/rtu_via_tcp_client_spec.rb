@@ -6,8 +6,7 @@ describe ModBus::RTUViaTCPClient do
       @sock = mock('Socked')
       TCPSocket.should_receive(:new).with("127.0.0.1", 10002).and_return(@sock)    
       @sock.stub!(:read_timeout=)
-      @sock.stub!(:read_timeout)
-      @sock.stub!(:read)
+      @sock.stub!(:read_nonblock)
       
       @cl = ModBus::RTUViaTCPClient.new("127.0.0.1")
       @slave = @cl.with_slave(1)

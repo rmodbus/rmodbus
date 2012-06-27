@@ -57,7 +57,6 @@ module ModBus
           log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
           io.write resp
         end
-        sleep(0.01)
 			end
 		end
 	end

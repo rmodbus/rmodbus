@@ -42,8 +42,8 @@ begin
       @sp = mock('Serial port')
       SerialPort.should_receive(:new).with("/dev/port1", 9600, 7, 2, SerialPort::ODD).and_return(@sp)    
       
-      @sp.stub!(:read_timeout=)
       @sp.stub!(:read_timeout)
+      @sp.stub!(:read_timeout=)
       
       @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => SerialPort::ODD).with_slave(1)
       @slave.read_retries = 0
@@ -52,7 +52,7 @@ begin
     it 'should log rec\send bytes' do
       request = "\x3\x0\x1\x0\x1"
       @sp.should_receive(:write).with("\1#{request}\xd5\xca")
-      @sp.should_receive(:read).and_return("\xff\xff") # Clean a garbage
+      @sp.should_receive(:read_nonblock).and_return("\xff\xff") # Clean a garbage
       @sp.should_receive(:read).with(2).and_return("\x1\x3")
       @sp.should_receive(:read).with(1).and_return("\x2")
       @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")

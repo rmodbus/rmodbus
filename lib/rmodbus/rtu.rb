@@ -23,7 +23,6 @@ module ModBus
       msg = nil
       while msg.nil?
 	      msg = io.read(2)
-        sleep(0.01)
       end
 
       function_code = msg.getbyte(1)
@@ -46,11 +45,14 @@ module ModBus
     end
 
     def clean_input_buff
-      rt = @io.read_timeout
-      @io.read_timeout = -1
-      @io.read # Clean input buffer
-
-      @io.read_timeout = rt
+      begin
+        # Read up to 1500 bytes of trash.
+        @io.read_nonblock(1500)
+      rescue Errno::EAGAIN
+        # Ignore the fact we couldn't read.
+      rescue Exception => e
+        raise e
+      end
     end
 
     def send_rtu_pdu(pdu)
@@ -119,7 +121,6 @@ module ModBus
           log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
           io.write resp
 		    end
-        sleep(0.01)
 	    end
     end
 
