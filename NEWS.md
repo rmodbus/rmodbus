@@ -1,6 +1,7 @@
-###Next Release
+###2012-06-28 Release 1.1.4
 
-1. Optimized a clearing of buffer before sending in RTU module.
+1. Fixed issue [#23](https://github.com/flipback/rmodbus/issues/23).
+2. Improved speed of the RTU\RTUViaTCP part. 
 
 ###2012-06-06 Release 1.1.3
 
