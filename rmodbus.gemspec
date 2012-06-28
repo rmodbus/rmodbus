@@ -20,8 +20,12 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'rdiscount'
-  gem.add_development_dependency 'pry'
-  gem.add_development_dependency 'serialport' unless RUBY_PLATFORM == 'java'
   gem.add_development_dependency 'guard-rspec'
-  gem.add_development_dependency 'ruby-prof'
+  gem.add_development_dependency 'pry'
+  
+  unless RUBY_PLATFORM == 'java'
+    gem.add_development_dependency 'serialport'
+    gem.add_development_dependency 'ruby-prof'
+  end
+
 end
