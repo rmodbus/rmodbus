@@ -5,7 +5,7 @@ describe ModBus::RTUClient do
     @sp = mock('Serial port')
     SerialPort.should_receive(:new).with("/dev/port1", 9600, 8, 1, 0).and_return(@sp)    
     @sp.stub!(:read_timeout=)
-    @sp.stub!(:read_timeout)
+    @sp.should_receive(:flow_control=).with(SerialPort::NONE)
     @sp.stub!(:read_nonblock)
 
     @cl = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)
@@ -43,6 +43,7 @@ describe ModBus::RTUClient do
     SerialPort.should_receive(:new).with(port, baud, 8, 1, SerialPort::NONE).and_return(@sp)    
     @sp.should_receive(:closed?).and_return(false)
     @sp.should_receive(:close)
+    @sp.should_receive(:flow_control=).with(SerialPort::NONE)
     ModBus::RTUClient.connect(port, baud) do |cl|
       cl.port.should == port
       cl.baud.should == baud

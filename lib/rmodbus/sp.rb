@@ -36,6 +36,7 @@ module ModBus
       @read_timeout = opts[:read_timeout] unless opts[:read_timeout].nil?
 
       io = SerialPort.new(@port, @baud, @data_bits, @stop_bits, @parity)
+      io.flow_control = SerialPort::NONE
       io.read_timeout = @read_timeout
       io
     end
