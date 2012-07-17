@@ -5,6 +5,7 @@ describe ModBus::RTUServer do
     @sp = mock "SerialPort"
     SerialPort.should_receive(:new).with('/dev/ttyS0', 4800, 7, 2, SerialPort::NONE).and_return(@sp)
     @sp.stub!(:read_timeout=)
+    @sp.should_receive(:flow_control=).with(SerialPort::NONE)
 
     @server = ModBus::RTUServer.new('/dev/ttyS0', 4800, 1, :data_bits => 7, :stop_bits => 2)
     @server.coils = [1,0,1,1]

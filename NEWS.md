@@ -1,3 +1,7 @@
+###2012-07-17 Release 1.1.5
+
+1. Fixed issue [#24](https://github.com/flipback/rmodbus/issues/24) for RTUClient.
+
 ###2012-06-28 Release 1.1.4
 
 1. Fixed issue [#23](https://github.com/flipback/rmodbus/issues/23).

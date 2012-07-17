@@ -1,6 +1,6 @@
 # RModBus - free implementation of ModBus protocol on Ruby.
 #
-# Copyright (C) 2011  Timin Aleksey
+# Copyright (C) 2012  Timin Aleksey
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,5 +13,5 @@
 # GNU General Public License for more details.
 module ModBus
   # Package version
-  VERSION = '1.1.4'
+  VERSION = '1.1.5'
 end
