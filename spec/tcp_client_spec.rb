@@ -20,16 +20,24 @@ describe ModBus::TCPClient do
       @slave.query('').should == nil
     end
     
-    it 'should throw exception if get other transaction' do
+    it 'should not throw exception and white next packet if get other transaction' do
       @adu[0,2] = @slave.transaction.next.to_word
       @sock.should_receive(:write).with(@adu)
       @sock.should_receive(:read).with(7).and_return("\000\002\000\000\000\001" + @uid.chr)
-      begin
-        @slave.query('').should == nil
-      rescue Exception => ex
-        ex.class.should == ModBus::Errors::ModBusException
-      end
+      @sock.should_receive(:read).with(7).and_return("\000\001\000\000\000\001" + @uid.chr)
+
+      expect{ @slave.query('') }.to_not raise_error
     end
+    
+    it 'should throw timeout exception if do not get own transaction' do
+      @slave.read_retries = 2
+      @adu[0,2] = @slave.transaction.next.to_word
+      @sock.should_receive(:write).any_number_of_times.with(/\.*/)
+      @sock.should_receive(:read).any_number_of_times.with(7).and_return("\000\x3\000\000\000\001" + @uid.chr)
+
+      expect{ @slave.query('') }.to raise_error(ModBus::Errors::ModBusTimeout, "Timed out during read attempt")
+    end
+
     
     it 'should return only data from PDU' do
       request = "\x3\x0\x6b\x0\x3"

@@ -1,3 +1,8 @@
+###Next Release 1.2.0
+
+1. Transaction number mismatch doesn't throw exception in TCPSlave#query method. 
+Now this method will wait correct transaction until timeout breaks waiting.  
+
 ###2012-07-17 Release 1.1.5
 
 1. Fixed issue [#24](https://github.com/flipback/rmodbus/issues/24) for RTUClient.
