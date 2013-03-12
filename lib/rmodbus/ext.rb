@@ -14,7 +14,7 @@
 
 class String
 
-  unless RUBY_VERSION =~ /^1\.9/
+  if RUBY_VERSION < "1.9"
     def getbyte(index)
       self[index].to_i
     end
