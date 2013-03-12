@@ -1,3 +1,7 @@
+###Next Release
+
+1. Added ruby-2.0 compatibility
+
 ###2012-07-17 Release 1.1.5
 
 1. Fixed issue [#24](https://github.com/flipback/rmodbus/issues/24) for RTUClient.

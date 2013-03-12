@@ -1,3 +1,4 @@
+# -*- coding: ascii
 require 'rmodbus'
 
 #Use public wrap method

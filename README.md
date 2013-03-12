@@ -5,7 +5,7 @@ RModBus [![Build Status](https://secure.travis-ci.org/flipback/rmodbus.png)](htt
 
 Features
 ---------------------------
-  - Ruby 1.8, Ruby 1.9, JRuby (without serial ModBus RTU)
+  - Ruby 1.8.7, Ruby 1.9, Ruby 2.0, JRuby (without serial ModBus RTU)
   - TCP, RTU, RTU over TCP protocols
   - Client(master) and server(slave)
   - 16, 32 -bit and float registers

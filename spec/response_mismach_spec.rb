@@ -1,3 +1,4 @@
+# -*- coding: ascii
 require "spec_helper"
 
 describe "response mismach" do

@@ -1,4 +1,6 @@
+# -*- coding: ascii
 require "rmodbus"
+
 describe ModBus::RTUViaTCPServer do
   it "should have options :host" do
     host = '192.168.0.1'

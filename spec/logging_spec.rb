@@ -1,3 +1,4 @@
+# -*- coding: ascii
 require 'rmodbus'
 
 describe ModBus::TCPClient  do
