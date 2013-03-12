@@ -25,7 +25,6 @@ Gem::Specification.new do |gem|
   
   unless RUBY_PLATFORM == 'java'
     gem.add_development_dependency 'serialport'
-    gem.add_development_dependency 'ruby-prof'
   end
 
 end
