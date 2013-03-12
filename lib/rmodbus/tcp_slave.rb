@@ -47,17 +47,21 @@ module ModBus
     # overide method for RTU over TCP implamentaion
     # @see Slave#query
     def read_pdu
-      header = @io.read(7)
-      if header
-        tin = header[0,2].unpack('n')[0]
-        raise Errors::ModBusException.new("Transaction number mismatch") unless tin == @transaction
-        len = header[4,2].unpack('n')[0]
-        msg = @io.read(len-1)
+      loop do 
+        header = @io.read(7)
+        if header
+          trn = header[0,2].unpack('n')[0]
+          len = header[4,2].unpack('n')[0]
+          msg = @io.read(len-1)
 
-        log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg)
-        msg
-      else
-        raise Errors::ModBusException.new("Server did not respond")
+          log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg)
+          
+          if trn == @transaction
+            return msg
+          else
+            log "Transaction number mismatch. A packet is ignored."        
+          end
+        end
       end
     end
   end

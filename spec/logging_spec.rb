@@ -11,21 +11,36 @@ describe ModBus::TCPClient  do
     @sock.stub!(:read).with(0).and_return('')
 
     @slave = ModBus::TCPClient.new('127.0.0.1', 1502).with_slave(@uid)
+    @slave.debug = true
   end
 
   it 'should log rec\send bytes' do
     request, response = "\x3\x0\x6b\x0\x3", "\x3\x6\x2\x2b\x0\x0\x0\x64"
     mock_query(request,response)
-    @slave.debug = true
     $stdout.should_receive(:puts).with("Tx (12 bytes): [00][01][00][00][00][06][01][03][00][6b][00][03]")
     $stdout.should_receive(:puts).with("Rx (15 bytes): [00][01][00][00][00][09][01][03][06][02][2b][00][00][00][64]")
     @slave.query(request)
   end
 
   it "should don't logging if debug disable" do
+    @slave.debug = false
     request, response = "\x3\x0\x6b\x0\x3", "\x3\x6\x2\x2b\x0\x0\x0\x64"
     mock_query(request,response)
     @slave.query(request)
+  end
+
+  it "should log warn message if transaction mismatch" do
+    @adu[0,2] = @slave.transaction.next.to_word
+    @sock.should_receive(:write).with(@adu)
+    @sock.should_receive(:read).with(7).and_return("\000\002\000\000\000\001" + @uid.chr)
+    @sock.should_receive(:read).with(7).and_return("\000\001\000\000\000\001" + @uid.chr)
+
+    $stdout.should_receive(:puts).with("Tx (7 bytes): [00][01][00][00][00][01][01]")
+    $stdout.should_receive(:puts).with("Rx (7 bytes): [00][02][00][00][00][01][01]")
+    $stdout.should_receive(:puts).with("Transaction number mismatch. A packet is ignored.")
+    $stdout.should_receive(:puts).with("Rx (7 bytes): [00][01][00][00][00][01][01]")
+
+    @slave.query('')
   end
 
   def mock_query(request, response)
