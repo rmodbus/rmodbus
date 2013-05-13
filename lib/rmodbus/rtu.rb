@@ -17,6 +17,8 @@ module ModBus
   module RTU
     private
 
+    CHUNK_SIZE = 1500
+
     # We have to read specific amounts of numbers of bytes from the network depending on the function code and content
     def read_rtu_response(io)
 	    # Read the slave_id and function code
@@ -45,13 +47,19 @@ module ModBus
     end
 
     def clean_input_buff
+      win_platform = RUBY_PLATFORM.include? "mingw"
       begin
-        # Read up to 1500 bytes of trash.
-        @io.read_nonblock(1500)
+        # Read up to CHUNK_SIZE bytes of trash.
+        if win_platform
+          # non-blocking reads are not supported by Windows
+          @io.readpartial(CHUNK_SIZE)
+        else
+          @io.read_nonblock(CHUNK_SIZE)
+        end
       rescue Errno::EAGAIN
         # Ignore the fact we couldn't read.
       rescue Exception => e
-        raise e
+        raise e unless win_platform && e.is_a?(EOFError) # EOFError means we are done
       end
     end
 
