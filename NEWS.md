@@ -1,3 +1,7 @@
+###2013-06-28 Release 1.2.1
+
+1. Fixed issue [#27](https://github.com/flipback/rmodbus/issues/24) for read_nonblock error on Windows
+
 ###2013-03-12 Release 1.2.0
 
 1. Transaction number mismatch doesn't throw exception in TCPSlave#query method. 
