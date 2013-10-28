@@ -2,7 +2,7 @@
 require "rmodbus"
 
 describe ModBus::TCPServer do
-  before do
+  before :all do
     @server = ModBus::TCPServer.new(8502,1)
     @server.coils = [1,0,1,1]
     @server.discrete_inputs = [1,1,0,0]
@@ -113,7 +113,7 @@ describe ModBus::TCPServer do
     srv.maxConnections.should eql(max_conn)
   end
 
-  after do
+  after :all do
     @cl.close unless @cl.closed?
     @server.stop unless @server.stopped?
     while GServer.in_service?(8502)

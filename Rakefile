@@ -22,15 +22,7 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   end
 end
 
-RSpec::Core::RakeTask.new(:rcov) do |spec|
-  spec.pattern = FileList['spec/**/*_spec.rb']
-  spec.rcov = true
-end
-
 task :default => :spec
-
-require 'yard'
-YARD::Rake::YardocTask.new
 
 task :pry do
   sh "bundle exec pry -r ./lib/rmodbus.rb"
