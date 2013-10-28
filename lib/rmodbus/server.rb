@@ -35,13 +35,13 @@ module ModBus
 
       case func
         when 1
-          params = parse_read_func(req, coils)
+          params = parse_read_func(req, coils, 2000)
           if params[:err] == 0
             val = coils[params[:addr],params[:quant]].pack_to_word
             pdu = func.chr + val.size.chr + val
           end
         when 2
-          params = parse_read_func(req, discrete_inputs)
+          params = parse_read_func(req, discrete_inputs, 2000)
           if params[:err] == 0
             val = discrete_inputs[params[:addr],params[:quant]].pack_to_word
             pdu = func.chr + val.size.chr + val
@@ -89,10 +89,10 @@ module ModBus
       end
     end
 
-    def parse_read_func(req, field)
+    def parse_read_func(req, field, quant_max=0x7d)
       quant = req[3,2].unpack('n')[0]
 
-      return { :err => 3} unless quant <= 0x7d
+      return { :err => 3} unless quant <= quant_max
 
       addr = req[1,2].unpack('n')[0]
       return { :err => 2 } unless addr + quant <= field.size

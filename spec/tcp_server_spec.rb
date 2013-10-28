@@ -29,8 +29,15 @@ describe ModBus::TCPServer do
     )
   end
 
-  it "should send exception if quanity of out more 0x7d" do
-    lambda { @slave.read_coils(0, 0x7e) }.should raise_exception(
+  it "should send exception if quanity of registers are more than 0x7d" do
+    lambda { @slave.read_holding_registers(0, 0x7e) }.should raise_exception(
+      ModBus::Errors::IllegalDataValue,
+      "A value contained in the query data field is not an allowable value for server"
+    )
+  end
+
+  it "shouldn't send exception if quanity of coils are more than 0x7d0" do
+    lambda { @slave.read_coils(0, 0x7d1) }.should raise_exception(
       ModBus::Errors::IllegalDataValue,
       "A value contained in the query data field is not an allowable value for server"
     )
@@ -51,6 +58,11 @@ describe ModBus::TCPServer do
 
   it "should supported function 'read coils'" do
     @slave.read_coils(0,3).should == @server.coils[0,3]
+  end
+
+  it "should supported function 'read coils' with more than 125 in one request" do
+    @server.coils = Array.new( 1900, 1 )
+    @slave.read_coils(0,1900).should == @server.coils[0,1900]
   end
 
   it "should supported function 'read discrete inputs'" do
