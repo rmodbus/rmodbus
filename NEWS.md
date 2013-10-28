@@ -1,12 +1,16 @@
+###Next release
+
+1. Fixed issue [#29](https://github.com/flipback/rmodbus/pull/29). The server part supports 2000 of coils/discrete inputs for reading instead of 125.
+
 ###2013-06-28 Release 1.2.1
 
-1. Fixed issue [#27](https://github.com/flipback/rmodbus/issues/24) for read_nonblock error on Windows
+1. Fixed issue [#27](https://github.com/flipback/rmodbus/issues/27) for read_nonblock error on Windows
 
 ###2013-03-12 Release 1.2.0
 
 1. Transaction number mismatch doesn't throw exception in TCPSlave#query method. 
 Now this method will wait correct transaction until timeout breaks waiting.  
-2. Added ruby-2.0 experemental compatibility
+2. Added ruby-2.0 experimental compatibility
 
 ###2012-07-17 Release 1.1.5
 
