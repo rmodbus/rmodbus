@@ -6,6 +6,7 @@ require 'rmodbus/version'
 Gem::Specification.new do |gem|
   gem.name = "rmodbus"
   gem.version = ModBus::VERSION
+  gem.license = 'GPL v2.0'
   gem.author  = 'A.Timin, J. Sanders, K. Reynolds'
   gem.email = "atimin@gmail.com"
   gem.homepage = "http://rmodbus.flipback.net"

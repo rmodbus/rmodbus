@@ -13,5 +13,5 @@
 # GNU General Public License for more details.
 module ModBus
   # Package version
-  VERSION = '1.2.1'
+  VERSION = '1.2.2'
 end

@@ -1,4 +1,4 @@
-###Next release
+###2013-10-28 Release 1.2.2
 
 1. Fixed issue [#29](https://github.com/flipback/rmodbus/pull/29). The server part supports 2000 of coils/discrete inputs for reading instead of 125.
 
