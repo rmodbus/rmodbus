@@ -1,11 +1,11 @@
 RModBus [![Build Status](https://secure.travis-ci.org/flipback/rmodbus.png)](http://travis-ci.org/flipback/rmodbus)
 ==========================
 
-**RModBus** - free implementation of protocol ModBus.
+**RModBus** - free implementation of protocol ModBus written in pure Ruby.
 
 Features
 ---------------------------
-  - Ruby 1.8.7, Ruby 1.9, Ruby 2.0 (experemntal), JRuby (without serial ModBus RTU)
+  - Ruby 1.8.7, Ruby 1.9, Ruby 2.0, JRuby (without serial ModBus RTU)
   - TCP, RTU, RTU over TCP protocols
   - Client(master) and server(slave)
   - 16, 32 -bit and float registers
