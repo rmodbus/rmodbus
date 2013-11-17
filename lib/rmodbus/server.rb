@@ -113,7 +113,7 @@ module ModBus
 
     def parse_write_register_func(req)
       addr = req[1,2].unpack('n')[0]
-      return { :err => 2 } unless addr <= @coils.size
+      return { :err => 2 } unless addr <= @holding_registers.size
 
       val = req[3,2].unpack('n')[0]
 
