@@ -8,10 +8,15 @@ describe ModBus::TCPClient  do
     @adu = "\000\001\000\000\000\001\001"
 
     TCPSocket.should_receive(:new).with('127.0.0.1', 1502).and_return(@sock)
-    @sock.stub!(:read).with(0).and_return('')
-
+    @sock.stub!(:sysread).with(0).and_return('')
+    @sock.stub!(:syswrite){|msg| msg.size}
+    @sock.should_receive(:flush).any_number_of_times
+    @sock.should_receive(:fcntl).any_number_of_times
+         
     @slave = ModBus::TCPClient.new('127.0.0.1', 1502).with_slave(@uid)
     @slave.debug = true
+    @slave.stub!(:read_ready?){|array| array }
+    @slave.stub!(:write_ready?){|array| array }
   end
 
   it 'should log rec\send bytes' do
@@ -22,32 +27,34 @@ describe ModBus::TCPClient  do
     @slave.query(request)
   end
 
-  it "should don't logging if debug disable" do
+  it "should not log if debug disabled" do
     @slave.debug = false
     request, response = "\x3\x0\x6b\x0\x3", "\x3\x6\x2\x2b\x0\x0\x0\x64"
     mock_query(request,response)
     @slave.query(request)
   end
 
-  it "should log warn message if transaction mismatch" do
-    @adu[0,2] = @slave.transaction.next.to_word
-    @sock.should_receive(:write).with(@adu)
-    @sock.should_receive(:read).with(7).and_return("\000\002\000\000\000\001" + @uid.chr)
-    @sock.should_receive(:read).with(7).and_return("\000\001\000\000\000\001" + @uid.chr)
-
-    $stdout.should_receive(:puts).with("Tx (7 bytes): [00][01][00][00][00][01][01]")
-    $stdout.should_receive(:puts).with("Rx (7 bytes): [00][02][00][00][00][01][01]")
-    $stdout.should_receive(:puts).with("Transaction number mismatch. A packet is ignored.")
-    $stdout.should_receive(:puts).with("Rx (7 bytes): [00][01][00][00][00][01][01]")
-
-    @slave.query('')
-  end
+#this test now removed because an error is raised on this condition
+  
+#  it "should log warn message if transaction mismatch" do
+#    @adu[0,2] = @slave.transaction.next.to_word
+#    @sock.should_receive(:write).with(@adu)
+#    @sock.should_receive(:read).with(7).and_return("\000\002\000\000\000\001" + @uid.chr)
+#    @sock.should_receive(:read).with(7).and_return("\000\001\000\000\000\001" + @uid.chr)
+#
+#    $stdout.should_receive(:puts).with("Tx (7 bytes): [00][01][00][00][00][01][01]")
+#    $stdout.should_receive(:puts).with("Rx (7 bytes): [00][02][00][00][00][01][01]")
+#    $stdout.should_receive(:puts).with("Transaction number mismatch. A packet is ignored.")
+#    $stdout.should_receive(:puts).with("Rx (7 bytes): [00][01][00][00][00][01][01]")
+#
+#    @slave.query('')
+#  end
 
   def mock_query(request, response)
     @adu = @slave.transaction.next.to_word + "\x0\x0\x0\x9" + @uid.chr + request
-    @sock.should_receive(:write).with(@adu[0,4] + "\0\6" + @uid.chr + request)
-    @sock.should_receive(:read).with(7).and_return(@adu[0,7])
-    @sock.should_receive(:read).with(8).and_return(response)
+    @sock.should_receive(:syswrite).with(@adu[0,4] + "\0\6" + @uid.chr + request)
+    @sock.should_receive(:sysread).with(7).and_return(@adu[0,7])
+    @sock.should_receive(:sysread).with(8).and_return(response)  
   end
 end
 
@@ -60,18 +67,25 @@ begin
       
       @sp.should_receive(:flow_control=).with(SerialPort::NONE)
       @sp.stub!(:read_timeout=)
-      
+      @sp.stub!(:read_timeout){ 100 }
+      @sp.stub!(:t_3_5){ 0.01 }
+        
       @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => SerialPort::ODD).with_slave(1)
       @slave.read_retries = 0
+      @slave.stub!(:read_ready?){|array| array }
+      @slave.stub!(:write_ready?){|array| array }
+      @slave.stub!(:clear_buffer)
+
     end
     
     it 'should log rec\send bytes' do
       request = "\x3\x0\x1\x0\x1"
-      @sp.should_receive(:write).with("\1#{request}\xd5\xca")
-      @sp.should_receive(:read_nonblock).and_return("\xff\xff") # Clean a garbage
-      @sp.should_receive(:read).with(2).and_return("\x1\x3")
-      @sp.should_receive(:read).with(1).and_return("\x2")
-      @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
+      @sp.should_receive(:syswrite).with("\1#{request}\xd5\xca").and_return(8)
+      #@sp.should_receive(:readchar).and_return("\xff") # Clean a garbage
+      @sp.should_receive(:sysread).with(1).and_return("\x1")
+      @sp.should_receive(:sysread).with(1).and_return("\x3")
+      @sp.should_receive(:sysread).with(1).and_return("\x2")
+      @sp.should_receive(:sysread).with(4).and_return("\xff\xff\xb9\xf4")
       
       @slave.debug = true
       $stdout.should_receive(:puts).with("Tx (8 bytes): [01][03][00][01][00][01][d5][ca]")

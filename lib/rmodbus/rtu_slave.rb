@@ -25,6 +25,17 @@ module ModBus
   # @see Slave
   class RTUSlave < Slave
     include RTU
+    
+    def renew_connection
+      port=@io.port
+      baud=@io.baud
+      @query_lock.synchronize do
+        @io.close
+        @io=open_serial_port(port,baud)
+        clear_buffer
+      end
+    end
+
 
     private
     # overide method for RTU implamentaion

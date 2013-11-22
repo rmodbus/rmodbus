@@ -1,6 +1,7 @@
 # RModBus - free implementation of ModBus protocol on Ruby.
 #
 # Copyright (C) 2008-2011  Timin Aleksey
+# Copyright (C) 2011  Steve Gooberman-Hill for multithread safety
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +19,8 @@ module ModBus
     include Errors
     include Debug
     include Options
+    
+    attr_accessor :heartbeat
 
     # Initialized client (alias :connect)
     # @example
@@ -31,9 +34,20 @@ module ModBus
       # Defaults 
       @debug = false
       @raise_exception_on_mismatch = false
-      @read_retry_timeout = 1
-      @read_retries = 10
-
+      @read_retry_timeout = 2
+      @read_retries = 20
+      
+      
+      #client may be connected to more than one device, so we need to ensure that the
+      #physical interface is only being accessed by a single Thread at a time 
+      @query_lock=Mutex.new 
+      #the heartbeat is set every time the query_lock is gained in a #synchronize block
+      #this enables us to check whether the system is responding or is blocked
+      #of course, it should always work ok, but we know that there can be problems
+      #with certain linux systems not playing nice and blocking intermittently!
+      @heartbeat=Time.now
+      
+      
       @io = open_connection(*args)
       if block_given?
         begin
@@ -45,7 +59,7 @@ module ModBus
         self
       end
     end
-
+    
     class << self
       alias_method :connect, :new
     end
@@ -82,6 +96,32 @@ module ModBus
     def close
       @io.close unless @io.closed?
     end
+    
+    #used for test purposes only
+    def get_io
+      @io
+    end
+    
+    #method_missing delegates any unknown calls to the io object, allowing the client
+    #to effectively behave as an object of class IO. respond_to? is similarly modified so
+    #the object will look like an IO object
+    
+    def method_missing(meth, *args, &block)
+      if @io.respond_to? meth
+        @io.send(meth, *args, &block)
+      else
+        super
+      end
+    end 
+    
+    def respond_to?(meth)
+      if @io.respond_to? meth
+        true
+      else
+        super
+      end
+    end
+
 
     protected
     def open_connection(*args)
@@ -100,7 +140,9 @@ module ModBus
     end
 
     def get_slave(uid,io)
-      Slave.new(uid, io)
+      Slave.new(uid, io, @query_lock, @heartbeat)
     end
+    
+    
   end
 end
