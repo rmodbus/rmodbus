@@ -1,3 +1,7 @@
+###Next release
+
+1. Fixed bug [#30](https://github.com/flipback/rmodbus/pull/30) in parsing command 'write_register' for server implementation part. 
+
 ###2013-10-28 Release 1.2.2
 
 1. Fixed issue [#29](https://github.com/flipback/rmodbus/pull/29). The server part supports 2000 of coils/discrete inputs for reading instead of 125.
