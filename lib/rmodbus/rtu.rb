@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2010 - 2011  Timin Aleksey
 # Copyright (C) 2010  Kelley Reynolds
+# Copyright (C) 2012 uCratos Ltd (Steve Gooberman-Hill)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,122 +18,324 @@ module ModBus
   module RTU
     private
 
-    CHUNK_SIZE = 1500
-
     # We have to read specific amounts of numbers of bytes from the network depending on the function code and content
-    def read_rtu_response(io)
-	    # Read the slave_id and function code
-      msg = nil
-      while msg.nil?
-	      msg = io.read(2)
-      end
-
-      function_code = msg.getbyte(1)
-      case function_code
+    # this only varies from the rread_rtu_request method by the message length handling
+    # TODO - combine the two methods with a callout to a block to get the content length?
+    def read_rtu_response(io=nil)
+      #note that by default we use the internal @io, but being able to pass an io in makes testing easier
+      io||=@io
+      uid=nil
+	    function_code=nil
+      msg_length=nil
+      msg_content=nil
+      
+      msg=nil
+      
+      timer=io.read_timeout
+      select_timer=timer.to_f/1000 #select timer is in seconds, @io_read_timeout is in ms
+      
+      
+      begin
+        io.read_timeout=-1
+                  
+        #first read slave ID and Function Code
+        #there is no timeout in the caller as it is dangerous (see http://headius.blogspot.co.uk/2008/02/rubys-threadraise-threadkill-timeoutrb.html)
+        #so the read and write timeing is handled using select calls
+        
+        #allow a decent interval for the first octet - the device has to respond!
+        #we should always get five bytes minimum as this is the length of an error code (uid, function code, error code, 2 byte CRC)
+        
+        begin
+          #explicitly raise an error if we can't contact the device
+          raise ModBus::Errors::ModBusTimeout, 'Device does not respond' unless read_ready?(select_timer)
+          uid = io.sysread(1)
+        rescue SystemCallError, Errno::EAGAIN, EOFError => er
+          $log.debug 'Rx : read error ' + er.to_s
+          #next line will catch
+        end
+        raise ModBus::Errors::ProtocolError, "Incomplete Slave ID read" unless uid 
+        
+        #now we have a response so we can continue      
+        #we will always read the entire message - a slave ID mismatch is handled at a higher level 
+        begin
+          function_code = io.sysread(1) if read_ready?(io.t_3_5)
+        rescue SystemCallError, Errno::EAGAIN, EOFError => er
+          $log.debug 'Rx : read error ' + er.to_s
+          #next line will catch
+        end 
+        raise ModBus::Errors::ProtocolError, "Incomplete Function Code read" unless function_code 
+        
+        #how much more we read is dependent on the function code - some function codes have fixed length responses
+        #for others we read bytes to find the length of the response
+        content_length=0
+        case function_code.getbyte(0)
         when 1,2,3,4 then
           # read the third byte to find out how much more
           # we need to read + CRC
-          msg += io.read(1)
-          msg += io.read(msg.getbyte(2)+2)
+          begin
+            msg_length= io.sysread(1) if read_ready?(io.t_3_5)
+          rescue SystemCallError, Errno::EAGAIN, EOFError => er
+            $log.debug 'Rx : read error ' + er.to_s
+            #next line will catch
+          end 
+          raise ModBus::Errors::ProtocolError, "Incomplete Message Length read" unless msg_length 
+          content_length=msg_length.getbyte(0)+2
+          
         when 5,6,15,16 then
           # We just read in an additional 6 bytes
-          msg += io.read(6)
+          content_length=6
         when 22 then
-          msg += io.read(8)
+          content_length=8
         when 0x80..0xff then
-          msg += io.read(3)
+          #error response- so we expect 3 more bytes
+          content_length=3
         else
+          
+          #what to do if we can't recognise the return sequence?
+          #this method is only ever called at the master end, so we should probably
+          #just read any remaining bytes on the interface, then end
           raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
-      end
-    end
-
-    def clean_input_buff
-      win_platform = RUBY_PLATFORM.include? "mingw"
-      begin
-        # Read up to CHUNK_SIZE bytes of trash.
-        if win_platform
-          # non-blocking reads are not supported by Windows
-          @io.readpartial(CHUNK_SIZE)
-        else
-          @io.read_nonblock(CHUNK_SIZE)
         end
-      rescue Errno::EAGAIN
-        # Ignore the fact we couldn't read.
-      rescue Exception => e
-        raise e unless win_platform && e.is_a?(EOFError) # EOFError means we are done
-      end
+        
+        begin
+          #check again that there is data to read
+          msg_content=''
+          while msg_content.bytesize < content_length && read_ready?(io.t_3_5)
+            msg_content+=io.sysread(content_length-msg_content.bytesize)
+          end
+                 
+        rescue SystemCallError, Errno::EAGAIN, EOFError => er
+          $log.debug 'Rx : read error ' + er.to_s
+          #next line will catch
+        end
+        raise ModBus::Errors::ProtocolError, "Incomplete Message Content read" unless msg_content && msg_content.bytesize==content_length
+        
+        msg_length ||= ''
+        msg=uid+function_code+msg_length+msg_content
+      
+      rescue ModBus::Errors::ModBusException =>er
+        raise er if er.kind_of? ModBus::Errors::ModBusTimeout
+        
+        uid ||= ''
+        function_code ||= ''
+        msg_length ||= ''
+        msg_content ||= ''
+        
+        msg=uid+function_code+msg_length+msg_content
+              
+        
+        $log.debug 'Rx : '+er.message+ ' ' + logging_bytes(msg)
+         
+        
+        msg='' # return an empty message  
+      rescue StandardError => er
+        $log.error "Rx : Device Failed due to #{er}"
+        raise
+                
+      ensure
+        io.read_timeout=timer
+        msg 
+                    
+        end
+    end
+    
+    # clear the buffer - need to ensure that there is nothing in the buffer both before we start a query
+    # and after we finish a query - some devices are known to give multiple responses (eg a good response and an
+    # error response as well), or a timeout could have been missed because the device was too slow
+    def clear_buffer
+      #log("Rx : clearing buffer")
+      residual=''
+      timer=@io.read_timeout
+              
+      begin
+        @io.read_timeout=-1
+        if read_ready?(@io.t_3_5)
+          loop do
+            residual  <<  @io.readchar  #get residual if there is anything left
+            break unless read_ready?(@io.t_3_5)
+          end
+        end
+      rescue SystemCallError, Errno::EAGAIN, EOFError => er
+        $log.debug 'Rx : clear buffer error ' + er.to_s
+      ensure
+        @io.read_timeout=timer
+        $log.debug 'Rx : clear_buffer ' + logging_bytes(residual) 
+        nil #
+      end 
+      
+
     end
 
+    #send a PDU 
     def send_rtu_pdu(pdu)
       msg = @uid.chr + pdu
       msg << crc16(msg).to_word
-      
-      clean_input_buff  
-      @io.write msg
 
-      log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
+      timer=@io.read_timeout
+      select_timer=timer.to_f/1000 #select timer is in seconds, @io_read_timeout is in ms
+
+      
+      #check the buffer is ready to write
+      begin
+        raise ModBus::Errors::ModBusTimeout, 'Device not ready' unless write_ready?(select_timer)        
+        length=@io.syswrite(msg)
+      rescue SystemCallError => er
+        $log.debug 'Tx : write error '+er.to_s
+      rescue Exception => ex
+        $log.debug 'Tx : write exception '+ ex.to_s 
+        raise
+        #next line will catch
+      end
+      raise ModBus::Errors::ProtocolError, "Incomplete Message sent #{length}" unless length==msg.bytesize
+      
+
+      #$log.debug "Tx (#{msg.bytesize} bytes): " + logging_bytes(msg)
+        log "Tx (#{msg.bytesize} bytes): " + logging_bytes(msg)
     end
 
+    #read a PDU response from the device
+    #TODO should CRC mismatches or UID mismatches raise as errors?
     def read_rtu_pdu
       msg = read_rtu_response(@io)
 
-      log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
+#      $log.debug "Rx (#{msg.bytesize} bytes): " + logging_bytes(msg)
+      log "Rx (#{msg.bytesize} bytes): " + logging_bytes(msg)
 
       if msg.getbyte(0) == @uid
         return msg[1..-3] if msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
-        log "Ignore package: don't match CRC"
+           
+        #only get here if CRC is wrong  
+        $log.debug "Ignore package: don't match CRC"
       else
-        log "Ignore package: don't match uid ID"
+        $log.debug "Ignore package: don't match uid ID"
       end
-      loop do
-        #waite timeout
-        sleep(0.1)
-      end
+      
+      #return nil if no valid pdu read
+      nil
+      
     end
 
-    def read_rtu_request(io)
-			# Read the slave_id and function code
-			msg = io.read(2)
-
-			# If msg is nil, then our client never sent us anything and it's time to disconnect
-			return if msg.nil?
-
-			function_code = msg.getbyte(1)
-			if [1, 2, 3, 4, 5, 6].include?(function_code)
-				# read 6 more bytes and return the message total message
-				msg += io.read(6)
-			elsif [15, 16].include?(function_code)
-				# Read in first register, register count, and data bytes
-				msg += io.read(5)
-				# Read in however much data we need to + 2 CRC bytes
-				msg += io.read(msg.getbyte(6) + 2)
-			else
-				raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
-			end
-
-			log "Server RX (#{msg.size} bytes): #{logging_bytes(msg)}"
-
-			msg
+    #read an RTU request
+    def read_rtu_request(io=nil)
+      io||=@io
+      $log.debug 'Rx : started'
+      uid=nil
+      function_code=nil
+      msg_length=nil
+      msg_content=nil
+      
+      msg=nil
+      
+      timer=io.read_timeout
+      select_timer=timer.to_f/1000 #select timer is in seconds, io_read_timeout is in ms
+            
+      
+      begin
+        io.read_timeout=-1
+                  
+        #first read slave ID and Function Code
+        #there is no timeout in the caller as it is dangerous (see http://headius.blogspot.co.uk/2008/02/rubys-threadraise-threadkill-timeoutrb.html)
+        #so the read and write timeing is handled using select calls
+        
+        #allow a decent interval for the first octet - the device has to respond!
+        #we should always get eight bytes minimum as this is the length of the shortest normal request
+        #TODO - check diagnostics request length - but we have at least 3 bytes so should be fine
+        
+        begin
+          raise ModBus::Errors::ModBusTimeout, 'Device does not respond' unless read_ready?(select_timer)
+          uid = io.sysread(1)
+        rescue SystemCallError, EOFError, Errno::EAGAIN
+          #next line will catch
+        end
+        raise ModBus::Errors::ProtocolError, "Incomplete Slave ID read" unless uid #&& msg_header.bytesize==2
+        
+        #now we have a response so we can continue      
+        #we will always read the entire message - a slave ID mismatch is handled at a higher level 
+        begin
+          function_code = io.sysread(1) if read_ready?(io.t_3_5)
+        rescue SystemCallError, EOFError, Errno::EAGAIN
+          #next line will catch
+        end 
+        raise ModBus::Errors::ProtocolError, "Incomplete Function Code read" unless function_code 
+        
+        #how much more we read is dependent on the function code - some function codes have fixed length responses
+        #for others we read bytes to find the length of the response
+        content_length=0
+  			case function_code.getbyte(0)
+  			when 1, 2, 3, 4, 5, 6
+  			  content_length=6
+  			when 15, 16
+  				# Read in first register (2 bytes), register count (2 bytes), and data bytes (1 byte)
+  				msg_length = io.sysread(5) if read_ready?(io.t_3_5*5)
+          raise ModBus::Errors::ProtocolError, "Incomplete Message Length read" unless msg_length.bytesize==5
+          content_length=msg_length.getbyte(4)+2
+        else
+          #TODO - add diagnostics processing
+          raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
+        end            
+  				
+  				
+        begin
+          #check again that there is data to read
+          msg_content=''
+          while msg_content.bytesize < content_length && read_ready?(select_timer)
+            msg_content+=@io.sysread(content_length-msg_content.bytesize)
+          end        
+        rescue SystemCallError, EOFError, Errno::EAGAIN
+        #next line will catch
+        end
+        raise ModBus::Errors::ProtocolError, "Incomplete Message Content read" unless msg_content && msg_content.bytesize==content_length
+        
+        msg_length ||= ''
+        msg=uid+function_code+msg_length+msg_content
+      
+        rescue ModBus::Errors::ModBusException =>er
+          raise er if er.kind_of? ModBus::Errors::ModBusTimeout
+          
+          uid ||= ''
+          function_code ||= ''
+          msg_length ||= ''
+          msg_content ||= ''
+          
+          msg=uid+function_code+msg_length+msg_content
+                
+          
+          $log.debug 'Rx : '+er.message+ ' ' + logging_bytes(msg)
+           
+          
+          msg='' # return an empty message  
+        ensure
+          io.read_timeout=timer
+          msg 
+                      
+        end
 		end
 
-    def serv_rtu_requests(io, &blk)
+    #serve an RTU request
+		#TODO - do we want to flag a bad CRC check as an error - it may be good to log it so we can get an idea
+		#of just how bad the line is!
+		def serv_rtu_requests(io, &blk)
       loop do
         # read the RTU message
-        msg = read_rtu_request(io)
-        # If there is no RTU message, we're done serving this client
-        break if msg.nil?
+        begin
+          msg = read_rtu_request(io)
+          $log.debug "Rx : " +logging_bytes(msg)
+                
+        rescue ModBus::Errors::ModBusException
+          #if the read fails then we get here
+        end
+        # If there is no RTU message, then loop! we're NOT! done serving this client
+        next if msg.nil?
 
         if msg.getbyte(0) == @uid and msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
           pdu = yield msg
-          resp = @uid.chr + pdu
-          resp << crc16(resp).to_word
-          log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
-          io.write resp
+          send_rtu_pdu(pdu)
 		    end
+        sleep(0.01)
 	    end
     end
 
-    # Calc CRC16 for massage
+    # Calc CRC16 for message
     def crc16(msg)
       crc_lo = 0xff
       crc_hi = 0xff
@@ -184,7 +387,24 @@ module ModBus
         0x48, 0x49, 0x89, 0x4B, 0x8B, 0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C,
         0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80,
         0x40]
+        
+    public 
+    
+    #enables us to do CRC calcs out of IRB for testing purposes
+    def RTU.crc16(msg)
+      crc_lo = 0xff
+      crc_hi = 0xff
+
+      msg.unpack('c*').each do |byte|
+        i = crc_hi ^ byte
+        crc_hi = crc_lo ^ CrcHiTable[i]
+        crc_lo = CrcLoTable[i]
+      end
+
+      return ((crc_hi << 8) + crc_lo)
+    end
 
   end
 end
+
 

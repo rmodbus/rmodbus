@@ -137,6 +137,23 @@ module ModBus
       end
       params
     end
+    
+    #put the select into a separate method to allow rspec to mock it 
+     #rspec doesn't like IO.select
+     def read_ready? (timeout)
+       IO.select([@io],nil,nil, timeout)
+     end
+    
+     #put the select into a separate method to allow rspec to mock it 
+     #rspec doesn't like IO.select
+     def write_ready? (timeout)
+       IO.select(nil, [@io],nil, timeout)
+     end
+    
+     #stub method to clear the buffer
+     #overwritten by RTU
+     def clear_buffer
+     end   
 
   end
 end

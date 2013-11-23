@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2008-2011  Timin Aleksey
 # Copyright (C) 2010  Kelley Reynolds
+# Copyright (C) 2011-2012  uCratos Ltd (Steve Gooberman-Hill)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,13 +14,40 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+require 'timeout'
+require 'weakref'
+
 module ModBus
+  module Diagnostics
+    RETURN_QUERY_DATA=0
+    RESTART_COMMS=1
+    RETURN_DIAGNOSTIC_REGISTER=2
+    CHANGE_ASCII_DELIMITER=3
+    FORCE_LISTEN_ONLY=4
+    CLEAR_COUNTERS=10
+    RETURN_BUS_MSG_COUNT=11
+    RETURN_BUS_COMM_ERROR_COUNT=12
+    RETURN_BUS_EXCEPTION_COUNT=13
+    RETURN_SLAVE_MSG_COUNT=14
+    RETURN_SLAVE_NO_RESPONSE_COUNT=15
+    RETURN_SLAVE_NAK_COUNT=16
+    RETURN_SLAVE_BUSY_COUNT=17
+    RETURN_BUS_CHAR_OVERRUN_COUNT=18
+    RETURN_OVERRRUN_ERROR_COUNT=19
+    CLEAR_OVERRUN_COUNTER=20
+    GET_MODBUS_PLUS_STATS=21
+  end
+  
+    
+    
   class Slave
     include Errors
     include Debug
     include Options
     # Number of times to retry on read and read timeouts
-    attr_accessor :uid
+    attr_accessor :uid, :io
+    
+    
     Exceptions = {
           1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
           2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),
@@ -29,11 +57,28 @@ module ModBus
           6 => SlaveDeviceBus.new("The server is engaged in processing a long duration program command"),
           8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
     }
-    def initialize(uid, io)
+    
+    HEARTBEAT_TIMEOUT=60
+    
+    
+    
+    def initialize(uid, io, lock=Mutex.new, hb=Time.now())
 	    @uid = uid
       @io = io
+      @query_lock=lock #lock to ensure that queries happen one at a time from the master device
+                       #optional in arguments at allow test suite not to crash!
+      @heartbeat=hb #heartbeat of the connection 
     end
-
+    
+    #checks that the slave has acted in the last HEARTBEAT_TIMEOUT seconds. very useful if you are polling a device regularly
+    #as some modbus error conditions have been observed to hang the line - so if the heartbeat is stale then 
+    #the query_lock hasn't returned form this device or another device
+    #returns true if the device is ok
+    def heartbeat
+      Time.now()-@heartbeat < HEARTBEAT_TIMEOUT
+    end  
+    
+    
     # Returns a ModBus::ReadWriteProxy hash interface for coils
     #
     # @example
@@ -223,6 +268,18 @@ module ModBus
       query("\x16" + addr.to_word + and_mask.to_word + or_mask.to_word)
       self
     end
+    
+    #send diagnostic function
+    #all diagnostics are 7 byte queries
+    #as per fig 44 of PI+MBUS-300 Rev J
+    # @example
+    #   diagnostics(Diagnostics::RESTART_COMMS,0x0000) => self
+    # @param [Integer] code Diagnostics subfunction code (defined in Diagnostics module)
+    # @param [Integer] data Data to send - assumed to be 0x0000 unless otherwise defined 
+    def diagnostics(code, data=0x0000)
+      query("\x08"+code.to_word+data.to_word)
+      self
+    end
 
     # Request pdu to slave device
     #
@@ -241,32 +298,76 @@ module ModBus
     # @raise [MemoryParityError] extended file area failed to pass a consistency check
     def query(request)
       tried = 0
-      response = ""
+      response = ''
+      tp=Thread.current.priority
       begin
-        timeout(@read_retry_timeout, ModBusTimeout) do
-          send_pdu(request)
-          response = read_pdu
+        @query_lock.synchronize do
+          $log.debug "Lock > #{@uid}"
+          @heartbeat=Time.now if @heartbeat<Time.now
+          $log.debug "Heartbeat is #{@heartbeat.inspect}"
+           
+          begin
+            Thread.current.priority=2 #increase the priority of the thread while we are running the IO
+            clear_buffer
+            
+            # retries are sorted out outside the critical section!
+            timeout(@read_retry_timeout, ModBusTimeout) do
+              send_pdu(request)
+              response = read_pdu
+            end
+          rescue ModBusException
+            raise
+          ensure
+            clear_buffer
+            Thread.current.priority=tp
+            $log.debug "Lock < #{@uid}"
+          end
+                    
+        end #end synchronized section
+        
+        raise ModBusTimeout.new("Response Failure") if response.nil? || response.bytesize == 0
+        
+        read_func = response.getbyte(0)
+        
+        #check for an exception
+        if read_func >= 0x80
+          exc_id = response.getbyte(1)
+          response=''
+          raise Exceptions[exc_id] unless Exceptions[exc_id].nil?
+          raise ModBusException.new("ModBus : Unknown error response received" )
         end
+  
+        check_response_mismatch(request, response) if raise_exception_on_mismatch
+        response=response[2..-1]
+        #end
+        
       rescue ModBusTimeout => err
-        log "Timeout of read operation: (#{@read_retries - tried})"
+        $log.debug "Timeout of read operation: (#{@read_retries - tried})"
         tried += 1
         retry unless tried >= @read_retries
-        raise ModBusTimeout.new, "Timed out during read attempt"
+        raise #ModBus::Errors::ModBusTimeout("Timed out during read attempt")
+      rescue ModBusException  => ex
+        $log.warn "Slave caught Modbus exception : #{ex.to_s}  at #{ex.backtrace[0]}"
+        raise 
+      rescue StandardError  => ex
+        $log.error "Slave caught exception : #{ex.to_s}  at #{ex.backtrace[0]}"
+        raise
+      ensure
+        response 
       end
 
-      return nil if response.size == 0
-
-      read_func = response.getbyte(0)
-      if read_func >= 0x80
-        exc_id = response.getbyte(1)
-        raise Exceptions[exc_id] unless Exceptions[exc_id].nil?
-
-        raise ModBusException.new, "Unknown error"
-      end
-
-      check_response_mismatch(request, response) if raise_exception_on_mismatch
-      response[2..-1]
+      
     end
+    
+    def renew_connection
+      @io=Object.new
+    end
+
+    #stub method - can be overwritten in derived classes 
+    def clear_buffer
+       #nothing to do here
+    end
+
 
     private
     def check_response_mismatch(request, response)
@@ -314,10 +415,28 @@ module ModBus
           msg = "Quantity is mismatch (expected #{exp_quant}, got #{got_quant})"
         end
       else
-        warn "Fuiction (#{read_func}) is not supported raising response mismatch"
+        warn "Function (#{read_func}) is not supported raising response mismatch"
       end
 
       raise ResponseMismatch.new(msg, request, response) if msg
+
     end
+   
+    #put the select into a separate method to allow rspec to mock it 
+    #rspec doesn't like IO.select
+    def read_ready? (timeout)
+      IO.select([@io],nil,nil, timeout)
+    end
+   
+    #put the select into a separate method to allow rspec to mock it 
+    #rspec doesn't like IO.select
+    def write_ready? (timeout)
+      IO.select(nil, [@io],nil, timeout)
+    end
+   
+    #stub method to clear the buffer
+    #overwritten by RTU
+    def clear_buffer
+    end    
   end
 end

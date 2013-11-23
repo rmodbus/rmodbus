@@ -37,3 +37,6 @@ require 'rmodbus/rtu_via_tcp_client'
 require 'rmodbus/rtu_via_tcp_server'
 require 'rmodbus/proxy'
 require 'rmodbus/version'
+
+require 'logger'
+$log ||=Logger.new(STDERR)

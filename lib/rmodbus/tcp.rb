@@ -44,5 +44,11 @@ module ModBus
 
       io
     end
+
+    #stub - not really required for ModbusTCP as we are using transaction numbers
+    def clear_buffer
+       #nothing to do here
+    end
+
   end
 end

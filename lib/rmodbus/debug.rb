@@ -20,7 +20,7 @@ module ModBus
 
 
     private
-    # Put log message on standart output
+    # Put log message on standard output
     # @param [String] msg message for log
     def log(msg)
       $stdout.puts msg if @debug

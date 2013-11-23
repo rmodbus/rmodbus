@@ -40,6 +40,9 @@ module ModBus
 
     class MemoryParityError < ModBusException
     end
+    
+    class ProtocolError < ModBusException
+    end
 
     class ModBusTimeout < ModBusException
     end

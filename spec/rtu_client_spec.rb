@@ -6,36 +6,44 @@ describe ModBus::RTUClient do
     @sp = mock('Serial port')
     SerialPort.should_receive(:new).with("/dev/port1", 9600, 8, 1, 0).and_return(@sp)    
     @sp.stub!(:read_timeout=)
+    @sp.stub!(:read_timeout){ 100 }    
+    @sp.stub!(:t_3_5){ 0.01 }    
     @sp.should_receive(:flow_control=).with(SerialPort::NONE)
-    @sp.stub!(:read_nonblock)
 
     @cl = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)
+
     @slave = @cl.with_slave(1)
+    @slave.stub!(:read_ready?){|array| array }
+    @slave.stub!(:write_ready?){|array| array }
+    @slave.stub!(:clear_buffer)
     @slave.read_retries = 1
   end
 
   it "should ignore frame with other UID" do
     request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
-    @sp.should_receive(:write).with("\1#{request}\xA6\x31")
-    @sp.should_receive(:read).with(2).and_return("\x2\x10")
-    @sp.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
+    @sp.should_receive(:syswrite).with("\1#{request}\xA6\x31").and_return(11)
+    @sp.should_receive(:sysread).with(1).and_return("\x2")
+    @sp.should_receive(:sysread).with(1).and_return("\x10")
+    @sp.should_receive(:sysread).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
     lambda {@slave.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
   end
 
   it "should ignored frame with incorrect CRC" do
     request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
-    @sp.should_receive(:write).with("\1#{request}\xA6\x31")
-    @sp.should_receive(:read).with(2).and_return("\x2\x10")
-    @sp.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
+    @sp.should_receive(:syswrite).with("\1#{request}\xA6\x31").and_return(11)
+    @sp.should_receive(:sysread).with(1).and_return("\x2")
+    @sp.should_receive(:sysread).with(1).and_return("\x10")
+    @sp.should_receive(:sysread).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
     lambda {@slave.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
   end
   
   it "should return value of registers"do
     request = "\x3\x0\x1\x0\x1"
-    @sp.should_receive(:write).with("\1#{request}\xd5\xca")
-    @sp.should_receive(:read).with(2).and_return("\x1\x3")
-    @sp.should_receive(:read).with(1).and_return("\x2")
-    @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
+    @sp.should_receive(:syswrite).with("\1#{request}\xd5\xca").and_return(8)
+    @sp.should_receive(:sysread).with(1).and_return("\x1")
+    @sp.should_receive(:sysread).with(1).and_return("\x3")
+    @sp.should_receive(:sysread).with(1).and_return("\x2")
+    @sp.should_receive(:sysread).with(4).and_return("\xff\xff\xb9\xf4")
     @slave.query(request).should == "\xff\xff"
   end
 

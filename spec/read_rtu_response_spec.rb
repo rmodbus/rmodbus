@@ -2,30 +2,44 @@
 require 'rmodbus'
 
 #Use public wrap method
-class ModBus::Client
+class ModBus::Slave
   include ModBus::RTU
   def test_read_method(msg)
     io = TestIO.new(msg)
     read_rtu_response(io)
   end
+  
+  def read_ready?(timeout)
+    true
+  end
+  alias :write_ready? :read_ready?
+
 
 end
 
 class TestIO
+  attr_accessor :read_timeout
+  
   def initialize(msg)
     @msg = msg
+    @read_timeout=100
   end
 
-  def read(num)
+  def sysread(num)
     result = @msg[0,num]
     @msg = @msg[num..-1]
     result
   end
+  
+  def t_3_5
+    0.01
+  end
+    
 end
 
 describe "#read_rtu_response" do
   before do
-    @cl_mb = ModBus::Client.new   
+    @cl_mb = ModBus::Slave.new(1,nil)  
   end
 
   it "should read response for 'read coils'" do

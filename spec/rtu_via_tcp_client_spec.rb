@@ -7,35 +7,43 @@ describe ModBus::RTUViaTCPClient do
       @sock = mock('Socked')
       TCPSocket.should_receive(:new).with("127.0.0.1", 10002).and_return(@sock)    
       @sock.stub!(:read_timeout=)
-      @sock.stub!(:read_nonblock)
+      @sock.stub!(:read_timeout){ 100 } 
+      @sock.stub!(:t_3_5){ 0.01 }   
+
       
       @cl = ModBus::RTUViaTCPClient.new("127.0.0.1")
       @slave = @cl.with_slave(1)
       @slave.read_retries = 1
+      @slave.stub!(:read_ready?){|array| array }
+      @slave.stub!(:write_ready?){|array| array }
+      @slave.stub!(:clear_buffer)
     end
     
     it "should ignore frame with other UID" do
       request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
-      @sock.should_receive(:write).with("\1#{request}\xA6\x31")
-      @sock.should_receive(:read).with(2).and_return("\x2\x10")
-      @sock.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
+      @sock.should_receive(:syswrite).with("\1#{request}\xA6\x31").and_return(11)
+      @sock.should_receive(:sysread).with(1).and_return("\x2")
+      @sock.should_receive(:sysread).with(1).and_return("\x10")
+            @sock.should_receive(:sysread).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
       lambda {@slave.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
     end
     
-    it "should ignored frame with incorrect CRC" do
+    it "should ignore frame with incorrect CRC" do
       request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
-      @sock.should_receive(:write).with("\1#{request}\xA6\x31")
-      @sock.should_receive(:read).with(2).and_return("\x2\x10")
-      @sock.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
+      @sock.should_receive(:syswrite).with("\1#{request}\xA6\x31").and_return(11)
+      @sock.should_receive(:sysread).with(1).and_return("\x2")
+      @sock.should_receive(:sysread).with(1).and_return("\x10")
+      @sock.should_receive(:sysread).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
       lambda {@slave.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
     end
     
     it "should return value of registers"do
       request = "\x3\x0\x1\x0\x1"
-      @sock.should_receive(:write).with("\1#{request}\xd5\xca")
-      @sock.should_receive(:read).with(2).and_return("\x1\x3")
-      @sock.should_receive(:read).with(1).and_return("\x2")
-      @sock.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
+      @sock.should_receive(:syswrite).with("\1#{request}\xd5\xca").and_return(8)
+      @sock.should_receive(:sysread).with(1).and_return("\x1")
+      @sock.should_receive(:sysread).with(1).and_return("\x3")
+      @sock.should_receive(:sysread).with(1).and_return("\x2")
+      @sock.should_receive(:sysread).with(4).and_return("\xff\xff\xb9\xf4")
       @slave.query(request).should == "\xff\xff"
     end
     
