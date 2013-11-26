@@ -1,6 +1,7 @@
 # RModBus - free implementation of ModBus protocol on Ruby.
 #
 # Copyright (C) 2008-2011  Timin Aleksey
+# Copyright (C) 2011  Steve Gooberman-Hill for multithread safety
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ module ModBus
     end
 
     def get_slave(uid, io)
-      TCPSlave.new(uid, io)
+      TCPSlave.new(uid, io, @query_lock)
     end
   end
 end
