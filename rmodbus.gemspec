@@ -25,4 +25,7 @@ Gem::Specification.new do |gem|
     gem.add_development_dependency 'serialport', '~>1.3'
   end
 
+  if RUBY_VERSION >= "2.2"
+    gem.add_runtime_dependency "gserver", '~>0.0'
+  end
 end
