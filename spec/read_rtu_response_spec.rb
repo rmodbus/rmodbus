@@ -79,7 +79,8 @@ describe "#read_rtu_response" do
   end
 
   it "should raise exception if function is illegal" do
-    resp = make_resp("\xff\x0\x1\x0\x2").should raise_error {
+    resp =  make_resp("\x1f\x0\x1\x0\x2")
+    lambda{ @cl_mb.test_read_method(resp)}.should raise_error {
       ModBus::Errors::IllegalFunction
     }
   end
