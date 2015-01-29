@@ -1,7 +1,10 @@
+###2015-01-29 Release 1.2.4
+
+1. Added ruby-2.2 compatibility
+
 ###2015-01-29 Release 1.2.3
 
 1. Fixed bug [#30](https://github.com/flipback/rmodbus/pull/30) in parsing command 'write_register' for server implementation part. 
-2. Added ruby-2.2 compatibility
 
 ###2013-10-28 Release 1.2.2
 
