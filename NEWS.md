@@ -1,4 +1,4 @@
-###Next release
+###2015-01-29 Release 1.2.3
 
 1. Fixed bug [#30](https://github.com/flipback/rmodbus/pull/30) in parsing command 'write_register' for server implementation part. 
 
