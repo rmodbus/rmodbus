@@ -1,3 +1,7 @@
+###2015-03-12 Release 1.2.5
+
+1. Fixed issue [#34](https://github.com/flipback/rmodbus/issues/34).
+
 ###2015-01-29 Release 1.2.4
 
 1. Added ruby-2.2 compatibility
