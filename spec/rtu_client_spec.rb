@@ -31,11 +31,7 @@ describe ModBus::RTUClient do
   end
   
   it "should return value of registers"do
-    request = "\x3\x0\x1\x0\x1"
-    @sp.should_receive(:write).with("\1#{request}\xd5\xca")
-    @sp.should_receive(:read).with(2).and_return("\x1\x3")
-    @sp.should_receive(:read).with(1).and_return("\x2")
-    @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
+    request = stab_valid_request
     @slave.query(request).should == "\xff\xff"
   end
 
@@ -51,6 +47,15 @@ describe ModBus::RTUClient do
       cl.data_bits.should == 8
       cl.stop_bits.should == 1
       cl.parity.should == SerialPort::NONE
+    end
+  end
+
+  unless RUBY_PLATFORM.include? "mingw"
+    it 'should ignore EOFError during clearing the buffer' do
+      @sp.should_receive(:read_nonblock).and_raise(EOFError)
+
+      request = stab_valid_request
+      lambda { @slave.query(request)}.should_not raise_error(EOFError)
     end
   end
 
@@ -71,6 +76,16 @@ describe ModBus::RTUClient do
     @cl.with_slave(1) do |slave|
       slave.uid = 1
     end
+  end
+
+  def stab_valid_request
+    request = "\x3\x0\x1\x0\x1"
+    @sp.should_receive(:write).with("\1#{request}\xd5\xca")
+    @sp.should_receive(:read).with(2).and_return("\x1\x3")
+    @sp.should_receive(:read).with(1).and_return("\x2")
+    @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
+
+    request
   end
 end
 

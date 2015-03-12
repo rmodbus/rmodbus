@@ -59,7 +59,7 @@ module ModBus
       rescue Errno::EAGAIN
         # Ignore the fact we couldn't read.
       rescue Exception => e
-        raise e unless win_platform && e.is_a?(EOFError) # EOFError means we are done
+        raise e unless win_platform || e.is_a?(EOFError) # EOFError means we are done
       end
     end
 
