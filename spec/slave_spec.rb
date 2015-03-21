@@ -5,7 +5,7 @@ describe ModBus::Slave do
   before do
     @slave = ModBus::Client.new.with_slave(1)
 
-    @slave.stub!(:query).and_return('')
+    @slave.stub(:query).and_return('')
   end
 
   it "should support function 'read coils'" do

@@ -41,23 +41,23 @@ describe ModBus::Client do
   it 'should common for all slaves :debug flag' do
     @cl.debug = true
     @cl.with_slave(1) do |slave_1|
-      slave_1.debug.should be_true
+      slave_1.debug.should be_truthy
     end
     @cl.with_slave(2) do |slave_2|
       slave_2.debug = false
-      slave_2.debug.should be_false
+      slave_2.debug.should be_falsey
     end
   end
 
   it 'should common for all slaves :raise_exception_on_mismatch flag' do
     @cl.raise_exception_on_mismatch = true
     @cl.with_slave(1) do |slave_1|
-      slave_1.raise_exception_on_mismatch.should be_true
+      slave_1.raise_exception_on_mismatch.should be_truthy
     end
 
     @cl.with_slave(2) do |slave_2|
       slave_2.raise_exception_on_mismatch = false
-      slave_2.raise_exception_on_mismatch.should be_false
+      slave_2.raise_exception_on_mismatch.should be_falsey
     end
   end
   
