@@ -1,3 +1,7 @@
+###2015-03-21 Release 1.2.6
+
+1. Fixed issue [#35](https://github.com/flipback/rmodbus/issues/35).
+
 ###2015-03-12 Release 1.2.5
 
 1. Fixed issue [#34](https://github.com/flipback/rmodbus/issues/34).
