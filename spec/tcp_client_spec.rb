@@ -5,11 +5,11 @@ describe ModBus::TCPClient do
   describe "method 'query'" do    
     before(:each) do
       @uid = 1
-      @sock = mock("Socket")
+      @sock = double('Socket')
       @adu = "\000\001\000\000\000\001\001"
   
       TCPSocket.should_receive(:new).with('127.0.0.1', 1502).and_return(@sock)
-      @sock.stub!(:read).with(0).and_return('')
+      @sock.stub(:read).with(0).and_return('')
       @cl = ModBus::TCPClient.new('127.0.0.1', 1502)
       @slave = @cl.with_slave(@uid)
     end
@@ -33,8 +33,8 @@ describe ModBus::TCPClient do
     it 'should throw timeout exception if do not get own transaction' do
       @slave.read_retries = 2
       @adu[0,2] = @slave.transaction.next.to_word
-      @sock.should_receive(:write).any_number_of_times.with(/\.*/)
-      @sock.should_receive(:read).any_number_of_times.with(7).and_return("\000\x3\000\000\000\001" + @uid.chr)
+      @sock.should_receive(:write).at_least(1).times.with(/\.*/)
+      @sock.should_receive(:read).at_least(1).times.with(7).and_return("\000\x3\000\000\000\001" + @uid.chr)
 
       expect{ @slave.query('') }.to raise_error(ModBus::Errors::ModBusTimeout, "Timed out during read attempt")
     end

@@ -4,11 +4,11 @@ require 'rmodbus'
 describe ModBus::TCPClient  do
   before(:each) do
     @uid = 1
-    @sock = mock("Socket")
+    @sock = double('Socket')
     @adu = "\000\001\000\000\000\001\001"
 
     TCPSocket.should_receive(:new).with('127.0.0.1', 1502).and_return(@sock)
-    @sock.stub!(:read).with(0).and_return('')
+    @sock.stub(:read).with(0).and_return('')
 
     @slave = ModBus::TCPClient.new('127.0.0.1', 1502).with_slave(@uid)
     @slave.debug = true
@@ -55,11 +55,11 @@ begin
   require "serialport"
   describe ModBus::RTUClient do
     before do 
-      @sp = mock('Serial port')
+      @sp = double('Serial port')
       SerialPort.should_receive(:new).with("/dev/port1", 9600, 7, 2, SerialPort::ODD).and_return(@sp)    
       
       @sp.should_receive(:flow_control=).with(SerialPort::NONE)
-      @sp.stub!(:read_timeout=)
+      @sp.stub(:read_timeout=)
       
       @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => SerialPort::ODD).with_slave(1)
       @slave.read_retries = 0
