@@ -105,8 +105,8 @@ module ModBus
       loop do
         # read the RTU message
         msg = read_rtu_request(io)
-        # If there is no RTU message, we're done serving this client
-        break if msg.nil?
+
+        next if msg.nil?
 
         if msg.getbyte(0) == @uid and msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
           pdu = yield msg
