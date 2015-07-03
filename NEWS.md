@@ -1,3 +1,7 @@
+###Next Release
+
+1. RTUServer doesn't stop serving when there is no RTU messages. Pull request [#37](https://github.com/flipback/rmodbus/pull/37).
+
 ###2015-03-21 Release 1.2.6
 
 1. Fixed issue [#35](https://github.com/flipback/rmodbus/issues/35).
