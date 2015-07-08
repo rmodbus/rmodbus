@@ -4,10 +4,10 @@ require 'rmodbus'
 describe ModBus::RTUViaTCPClient do
   describe "method 'query'" do    
     before do 
-      @sock = double('Socked')
+      @sock = double('Socket')
       TCPSocket.should_receive(:new).with("127.0.0.1", 10002).and_return(@sock)    
       @sock.stub(:read_timeout=)
-      @sock.stub(:flush_input)
+      @sock.stub(:flush)
       
       @cl = ModBus::RTUViaTCPClient.new("127.0.0.1")
       @slave = @cl.with_slave(1)

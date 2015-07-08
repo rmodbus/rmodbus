@@ -46,7 +46,11 @@ module ModBus
 
     def clean_input_buff
       # empty the input buffer
-      @io.flush_input
+      if @io.kind_of? SerialPort
+        @io.flush_input 
+      else
+        @io.flush
+      end
     end
 
     def send_rtu_pdu(pdu)

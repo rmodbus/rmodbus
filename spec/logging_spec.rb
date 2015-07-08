@@ -60,9 +60,12 @@ begin
       
       @sp.should_receive(:flow_control=).with(SerialPort::NONE)
       @sp.stub(:read_timeout=)
-      
+      @sp.stub(:kind_of?).with(SerialPort).and_return(true)
+      @sp.stub(:flush_input)
+
       @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => SerialPort::ODD).with_slave(1)
       @slave.read_retries = 0
+
     end
     
     it 'should log rec\send bytes' do
