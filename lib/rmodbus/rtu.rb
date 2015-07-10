@@ -46,7 +46,7 @@ module ModBus
 
     def clean_input_buff
       # empty the input buffer
-      if @io.kind_of? SerialPort
+      if @io.class.public_method_defined? :flush_input
         @io.flush_input 
       else
         @io.flush

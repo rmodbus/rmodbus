@@ -4,10 +4,13 @@ require 'rmodbus'
 describe ModBus::RTUClient do
   before do 
     @sp = double('Serial port')
+
     SerialPort.should_receive(:new).with("/dev/port1", 9600, 8, 1, 0).and_return(@sp)    
+    SerialPort.stub(:public_method_defined?).with(:flush_input).and_return(true)
+
     @sp.stub(:read_timeout=)
+    @sp.stub(:class).and_return(SerialPort)
     @sp.should_receive(:flow_control=).with(SerialPort::NONE)
-    @sp.stub(:kind_of?).with(SerialPort).and_return(true)
     @sp.stub(:flush_input)
 
     @cl = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)
