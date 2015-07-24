@@ -1,7 +1,7 @@
 RModBus [![Build Status](https://secure.travis-ci.org/flipback/rmodbus.png)](http://travis-ci.org/flipback/rmodbus)
 ==========================
 
-**RModBus** - free implementation of protocol ModBus written in pure Ruby.
+**RModBus** - free implementation of ModBus protocol in pure Ruby.
 
 Features
 ---------------------------
@@ -25,9 +25,11 @@ Support functions
 Installation
 ------------------------------------
 
-Download and install RModBus with the following
+Download and install RModBus with the following:
 
-**$ gem install rmodbus**
+```
+gem install rmodbus
+```
 
 Example
 ------------------------------------
@@ -55,15 +57,17 @@ Example
 GitHub
 ----------------------------------
 
-You can checkout source code from GitHub repositry
+You can checkout source code from GitHub repository:
 
-**$ git clone git://github.com/flipback/RModBus.git**
+```
+git clone git://github.com/flipback/RModBus.git
+```
 
 Reference
 ----------------------------------
 
 Home page: http://rmodbus.flipback.net
 
-RModBud on GitHub: http://github.com/flipback/RModBus
+RModBus on GitHub: http://github.com/flipback/RModBus
 
-ModBus community: http://www.modbus-ida.org
+ModBus specifications: http://www.modbus.org/specs.php
