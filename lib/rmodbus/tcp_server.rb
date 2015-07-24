@@ -25,8 +25,8 @@ module ModBus
   #   srv.start
 	class TCPServer < GServer
 		include Debug
-		include Server 
-    
+		include Server
+
     # Init server
     # @param [Integer] port listen port
     # @param [Integer] uid slave device
@@ -43,17 +43,19 @@ module ModBus
     # Serve requests
     # @param [TCPSocket] io socket
 		def serve(io)
-			while not stopped? 
-				req = io.read(7)
-				if req[2,2] == "\x00\x00" or req.getbyte(6) == @uid
-          tr = req[0,2]
-          len = req[4,2].unpack('n')[0]
+			while not stopped?
+        header = io.read(7)
+        tx_id = header[0,2]
+        proto_id = header[2,2]
+        len = header[4,2].unpack('n')[0]
+        unit_id = header.getbyte(6)
+				if proto_id == "\x00\x00" or unit_id == @uid
           req = io.read(len - 1)
           log "Server RX (#{req.size} bytes): #{logging_bytes(req)}"
 
           pdu = exec_req(req, @coils, @discrete_inputs, @holding_registers, @input_registers)
 
-          resp = tr + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
+          resp = tx_id + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
           log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
           io.write resp
         end
