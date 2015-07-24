@@ -42,16 +42,16 @@ module ModBus
 
     # Serve requests
     # @param [TCPSocket] io socket
-		def serve(io)
-			while not stopped?
+    def serve(io)
+      while not stopped?
         header = io.read(7)
         tx_id = header[0,2]
         proto_id = header[2,2]
         len = header[4,2].unpack('n')[0]
         unit_id = header.getbyte(6)
-				if proto_id == "\x00\x00"
+        if proto_id == "\x00\x00"
           req = io.read(len - 1)
-				  if unit_id == @uid || unit_id == 0
+          if unit_id == @uid || unit_id == 0
             log "Server RX (#{req.size} bytes): #{logging_bytes(req)}"
 
             pdu = exec_req(req, @coils, @discrete_inputs, @holding_registers, @input_registers)
@@ -63,7 +63,7 @@ module ModBus
             log "Ignored server RX (invalid unit ID #{unit_id}, #{req.size} bytes): #{logging_bytes(req)}"
           end
         end
-			end
-		end
+      end
+    end
 	end
 end
