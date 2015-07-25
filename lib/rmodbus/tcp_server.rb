@@ -35,6 +35,9 @@ module ModBus
     # @option opts [Float, Integer] :max_connection max of TCP connection with server default 4
 		def initialize(port = 502, uid = 1, opts = {})
 			@uid = uid
+
+      warn "[WARNING] Please, use UID = 255. It will be fixed in the next release." if @uid != 0xff
+
       opts[:host] = DEFAULT_HOST unless opts[:host]
       opts[:max_connection] = 4 unless opts[:max_connection]
 			super(port, host = opts[:host], maxConnection = opts[:max_connection])
