@@ -1,6 +1,9 @@
 ###Next Release
 
 1. RTUServer doesn't stop serving when there is no RTU messages. Pull request [#37](https://github.com/flipback/rmodbus/pull/37).
+2. Fixed a bug with flushing buffer in RTUviaTCPClient.
+3. Added validation for UDI in TCPServer. See request [#38](https://github.com/flipback/rmodbus/pull/38).
+4. Added a warning message to ask use UID=255 for TCP Server  according to the protocol specification.
 
 ###2015-03-21 Release 1.2.6
 
