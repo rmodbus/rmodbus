@@ -3,23 +3,28 @@ require "rmodbus"
 
 describe ModBus::TCPServer do
   before :all do
-    @server = ModBus::TCPServer.new(8502,1)
+    unit_ids = (1..247).to_a.shuffle
+    valid_unit_id = unit_ids.first
+    @invalid_unit_id = unit_ids.last
+    @server = ModBus::TCPServer.new(8502, valid_unit_id)
     @server.coils = [1,0,1,1]
     @server.discrete_inputs = [1,1,0,0]
     @server.holding_registers = [1,2,3,4]
     @server.input_registers = [1,2,3,4]
     @server.start
     @cl = ModBus::TCPClient.new('127.0.0.1', 8502)
-    @slave = @cl.with_slave(1)
-    @slave.read_retries = 1
+    @cl.read_retries = 1
+    @slave = @cl.with_slave(valid_unit_id)
   end
 
-  it "should silent if UID has mismatched" do
-    @cl.with_slave(2).read_coils(1,3)
-    #lambda { @cl.with_slave(2).read_coils(1,3) }.should raise_exception(
-    #  ModBus::Errors::ModBusException,
-    #  "Server did not respond"
-    #)
+  it "should succeed if UID is broadcast" do
+    @cl.with_slave(0).read_coils(1,3)
+  end
+
+  it "should fail if UID is mismatched" do
+    lambda { @cl.with_slave(@invalid_unit_id).read_coils(1,3) }.should raise_exception(
+      ModBus::Errors::ModBusTimeout
+    )
   end
 
   it "should send exception if function not supported" do
