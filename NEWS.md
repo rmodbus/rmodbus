@@ -1,4 +1,4 @@
-###Next Release
+###2015-07-30 Release 1.2.7
 
 1. RTUServer doesn't stop serving when there is no RTU messages. Pull request [#37](https://github.com/flipback/rmodbus/pull/37).
 2. Fixed a bug with flushing buffer in RTUviaTCPClient.
