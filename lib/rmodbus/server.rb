@@ -16,7 +16,7 @@
 module ModBus
   # Module for implementation ModBus server
   module Server
-    Funcs = [1,2,3,4,5,6,15,16]
+    Funcs = [1,2,3,4,5,6,15,16,23]
 
     attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers, :uid
     @coils = []
@@ -79,6 +79,22 @@ module ModBus
           if params[:err] == 0
             holding_registers[params[:addr],params[:quant]] = params[:val][0,params[:quant]]
             pdu = req[0,5]
+          end
+        when 23
+          params_w = parse_write_multiple_registers_func(func.chr + req[5, req.length - 5])
+          params_r = parse_read_func(func.chr + req[1,4], holding_registers)
+          if 0 == params_w[:err] && 0 == params_r[:err]
+            params = { :err => 0 }
+            holding_registers[params_w[:addr], params_w[:quant]] =
+              params_w[:val][0, params_w[:quant]]
+            pdu = func.chr + (params_r[:quant] * 2).chr +
+              holding_registers[params_r[:addr], params_r[:quant]].pack('n*')
+          elsif 3 == params_w[:err] || 3 == params_r[:err]
+            params = { :err => 3 }
+          elsif 2 == params_w[:err] || 2 == params_r[:err]
+            params = { :err => 2 }
+          else
+            raise 'Maybe a bug'
           end
       end
 

@@ -224,6 +224,27 @@ module ModBus
       self
     end
 
+    # Read/write multiple holding registers
+    #
+    # @example
+    #  read_write_multiple_registers(1, 5, 1, [0xaa, 0]) => [1, 0, ..]
+    #
+    # @param [Integer] addr_r address first registers to read
+    # @param [Integer] nregs number registers to read
+    # @param [Integer] addr_w address first registers to write
+    # @param [Array] vals written registers
+    # @return [Array] registers
+    def read_write_multiple_registers(addr_r, nregs, addr_w, vals)
+      s_val = ""
+      vals.each do |reg|
+        s_val << reg.to_word
+      end
+
+      query("\x17" + addr_r.to_word + nregs.to_word +
+            addr_w.to_word + vals.size.to_word + (vals.size * 2).chr + s_val).unpack('n*')
+    end
+    alias_method :read_write_holding_registers, :read_write_multiple_registers
+
     # Request pdu to slave device
     #
     # @param [String] pdu request to slave

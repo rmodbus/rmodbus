@@ -27,7 +27,7 @@ module ModBus
 
       function_code = msg.getbyte(1)
       case function_code
-        when 1,2,3,4 then
+        when 1,2,3,4,23 then
           # read the third byte to find out how much more
           # we need to read + CRC
           msg += io.read(1)
@@ -96,6 +96,12 @@ module ModBus
 				msg += io.read(5)
 				# Read in however much data we need to + 2 CRC bytes
 				msg += io.read(msg.getbyte(6) + 2)
+                        elsif [23].include?(function_code)
+                          # Read in first register, register count,
+                          # first register, register count, and data bytes
+                          msg += io.read(9)
+                          # Read in however much data we need to + 2 CRC bytes
+                          msg += io.read(msg.getbyte(10) + 2)
 			else
 				raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
 			end
