@@ -102,7 +102,7 @@ module ModBus
 
     def parse_write_coil_func(req)
       addr = req[1,2].unpack('n')[0]
-      return { :err => 2 } unless addr <= @coils.size
+      return { :err => 2 } unless addr <= @coils[@uidHash[@uid]].size
 
       val = req[3,2].unpack('n')[0]
       return { :err => 3 } unless val == 0 or val == 0xff00
@@ -113,15 +113,15 @@ module ModBus
 
     def parse_write_register_func(req)
       addr = req[1,2].unpack('n')[0]
-      return { :err => 2 } unless addr <= @holding_registers.size
-
+      return { :err => 2 } unless addr <= @holding_registers[@uidHash[@uid]].size
+      
       val = req[3,2].unpack('n')[0]
 
       return { :err => 0, :addr => addr, :val => val }
 	  end
 
     def parse_write_multiple_coils_func(req)
-      params = parse_read_func(req, @coils)
+      params = parse_read_func(req, @coils[@uidHash[@uid]])
 
       if params[:err] == 0
         params = {:err => 0, :addr => params[:addr], :quant => params[:quant], :val => req[6,params[:quant]].unpack_bits }
@@ -130,7 +130,7 @@ module ModBus
     end
 
     def parse_write_multiple_registers_func(req)
-      params = parse_read_func(req, @holding_registers)
+      params = parse_read_func(req, @holding_registers[@uidHash[@uid]])
 
       if params[:err] == 0
         params = {:err => 0, :addr => params[:addr], :quant => params[:quant], :val => req[6,params[:quant] * 2].unpack('n*')}

@@ -31,17 +31,18 @@ module ModBus
     # Init RTU server
     # @param [Integer] uid slave device
     # @see SP#open_serial_port
-    def initialize(port, baud=9600, uid=1, opts = {})
+    def initialize(port, baud=9600, uids=[1], opts = {})
       Thread.abort_on_exception = true
       @sp = open_serial_port(port, baud, opts)
-      @uid = uid
+      @uids = uids
+      @uidHash = Hash[@uids.map.with_index.to_a]
     end
 
     # Start server
     def start
       @serv = Thread.new do
         serv_rtu_requests(@sp) do |msg|
-          exec_req(msg[1..-3], @coils, @discrete_inputs, @holding_registers, @input_registers)
+          exec_req(msg[1..-3], @coils[@uidHash[@uid]], @discrete_inputs[@uidHash[@uid]], @holding_registers[@uidHash[@uid]], @input_registers[@uidHash[@uid]])
         end
       end
     end

@@ -112,13 +112,16 @@ module ModBus
 
         next if msg.nil?
 
-        if msg.getbyte(0) == @uid and msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
-          pdu = yield msg
-          resp = @uid.chr + pdu
-          resp << crc16(resp).to_word
-          log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
-          io.write resp
-		    end
+        @uids.each do |uid|
+          @uid = uid
+          if msg.getbyte(0) == @uid and msg[-2,2].unpack('n')[0] == crc16(msg[0..-3])
+            pdu = yield msg
+            resp = @uid.chr + pdu
+            resp << crc16(resp).to_word
+            log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
+            io.write resp
+          end
+        end
 	    end
     end
 
