@@ -243,7 +243,7 @@ module ModBus
       tried = 0
       response = ""
       begin
-        timeout(@read_retry_timeout, ModBusTimeout) do
+        ::Timeout.timeout(@read_retry_timeout, ModBusTimeout) do
           send_pdu(request)
           response = read_pdu
         end
@@ -285,7 +285,7 @@ module ModBus
           msg = "Byte count is mismatch (expected #{bc}, got #{data.size} bytes)"
         end
       when 3,4
-        rc = request.getword(3) 
+        rc = request.getword(3)
         if data.size/2 != rc
           msg = "Register count is mismatch (expected #{rc}, got #{data.size/2} regs)"
         end
@@ -307,7 +307,7 @@ module ModBus
         if exp_addr != got_addr
           msg = "Address is mismatch (expected #{exp_addr}, got #{got_addr})"
         end
-      
+
         exp_quant = request.getword(3)
         got_quant = response.getword(3)
         if exp_quant != got_quant
