@@ -1,3 +1,7 @@
+###2016-09-20 Release 1.2.8
+
+1. Fix warning on ruby 2.3 when calling Timeout.timeout
+
 ###2015-07-30 Release 1.2.7
 
 1. RTUServer doesn't stop serving when there is no RTU messages. Pull request [#37](https://github.com/flipback/rmodbus/pull/37).
@@ -19,7 +23,7 @@
 
 ###2015-01-29 Release 1.2.3
 
-1. Fixed bug [#30](https://github.com/flipback/rmodbus/pull/30) in parsing command 'write_register' for server implementation part. 
+1. Fixed bug [#30](https://github.com/flipback/rmodbus/pull/30) in parsing command 'write_register' for server implementation part.
 
 ###2013-10-28 Release 1.2.2
 
@@ -31,7 +35,7 @@
 
 ###2013-03-12 Release 1.2.0
 
-1. Transaction number mismatch doesn't throw exception in TCPSlave#query method. 
+1. Transaction number mismatch doesn't throw exception in TCPSlave#query method.
 Now this method will wait correct transaction until timeout breaks waiting.  
 2. Added ruby-2.0 experimental compatibility
 
@@ -42,19 +46,19 @@ Now this method will wait correct transaction until timeout breaks waiting.
 ###2012-06-28 Release 1.1.4
 
 1. Fixed issue [#23](https://github.com/flipback/rmodbus/issues/23).
-2. Improved speed of the RTU\RTUViaTCP part. 
+2. Improved speed of the RTU\RTUViaTCP part.
 
 ###2012-06-06 Release 1.1.3
 
-1. Fixed issue [#22](https://github.com/flipback/rmodbus/issues/22) 
+1. Fixed issue [#22](https://github.com/flipback/rmodbus/issues/22)
 
 ###2012-05-12 Release 1.1.2
 
-1. Fixed issue [#20](https://github.com/flipback/rmodbus/issues/20) 
+1. Fixed issue [#20](https://github.com/flipback/rmodbus/issues/20)
 
 ###2012-04-12 Release 1.1.1
 
-1. Fixed issue [#15](https://github.com/flipback/rmodbus/issues/15) 
+1. Fixed issue [#15](https://github.com/flipback/rmodbus/issues/15)
 
 2011-10-29 Release 1.1.0
 ===================================
@@ -64,11 +68,11 @@ Now this method will wait correct transaction until timeout breaks waiting.
 
   ```ruby
     @cl.debug = true
-    
+
     @cl.with_slave(1) do |slave_1|
       slave_1.debug #=> true
     end
-    
+
     @cl.with_slave(2) do |slave_2|
       slave_2.debug = false
       slave_2.debug #=> false
@@ -146,7 +150,7 @@ The built-in examples assume registers in a particular order but it's trivial to
     cl.holding_registers[2..3] = [384.620788574219].from_32f
     cl.holding_registers[2..3] => [20342, 17344]
   ```
-  
+
 Support JRuby
 --------------------------------------
 Now you could use RModBus on JRuby without RTU implementation.
