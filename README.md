@@ -1,4 +1,4 @@
-RModBus [![Build Status](https://secure.travis-ci.org/flipback/rmodbus.png)](http://travis-ci.org/flipback/rmodbus) [![Gem Version](https://badge.fury.io/rb/rmodbus.svg)](http://badge.fury.io/rb/rmodbus)
+RModBus [![Build Status](https://secure.travis-ci.org/rmodbus/rmodbus.png)](http://travis-ci.org/rmodbus/rmodbus) [![Gem Version](https://badge.fury.io/rb/rmodbus.svg)](http://badge.fury.io/rb/rmodbus)
 ==========================
 
 **RModBus** - free implementation of ModBus protocol in pure Ruby.
