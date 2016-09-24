@@ -69,6 +69,21 @@ class Array
     self.pack('N*').unpack('n*').each_slice(2).map { |arr| arr.reverse }.flatten
   end
 
+  # As seen here: https://en.wikipedia.org/wiki/IEEE_floating_point
+  def to_ieee754f
+    binary = self.map{|e| e.to_s(2).rjust(16, '0')}.inject{|bin, e| bin + e}
+    negative_multiplier = binary[0] == "1" ? -1.0 : 1.0
+    exponent = binary[1..8].to_i(2) - 127
+    mantissa = "1." + binary[9..-1]
+    number = negative_multiplier * 10 ** exponent * mantissa.to_f
+    splitted = number.to_s.split(".")
+    before_comma = splitted[0].to_i(2)
+    after_comma = splitted[1].split(//).each_with_index.map do |bit, i|
+      bit.to_i * 2 ** (-i-1)
+    end.inject{|memo, e| memo + e}
+    (before_comma + after_comma).to_f
+  end
+
   def pack_to_word
     word = 0
     s = ""

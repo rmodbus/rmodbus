@@ -29,6 +29,11 @@ describe Array do
     [20342, 17344, 20342, 17344].to_32f.size.should == 2
   end
 
+  it "should turn an array of bytes in IEEE754 format into the correct 32b float" do
+    [17264,32768].to_ieee754f.should be_within(0.1).of(240.5)
+    [16029, 2081].to_ieee754f.should be_within(0.1).of(0.3)
+  end
+
   it "should turn an array from 32b ints into 16b ints, big endian" do
     [1136676726].from_32i.should == [20342, 17344]
     [1136676726, 1136676725].from_32i.should == [20342, 17344, 20341, 17344]
