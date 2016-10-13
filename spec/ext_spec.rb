@@ -24,9 +24,14 @@ describe Array do
     [20342, 17344, 20342, 17344].to_32i.size.should == 2
   end
 
-  it "should turn an array into 32b floats" do
+  it "should turn an array into 32b floats big endian" do
     [20342, 17344].to_32f[0].should be_within(0.1).of(384.620788574219)
     [20342, 17344, 20342, 17344].to_32f.size.should == 2
+  end
+  
+  it "should turn a an array into 32b floats (little endian)" do
+    [17344, 20342].to_32f_le[0].should be_within(0.1).of(384.620788574219)
+    [17344, 20342, 17344, 20342].to_32f_le.size.should == 2
   end
 
   it "should turn an array from 32b ints into 16b ints, big endian" do
