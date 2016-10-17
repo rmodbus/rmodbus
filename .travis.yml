@@ -4,7 +4,7 @@ cache: bundler
 rvm:
   - 2.3.1
   - 2.2.5
-  - jruby
+  - jruby-9.1.2.0
 before_install:
   - "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
 script: "bundle exec rake spec"
