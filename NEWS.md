@@ -1,3 +1,7 @@
+###2016-10-18 Release 1.3.0
+
+1. Turn the following dependencies optional: serialport, gserver
+
 ###2016-09-20 Release 1.2.8
 
 1. Fix warning on ruby 2.3 when calling Timeout.timeout

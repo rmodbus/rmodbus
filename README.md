@@ -5,7 +5,7 @@ RModBus [![Build Status](https://secure.travis-ci.org/rmodbus/rmodbus.png)](http
 
 Features
 ---------------------------
-  - Ruby 2.1, 2.2 and JRuby (without serial ModBus RTU)
+  - Ruby 2.2, 2.3 and JRuby (without serial ModBus RTU)
   - TCP, RTU, RTU over TCP protocols
   - Client(master) and server(slave)
   - 16, 32 -bit and float registers
@@ -31,6 +31,29 @@ Download and install RModBus with the following:
 gem install rmodbus
 ```
 
+Or if you are using bundler, add to your Gemfile:
+
+```
+gem 'rmodbus'
+```
+
+If you want to use ModBus over serial, you will also need to install the 'serialport' gem.
+If you are using bundler, add to your Gemfile:
+
+```
+gem 'serialport'
+```
+
+If you want to use ModBus::TCPServer or ModBus::RTUViaTCPServer and are using Ruby >= 2.2,
+you will also need to install the 'gserver' gem. If you are using bundler, add to your Gemfile:
+
+```
+gem 'gserver'
+```
+
+Please note that GServer is deprecated, and I'm looking for a better solution.
+Contributions are welcome!
+
 Example
 ------------------------------------
 
@@ -54,13 +77,18 @@ Example
     end
   ```
 
-GitHub
+Versioning
 ----------------------------------
 
-You can checkout source code from GitHub repository:
+This project will follow http://semver.org/
 
 ```
-git clone git://github.com/flipback/RModBus.git
+Given a version number MAJOR.MINOR.PATCH, increment the:
+
+MAJOR version when you make incompatible API changes,
+MINOR version when you add functionality in a backwards-compatible manner, and
+PATCH version when you make backwards-compatible bug fixes.
+Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 ```
 
 Reference
@@ -68,6 +96,6 @@ Reference
 
 Home page: http://rmodbus.flipback.net
 
-RModBus on GitHub: http://github.com/flipback/RModBus
+RModBus on GitHub: http://github.com/rmodbus/rmodbus
 
 ModBus specifications: http://www.modbus.org/specs.php
