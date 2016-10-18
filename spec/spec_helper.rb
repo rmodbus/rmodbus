@@ -1,7 +1,6 @@
 # -*- coding: ascii
 require "rmodbus"
 
-
 class RaiseResponseMismatch
   def initialize(message, request, response)
     @expected_message, @expected_request, @expected_response = message, request, response

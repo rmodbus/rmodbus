@@ -9,31 +9,28 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-require 'rmodbus/errors'
+
 require 'rmodbus/ext'
-require 'rmodbus/debug'
-require 'rmodbus/options'
-require 'rmodbus/rtu'
-require 'rmodbus/tcp'
-require 'rmodbus/slave'
-require 'rmodbus/client'
-require 'rmodbus/server'
-require 'rmodbus/tcp_slave'
-require 'rmodbus/tcp_client'
-require 'rmodbus/tcp_server'
-
-begin
-  require 'serialport'
-  require 'rmodbus/sp'
-  require 'rmodbus/rtu_slave'
-  require 'rmodbus/rtu_client'
-  require 'rmodbus/rtu_server'
-rescue Exception => e
-  warn "[WARNING] Install `serialport` gem for use RTU protocols"
-end
-
-require 'rmodbus/rtu_via_tcp_slave'
-require 'rmodbus/rtu_via_tcp_client'
-require 'rmodbus/rtu_via_tcp_server'
 require 'rmodbus/proxy'
 require 'rmodbus/version'
+
+module ModBus
+  autoload :Errors, 'rmodbus/errors'
+  autoload :Debug, 'rmodbus/debug'
+  autoload :Options, 'rmodbus/options'
+  autoload :SP, 'rmodbus/sp'
+  autoload :RTU, 'rmodbus/rtu'
+  autoload :TCP, 'rmodbus/tcp'
+  autoload :Slave, 'rmodbus/slave'
+  autoload :Client, 'rmodbus/client'
+  autoload :Server, 'rmodbus/server'
+  autoload :TCPSlave, 'rmodbus/tcp_slave'
+  autoload :TCPClient, 'rmodbus/tcp_client'
+  autoload :TCPServer, 'rmodbus/tcp_server'
+  autoload :RTUSlave, 'rmodbus/rtu_slave'
+  autoload :RTUClient, 'rmodbus/rtu_client'
+  autoload :RTUServer, 'rmodbus/rtu_server'
+  autoload :RTUViaTCPSlave, 'rmodbus/rtu_via_tcp_slave'
+  autoload :RTUViaTCPClient, 'rmodbus/rtu_via_tcp_client'
+  autoload :RTUViaTCPServer, 'rmodbus/rtu_via_tcp_server'
+end

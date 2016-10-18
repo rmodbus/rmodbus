@@ -20,12 +20,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec', '~>2.99'
   gem.add_development_dependency 'guard-rspec', '~>1.2'
   gem.add_development_dependency 'pry', '~>0.10'
-  
-  unless RUBY_PLATFORM == 'java'
-    gem.add_development_dependency 'serialport', '~>1.3'
-  end
-
-  if RUBY_VERSION >= "2.2"
-    gem.add_runtime_dependency "gserver", '~>0.0'
-  end
+  gem.add_development_dependency 'serialport'
+  gem.add_development_dependency 'gserver'
 end
