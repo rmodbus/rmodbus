@@ -53,6 +53,12 @@ class Array
     self.each_slice(2).map { |(lsb, msb)| [msb, lsb].pack('n*').unpack('g')[0] }
   end
     
+  # Given an array of 16bit Fixnum, we turn it into 32bit Int in little-endian order, halving the size
+  def to_32f_le
+    raise "Array requires an even number of elements to pack to 32bits: was #{self.size}" unless self.size.even?
+    self.each_slice(2).map { |(lsb, msb)| [lsb, msb].pack('n*').unpack('g')[0] }
+  end
+  
   # Given an array of 32bit Floats, we turn it into an array of 16bit Fixnums, doubling the size
   def from_32f
     self.pack('g*').unpack('n*').each_slice(2).map { |arr| arr.reverse }.flatten
