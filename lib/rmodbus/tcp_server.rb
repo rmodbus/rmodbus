@@ -11,7 +11,12 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-require 'gserver'
+
+begin
+  require 'gserver'
+rescue
+  warn "[WARNING] Install `gserver` gem for use TCPServer"
+end
 
 module ModBus
   # TCP server implementation

@@ -13,7 +13,11 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-require 'gserver'
+begin
+  require 'gserver'
+rescue
+  warn "[WARNING] Install `gserver` gem for use RTUViaTCPServer"
+end
 
 module ModBus
   # RTU over TCP server implementation
