@@ -14,7 +14,7 @@ describe "response mismach" do
     mock_query!(request, response)
 
     lambda{ @slave.read_coils(0x13,0x12) }.should raise_response_mismatch(
-      "Function code is mismatch (expected 1, got 2)",
+      "Function code mismatch (expected 1, got 2)",
       request, response)
   end
 
@@ -25,7 +25,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.read_coils(0x13,0x12) }.should raise_response_mismatch(
-        "Byte count is mismatch (expected 3, got 2 bytes)",
+        "Byte count mismatch (expected 3, got 2 bytes)",
         request, response)
     end
   end
@@ -37,7 +37,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.read_discrete_inputs(0x13,0x12) }.should raise_response_mismatch(
-        "Byte count is mismatch (expected 3, got 2 bytes)",
+        "Byte count mismatch (expected 3, got 2 bytes)",
         request, response)
     end
   end
@@ -49,7 +49,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.read_holding_registers(0x8,0x1) }.should raise_response_mismatch(
-        "Register count is mismatch (expected 1, got 2 regs)",
+        "Register count mismatch (expected 1, got 2 regs)",
         request, response)
     end
   end
@@ -61,7 +61,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.read_input_registers(0x8,0x2) }.should raise_response_mismatch(
-        "Register count is mismatch (expected 2, got 1 regs)",
+        "Register count mismatch (expected 2, got 1 regs)",
         request, response)
     end
   end
@@ -73,7 +73,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
-        "Address is mismatch (expected 8, got 9)",
+        "Address mismatch (expected 8, got 9)",
         request, response)
     end
 
@@ -83,7 +83,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
-        "Value is mismatch (expected 0xff00, got 0x0)",
+        "Value mismatch (expected 0xff00, got 0x0)",
         request, response)
     end
   end
@@ -95,7 +95,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_single_register(8,0x0a0b) }.should raise_response_mismatch(
-        "Address is mismatch (expected 8, got 9)",
+        "Address mismatch (expected 8, got 9)",
         request, response)
     end
 
@@ -105,7 +105,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_single_register(8,0x0a0b) }.should raise_response_mismatch(
-        "Value is mismatch (expected 0xa0b, got 0x90b)",
+        "Value mismatch (expected 0xa0b, got 0x90b)",
         request, response)
     end
   end
@@ -117,7 +117,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]) }.should raise_response_mismatch(
-        "Address is mismatch (expected 19, got 20)",
+        "Address mismatch (expected 19, got 20)",
         request, response)
    end
 
@@ -127,7 +127,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]) }.should raise_response_mismatch(
-        "Quantity is mismatch (expected 10, got 9)",
+        "Quantity mismatch (expected 10, got 9)",
         request, response)
     end
   end
@@ -139,7 +139,7 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_holding_registers(0x1,[0xa,0x102]) }.should raise_response_mismatch(
-        "Address is mismatch (expected 1, got 2)",
+        "Address mismatch (expected 1, got 2)",
         request, response)
    end
 
@@ -149,13 +149,13 @@ describe "response mismach" do
       mock_query!(request, response)
 
       lambda{ @slave.write_holding_registers(0x1,[0xa,0x102]) }.should raise_response_mismatch(
-        "Quantity is mismatch (expected 2, got 1)",
+        "Quantity mismatch (expected 2, got 1)",
         request, response)
     end
   end
 
-
   private
+
   def mock_query!(request, response)
     @slave.should_receive(:send_pdu).with(request)
     @slave.should_receive(:read_pdu).and_return(response)

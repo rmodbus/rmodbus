@@ -20,18 +20,18 @@ module ModBus
     end
 
     private
-    # overide method for RTU over TCP implamentaion
+    # override method for RTU over TCP implementation
     # @see Slave#query
     def send_pdu(pdu)
       @transaction = 0 if @transaction.next > 65535
       @transaction += 1
       msg = @transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
-      @io.write msg
+      @io.write(msg)
 
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
     end
 
-    # overide method for RTU over TCP implamentaion
+    # override method for RTU over TCP implementation
     # @see Slave#query
     def read_pdu
       loop do
@@ -46,7 +46,7 @@ module ModBus
           if trn == @transaction
             return msg
           else
-            log "Transaction number mismatch. A packet is ignored."
+            log "Transaction number mismatch. The packet was ignored."
           end
         end
       end

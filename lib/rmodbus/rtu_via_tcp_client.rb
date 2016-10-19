@@ -14,7 +14,7 @@ module ModBus
 		include TCP
 
     protected
-		# Open TCP\IP connection
+
     def open_connection(ipaddr, port = 10002, opts = {})
       io = open_tcp_connection(ipaddr, port, opts)
 		end

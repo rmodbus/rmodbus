@@ -37,7 +37,7 @@ describe ModBus::TCPClient  do
 
     $stdout.should_receive(:puts).with("Tx (7 bytes): [00][01][00][00][00][01][01]")
     $stdout.should_receive(:puts).with("Rx (7 bytes): [00][02][00][00][00][01][01]")
-    $stdout.should_receive(:puts).with("Transaction number mismatch. A packet is ignored.")
+    $stdout.should_receive(:puts).with("Transaction number mismatch. The packet was ignored.")
     $stdout.should_receive(:puts).with("Rx (7 bytes): [00][01][00][00][00][01][01]")
 
     @slave.query('')
@@ -54,7 +54,7 @@ end
 begin
   require "serialport"
   describe ModBus::RTUClient do
-    before do 
+    before do
       @sp = double('Serial port')
 
       SerialPort.should_receive(:new).with("/dev/port1", 9600, 7, 2, SerialPort::ODD).and_return(@sp)
@@ -69,19 +69,18 @@ begin
       @slave.read_retries = 0
 
     end
-    
+
     it 'should log rec\send bytes' do
       request = "\x3\x0\x1\x0\x1"
       @sp.should_receive(:write).with("\1#{request}\xd5\xca")
-      @sp.should_receive(:flush_input)  # Clean a garbage
       @sp.should_receive(:read).with(2).and_return("\x1\x3")
       @sp.should_receive(:read).with(1).and_return("\x2")
       @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
-      
+
       @slave.debug = true
       $stdout.should_receive(:puts).with("Tx (8 bytes): [01][03][00][01][00][01][d5][ca]")
       $stdout.should_receive(:puts).with("Rx (7 bytes): [01][03][02][ff][ff][b9][f4]")
-      
+
       @slave.query(request).should == "\xff\xff"
     end
   end
