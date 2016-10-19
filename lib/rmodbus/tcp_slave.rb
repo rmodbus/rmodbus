@@ -1,16 +1,3 @@
-# RModBus - free implementation of ModBus protocol on Ruby.
-#
-# Copyright (C) 2011  Timin Aleksey
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
 module ModBus
   # TCP slave implementation
   # @example
@@ -47,7 +34,7 @@ module ModBus
     # overide method for RTU over TCP implamentaion
     # @see Slave#query
     def read_pdu
-      loop do 
+      loop do
         header = @io.read(7)
         if header
           trn = header[0,2].unpack('n')[0]
@@ -55,11 +42,11 @@ module ModBus
           msg = @io.read(len-1)
 
           log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg)
-          
+
           if trn == @transaction
             return msg
           else
-            log "Transaction number mismatch. A packet is ignored."        
+            log "Transaction number mismatch. A packet is ignored."
           end
         end
       end

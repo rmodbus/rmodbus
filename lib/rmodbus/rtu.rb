@@ -1,18 +1,3 @@
-# RModBus - free implementation of ModBus protocol in Ruby.
-#
-# Copyright (C) 2010 - 2011  Timin Aleksey
-# Copyright (C) 2010  Kelley Reynolds
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
 module ModBus
   module RTU
     private
@@ -47,7 +32,7 @@ module ModBus
     def clean_input_buff
       # empty the input buffer
       if @io.class.public_method_defined? :flush_input
-        @io.flush_input 
+        @io.flush_input
       else
         @io.flush
       end
@@ -56,8 +41,8 @@ module ModBus
     def send_rtu_pdu(pdu)
       msg = @uid.chr + pdu
       msg << crc16(msg).to_word
-      
-      clean_input_buff  
+
+      clean_input_buff
       @io.write msg
 
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
@@ -177,4 +162,3 @@ module ModBus
 
   end
 end
-

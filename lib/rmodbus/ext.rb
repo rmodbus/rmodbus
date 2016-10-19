@@ -1,17 +1,3 @@
-# RModBus - free implementation of ModBus protocol on Ruby.
-#
-# Copyright (C) 2009  Timin Aleksey
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
 class String
 
   if RUBY_VERSION < "1.9"
@@ -27,7 +13,7 @@ class String
     end
     array_bit
   end
- 
+
   # Get word by index
   # @param [Integer] i index first bytes of word
   # @return unpacked word
@@ -52,7 +38,7 @@ class Array
     raise "Array requires an even number of elements to pack to 32bits: was #{self.size}" unless self.size.even?
     self.each_slice(2).map { |(lsb, msb)| [msb, lsb].pack('n*').unpack('g')[0] }
   end
-    
+
   # Given an array of 32bit Floats, we turn it into an array of 16bit Fixnums, doubling the size
   def from_32f
     self.pack('g*').unpack('n*').each_slice(2).map { |arr| arr.reverse }.flatten
@@ -74,7 +60,7 @@ class Array
     s = ""
     mask = 0x01
 
-    self.each do |bit| 
+    self.each do |bit|
       word |= mask if bit > 0
       mask <<= 1
       if mask  == 0x100
@@ -91,4 +77,3 @@ class Array
   end
 
 end
-
