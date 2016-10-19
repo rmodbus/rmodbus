@@ -90,6 +90,11 @@ MINOR version when you add functionality in a backwards-compatible manner, and
 PATCH version when you make backwards-compatible bug fixes.
 ```
 
+Contributing
+----------------------------------
+
+See [CONTRIBUTING](CONTRIBUTING.md).
+
 Reference
 ----------------------------------
 
@@ -98,6 +103,11 @@ RModBus on GitHub: http://github.com/rmodbus/rmodbus
 Documentation: http://www.rubydoc.info/github/rmodbus/rmodbus
 
 ModBus specifications: http://www.modbus.org/specs.php
+
+License
+----------------------------------
+
+GPL v3
 
 Credits
 ----------------------------------
