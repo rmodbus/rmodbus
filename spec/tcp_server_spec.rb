@@ -1,5 +1,5 @@
 # -*- coding: ascii
-require "rmodbus"
+require 'rmodbus'
 
 describe ModBus::TCPServer do
   before :all do

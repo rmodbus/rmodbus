@@ -1,5 +1,5 @@
 # -*- coding: ascii
-require "rmodbus"
+require 'rmodbus'
 
 describe ModBus::RTUViaTCPServer do
   it "should have options :host" do

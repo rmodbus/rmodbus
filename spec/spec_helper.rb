@@ -1,5 +1,5 @@
 # -*- coding: ascii
-require "rmodbus"
+require 'rmodbus'
 
 class RaiseResponseMismatch
   def initialize(message, request, response)
