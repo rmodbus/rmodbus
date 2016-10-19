@@ -1,3 +1,8 @@
+### Release 2.0.0 - Not released yet
+
+1. More informative messages about GServer
+2. Removed Array#pack_to_word
+
 ###2016-10-18 Release 1.3.0
 
 1. Turn the following dependencies optional: serialport, gserver

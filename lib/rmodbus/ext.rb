@@ -55,25 +55,4 @@ class Array
     self.pack('N*').unpack('n*').each_slice(2).map { |arr| arr.reverse }.flatten
   end
 
-  def pack_to_word
-    word = 0
-    s = ""
-    mask = 0x01
-
-    self.each do |bit|
-      word |= mask if bit > 0
-      mask <<= 1
-      if mask  == 0x100
-        mask = 0x01
-        s << word.chr
-        word = 0
-      end
-    end
-    unless mask == 0x01
-      s << word.chr
-    else
-      s
-    end
-  end
-
 end

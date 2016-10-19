@@ -6,7 +6,7 @@ module ModBus
     attr_accessor :coils, :discrete_inputs, :holding_registers, :input_registers, :uid
     @coils = []
     @discrete_inputs = []
-    @holding_registers =[]
+    @holding_registers = []
     @input_registers = []
 
     private
@@ -22,13 +22,13 @@ module ModBus
         when 1
           params = parse_read_func(req, coils, 2000)
           if params[:err] == 0
-            val = coils[params[:addr],params[:quant]].pack_to_word
+            val = pack_to_word(coils[params[:addr],params[:quant]])
             pdu = func.chr + val.size.chr + val
           end
         when 2
           params = parse_read_func(req, discrete_inputs, 2000)
           if params[:err] == 0
-            val = discrete_inputs[params[:addr],params[:quant]].pack_to_word
+            val = pack_to_word(discrete_inputs[params[:addr],params[:quant]])
             pdu = func.chr + val.size.chr + val
           end
         when 3
@@ -121,6 +121,27 @@ module ModBus
         params = {:err => 0, :addr => params[:addr], :quant => params[:quant], :val => req[6,params[:quant] * 2].unpack('n*')}
       end
       params
+    end
+
+    def pack_to_word(array)
+      word = 0
+      s = ""
+      mask = 0x01
+
+      array.each do |bit|
+        word |= mask if bit > 0
+        mask <<= 1
+        if mask  == 0x100
+          mask = 0x01
+          s << word.chr
+          word = 0
+        end
+      end
+      unless mask == 0x01
+        s << word.chr
+      else
+        s
+      end
     end
 
   end
