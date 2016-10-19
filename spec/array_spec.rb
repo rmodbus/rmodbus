@@ -2,14 +2,6 @@
 require 'rmodbus'
 
 describe ModBus::Array do
-  before do
-    @test = ModBus::Array.new([0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0])
-  end
-
-  it "should unpack to @test" do
-    "test".unpack_bits == @test
-  end
-
   it "should turn an array into 32b ints" do
     ModBus::Array.new([20342, 17344]).to_32i.should == [1136676726]
     ModBus::Array.new([20342, 17344, 20342, 17344]).to_32i.size.should == 2
