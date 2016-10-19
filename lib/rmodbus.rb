@@ -5,7 +5,6 @@ require 'rmodbus/version'
 module ModBus
   autoload :Errors, 'rmodbus/errors'
   autoload :Debug, 'rmodbus/debug'
-  autoload :Options, 'rmodbus/options'
   autoload :SP, 'rmodbus/sp'
   autoload :RTU, 'rmodbus/rtu'
   autoload :TCP, 'rmodbus/tcp'

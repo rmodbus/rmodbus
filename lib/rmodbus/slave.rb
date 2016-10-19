@@ -2,9 +2,9 @@ module ModBus
   class Slave
     include Errors
     include Debug
-    include Options
-    # Number of times to retry on read and read timeouts
-    attr_accessor :uid
+
+    attr_accessor :uid, :raise_exception_on_mismatch, :read_retries, :read_retry_timeout
+
     Exceptions = {
           1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
           2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),

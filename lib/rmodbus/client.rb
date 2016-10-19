@@ -3,7 +3,8 @@ module ModBus
   class Client
     include Errors
     include Debug
-    include Options
+
+    attr_accessor :raise_exception_on_mismatch, :read_retries, :read_retry_timeout
 
     # Initialized client (alias :connect)
     # @example
