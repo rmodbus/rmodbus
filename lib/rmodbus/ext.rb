@@ -1,11 +1,4 @@
 class String
-
-  if RUBY_VERSION < "1.9"
-    def getbyte(index)
-      self[index].to_i
-    end
-  end
-
   def unpack_bits
     array_bit = ModBus::Array.new
     self.unpack('b*')[0].each_char do |c|
@@ -23,10 +16,8 @@ class String
 end
 
 class Integer
-
   # Shortcut or turning an integer into a word
   def to_word
     [self].pack('n')
   end
-
 end

@@ -1,8 +1,9 @@
 ### Release 2.0.0 - Not released yet
 
-1. More informative messages about GServer
-2. Removed Array#pack_to_word
-3. Conversion to/from 32bit registers allow to specify endianness, defaulting to big-endian
+1. Drops support for Ruby <= 1.9
+2. Changed library serialport to rubyserial, to better support other Ruby implementations
+4. Removed Array#pack_to_word
+5. Conversion to/from 32bit registers allow to specify endianness, defaulting to big-endian
 
   ```ruby
   res = slave.holding_registers[0..1]
