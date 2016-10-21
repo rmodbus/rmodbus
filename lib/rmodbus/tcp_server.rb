@@ -1,7 +1,7 @@
 begin
   require 'gserver'
-rescue
-  warn "[WARNING] Install `gserver` gem for use TCPServer"
+rescue Exception => e
+  raise Gem::LoadError, "Load `gserver` gem for use TCPServer"
 end
 
 module ModBus

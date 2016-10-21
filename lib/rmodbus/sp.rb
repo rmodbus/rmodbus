@@ -1,7 +1,7 @@
 begin
   require 'serialport'
 rescue Exception => e
-  warn "[WARNING] Install `serialport` gem for use RTU protocols"
+  raise Gem::LoadError, "Load `serialport` gem for use RTU protocols"
 end
 
 module ModBus
