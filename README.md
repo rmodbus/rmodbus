@@ -107,7 +107,7 @@ ModBus specifications: http://www.modbus.org/specs.php
 License
 ----------------------------------
 
-GPL v3
+BSD-3-Clause
 
 Credits
 ----------------------------------
