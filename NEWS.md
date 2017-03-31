@@ -1,3 +1,7 @@
+###2017-03-30 Release 1.3.2
+
+1. Fix Fixnum warning on Ruby 2.4
+
 ###2016-10-18 Release 1.3.0
 
 1. Turn the following dependencies optional: serialport, gserver
