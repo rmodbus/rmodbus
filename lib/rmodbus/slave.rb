@@ -1,3 +1,5 @@
+require 'timeout'
+
 module ModBus
   class Slave
     include Errors
