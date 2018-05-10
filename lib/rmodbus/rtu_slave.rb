@@ -14,13 +14,13 @@ module ModBus
     include RTU
 
     private
-    # overide method for RTU implamentaion
+    # overide method for RTU implementaion
     # @see Slave#query
     def send_pdu(pdu)
       send_rtu_pdu(pdu)
     end
 
-    # overide method for RTU implamentaion
+    # overide method for RTU implementaion
     # @see Slave#query
     def read_pdu
       read_rtu_pdu
