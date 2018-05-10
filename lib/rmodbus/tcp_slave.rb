@@ -26,6 +26,7 @@ module ModBus
       @transaction = 0 if @transaction.next > 65535
       @transaction += 1
       msg = @transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
+
       @io.write msg
 
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)

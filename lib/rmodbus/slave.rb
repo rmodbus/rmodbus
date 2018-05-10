@@ -19,6 +19,7 @@ module ModBus
     def initialize(uid, io)
 	    @uid = uid
       @io = io
+      @lock = Mutex.new
     end
 
     # Returns a ModBus::ReadWriteProxy hash interface for coils
@@ -231,8 +232,10 @@ module ModBus
       response = ""
       begin
         ::Timeout.timeout(@read_retry_timeout, ModBusTimeout) do
-          send_pdu(request)
-          response = read_pdu
+          @lock.synchronize do
+            send_pdu(request)
+            response = read_pdu
+          end
         end
       rescue ModBusTimeout => err
         log "Timeout of read operation: (#{@read_retries - tried})"

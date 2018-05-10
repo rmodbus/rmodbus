@@ -43,6 +43,7 @@ module ModBus
       msg << crc16(msg).to_word
 
       clean_input_buff
+
       @io.write msg
 
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
@@ -92,7 +93,6 @@ module ModBus
 
     def serv_rtu_requests(io, &blk)
       loop do
-        # read the RTU message
         msg = read_rtu_request(io)
 
         next if msg.nil?
