@@ -7,7 +7,7 @@ describe ModBus::TCPClient  do
     @sock = double('Socket')
     @adu = "\000\001\000\000\000\001\001"
 
-    TCPSocket.should_receive(:new).with('127.0.0.1', 1502).and_return(@sock)
+    Socket.should_receive(:tcp).with('127.0.0.1', 1502, nil, nil, hash_including(:connect_timeout)).and_return(@sock)
     @sock.stub(:read).with(0).and_return('')
 
     @slave = ModBus::TCPClient.new('127.0.0.1', 1502).with_slave(@uid)
