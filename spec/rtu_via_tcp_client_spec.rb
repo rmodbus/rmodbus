@@ -5,7 +5,7 @@ describe ModBus::RTUViaTCPClient do
   describe "method 'query'" do    
     before do 
       @sock = double('Socket')
-      TCPSocket.should_receive(:new).with("127.0.0.1", 10002).and_return(@sock)    
+      Socket.should_receive(:tcp).with("127.0.0.1", 10002, nil, nil, hash_including(:connect_timeout)).and_return(@sock)    
       @sock.stub(:read_timeout=)
       @sock.stub(:flush)
       
@@ -41,7 +41,7 @@ describe ModBus::RTUViaTCPClient do
     
     it 'should sugar connect method' do
       ipaddr, port = '127.0.0.1', 502
-      TCPSocket.should_receive(:new).with(ipaddr, port).and_return(@sock)
+      Socket.should_receive(:tcp).with(ipaddr, port, nil, nil, hash_including(:connect_timeout)).and_return(@sock)
       @sock.should_receive(:closed?).and_return(false)
       @sock.should_receive(:close)
       ModBus::RTUViaTCPClient.connect(ipaddr, port) do |cl|

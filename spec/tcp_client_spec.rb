@@ -8,7 +8,7 @@ describe ModBus::TCPClient do
       @sock = double('Socket')
       @adu = "\000\001\000\000\000\001\001"
   
-      TCPSocket.should_receive(:new).with('127.0.0.1', 1502).and_return(@sock)
+      Socket.should_receive(:tcp).with('127.0.0.1', 1502, nil, nil, hash_including(:connect_timeout)).and_return(@sock)
       @sock.stub(:read).with(0).and_return('')
       @cl = ModBus::TCPClient.new('127.0.0.1', 1502)
       @slave = @cl.with_slave(@uid)
@@ -53,7 +53,7 @@ describe ModBus::TCPClient do
     
     it 'should sugar connect method' do
         ipaddr, port = '127.0.0.1', 502
-        TCPSocket.should_receive(:new).with(ipaddr, port).and_return(@sock)
+        Socket.should_receive(:tcp).with(ipaddr, port, nil, nil, hash_including(:connect_timeout)).and_return(@sock)
         @sock.should_receive(:closed?).and_return(false)
         @sock.should_receive(:close)
         ModBus::TCPClient.connect(ipaddr, port) do |cl|
