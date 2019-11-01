@@ -5,15 +5,14 @@ describe ModBus::RTUClient do
   before do 
     @sp = double('Serial port')
 
-    SerialPort.should_receive(:new).with("/dev/port1", 9600, 8, 1, 0).and_return(@sp)    
-    SerialPort.stub(:public_method_defined?).with(:flush_input).and_return(true)
+    Serial.should_receive(:new).with("/dev/port1", 9600, 8, 1, :none).and_return(@sp)    
+    Serial.stub(:public_method_defined?).with(:flush_input).and_return(true)
 
     @sp.stub(:read_timeout=)
-    @sp.stub(:class).and_return(SerialPort)
-    @sp.should_receive(:flow_control=).with(SerialPort::NONE)
+    @sp.stub(:class).and_return(Serial)
     @sp.stub(:flush_input)
 
-    @cl = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 8, :stop_bits => 1, :parity => SerialPort::NONE)
+    @cl = ModBus::RTUClient.new("/dev/port1", 9600, data_bits: 8, stop_bits: 1, parity: :none)
     @slave = @cl.with_slave(1)
     @slave.read_retries = 1
   end
@@ -41,16 +40,15 @@ describe ModBus::RTUClient do
 
   it 'should sugar connect method' do
     port, baud = "/dev/port1", 4800
-    SerialPort.should_receive(:new).with(port, baud, 8, 1, SerialPort::NONE).and_return(@sp)    
+    Serial.should_receive(:new).with(port, baud, 8, 1, :none).and_return(@sp)    
     @sp.should_receive(:closed?).and_return(false)
     @sp.should_receive(:close)
-    @sp.should_receive(:flow_control=).with(SerialPort::NONE)
     ModBus::RTUClient.connect(port, baud) do |cl|
       cl.port.should == port
       cl.baud.should == baud
       cl.data_bits.should == 8
       cl.stop_bits.should == 1
-      cl.parity.should == SerialPort::NONE
+      cl.parity.should == :none
     end
   end
 

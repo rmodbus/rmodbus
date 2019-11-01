@@ -52,20 +52,19 @@ describe ModBus::TCPClient  do
 end
 
 begin
-  require "serialport"
+  require "rubyserial"
   describe ModBus::RTUClient do
     before do 
       @sp = double('Serial port')
 
-      SerialPort.should_receive(:new).with("/dev/port1", 9600, 7, 2, SerialPort::ODD).and_return(@sp)
-      SerialPort.stub(:public_method_defined?).with(:flush_input).and_return(true)
+      Serial.should_receive(:new).with("/dev/port1", 9600, 7, 2, :odd).and_return(@sp)
+      Serial.stub(:public_method_defined?).with(:flush_input).and_return(true)
 
-      @sp.stub(:class).and_return(SerialPort)
-      @sp.should_receive(:flow_control=).with(SerialPort::NONE)
+      @sp.stub(:class).and_return(Serial)
       @sp.stub(:read_timeout=)
       @sp.stub(:flush_input)
 
-      @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => SerialPort::ODD).with_slave(1)
+      @slave = ModBus::RTUClient.new("/dev/port1", 9600, data_bits: 7, stop_bits: 2, parity: :odd).with_slave(1)
       @slave.read_retries = 0
 
     end

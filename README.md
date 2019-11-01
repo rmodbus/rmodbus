@@ -37,11 +37,11 @@ Or if you are using bundler, add to your Gemfile:
 gem 'rmodbus'
 ```
 
-If you want to use ModBus over serial, you will also need to install the 'serialport' gem.
+If you want to use ModBus over serial, you will also need to install the 'rubyserial' gem.
 If you are using bundler, add to your Gemfile:
 
 ```
-gem 'serialport'
+gem 'rubyserial'
 ```
 
 If you want to use ModBus::TCPServer or ModBus::RTUViaTCPServer and are using Ruby >= 2.2,

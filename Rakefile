@@ -16,7 +16,7 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = FileList['spec/**/*_spec.rb']
   begin
-    require 'serialport'
+    require 'rubyserial'
   rescue LoadError => e
     spec.pattern.exclude("spec/rtu_client_spec.rb", "spec/rtu_server_spec.rb")
   end

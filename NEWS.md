@@ -162,7 +162,4 @@ The built-in examples assume registers in a particular order but it's trivial to
 
 Support JRuby
 --------------------------------------
-Now you could use RModBus on JRuby without RTU implementation.
-
-RTU classes requires gem [serialport](https://github.com/hparra/ruby-serialport) which
-currently not compatible with JRuby
+By switching from [serialport](https://github.com/hparra/ruby-serialport) to [rubyserial](https://github.com/hybridgroup/rubyserial), JRuby _should_ be supported.  The `serialport` gem had configurability for flow control, whereas the `rubyserial` gem does not seem to have that configuration exposed.  So be sure to test for your use case.
