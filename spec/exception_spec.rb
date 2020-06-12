@@ -3,11 +3,12 @@ require 'rmodbus'
 
 describe ModBus::TCPClient do
   before(:all) do
-    @srv = ModBus::TCPServer.new(1502, 1)
-    @srv.coils = [0] * 8
-    @srv.discrete_inputs = [0] * 8
-    @srv.holding_registers = [0] * 8
-    @srv.input_registers = [0] * 8
+    @srv = ModBus::TCPServer.new(1502)
+    srv_slave = @srv.with_slave(1)
+    srv_slave.coils = [0] * 8
+    srv_slave.discrete_inputs = [0] * 8
+    srv_slave.holding_registers = [0] * 8
+    srv_slave.input_registers = [0] * 8
     @srv.start
 
     @cl = ModBus::TCPClient.new('127.0.0.1', 1502)

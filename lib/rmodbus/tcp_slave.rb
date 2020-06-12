@@ -10,7 +10,7 @@ module ModBus
   # @see RTUViaTCPClient#open_connection
   # @see Client#with_slave
   # @see Slave
-  class TCPSlave < Slave
+  class TCPSlave < Client::Slave
     attr_reader :transaction
 
     # @see Slave::initialize

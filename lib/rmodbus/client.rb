@@ -1,6 +1,8 @@
 module ModBus
   # @abstract
   class Client
+    autoload :Slave, 'rmodbus/client/slave'
+
     include Errors
     include Debug
     include Options
@@ -18,7 +20,7 @@ module ModBus
       @debug = false
       @raise_exception_on_mismatch = false
       @read_retry_timeout = 1
-      @read_retries = 10
+      @read_retries = 1
 
       @io = open_connection(*args)
       if block_given?

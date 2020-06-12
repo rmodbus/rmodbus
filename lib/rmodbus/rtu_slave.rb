@@ -10,7 +10,7 @@ module ModBus
   # @see RTUClient#open_connection
   # @see Client#with_slave
   # @see Slave
-  class RTUSlave < Slave
+  class RTUSlave < Client::Slave
     include RTU
 
     private

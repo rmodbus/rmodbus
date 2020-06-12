@@ -8,18 +8,19 @@ describe ModBus::RTUServer do
     @sp.stub(:read_timeout=)
     @sp.should_receive(:flow_control=).with(SerialPort::NONE)
 
-    @server = ModBus::RTUServer.new('/dev/ttyS0', 4800, 1, :data_bits => 7, :stop_bits => 2)
-    @server.coils = [1,0,1,1]
-    @server.discrete_inputs = [1,1,0,0]
-    @server.holding_registers = [1,2,3,4]
-    @server.input_registers = [1,2,3,4]
+    @server = ModBus::RTUServer.new('/dev/ttyS0', 4800, :data_bits => 7, :stop_bits => 2)
+    @slave = @server.with_slave(1)
+    @slave.coils = [1,0,1,1]
+    @slave.discrete_inputs = [1,1,0,0]
+    @slave.holding_registers = [1,2,3,4]
+    @slave.input_registers = [1,2,3,4]
   end
 
   it "should be valid initialized " do
-    @server.coils.should == [1,0,1,1]
-    @server.discrete_inputs.should == [1,1,0,0]
-    @server.holding_registers.should == [1,2,3,4]
-    @server.input_registers.should == [1,2,3,4]
+    @slave.coils.should == [1,0,1,1]
+    @slave.discrete_inputs.should == [1,1,0,0]
+    @slave.holding_registers.should == [1,2,3,4]
+    @slave.input_registers.should == [1,2,3,4]
 
     @server.port.should == '/dev/ttyS0'
     @server.baud.should == 4800

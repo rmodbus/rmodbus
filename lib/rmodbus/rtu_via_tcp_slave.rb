@@ -10,7 +10,7 @@ module ModBus
   # @see RTUViaTCPClient#open_connection
   # @see Client#with_slave
   # @see Slave
-  class RTUViaTCPSlave < Slave
+  class RTUViaTCPSlave < Client::Slave
 		include RTU
 
     private

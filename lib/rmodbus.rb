@@ -9,7 +9,6 @@ module ModBus
   autoload :SP, 'rmodbus/sp'
   autoload :RTU, 'rmodbus/rtu'
   autoload :TCP, 'rmodbus/tcp'
-  autoload :Slave, 'rmodbus/slave'
   autoload :Client, 'rmodbus/client'
   autoload :Server, 'rmodbus/server'
   autoload :TCPSlave, 'rmodbus/tcp_slave'

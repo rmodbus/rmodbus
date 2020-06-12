@@ -1,7 +1,7 @@
 # -*- coding: ascii
 require 'rmodbus'
 
-describe ModBus::Slave do
+describe ModBus::Client::Slave do
   before do
     @slave = ModBus::Client.new.with_slave(1)
 

@@ -92,16 +92,17 @@ module ModBus
 			msg
 		end
 
-    def serv_rtu_requests(io, &blk)
+    def serv_rtu_requests(io)
       loop do
         # read the RTU message
         msg = read_rtu_request(io)
 
         next if msg.nil?
 
-        if msg.getbyte(0) == @uid and msg[-2,2].unpack('S<')[0] == crc16(msg[0..-3])
+        if msg[-2,2].unpack('S<')[0] == crc16(msg[0..-3])
           pdu = yield msg
-          resp = @uid.chr + pdu
+          next unless pdu
+          resp = msg.getbyte(0).chr + pdu
           resp << [crc16(resp)].pack("S<")
           log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
           io.write resp

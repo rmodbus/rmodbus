@@ -8,11 +8,12 @@ describe ModBus::TCPServer do
     @invalid_unit_id = unit_ids.last
     @port = 8502
     begin
-      @server = ModBus::TCPServer.new(@port, valid_unit_id)
-      @server.coils = [1,0,1,1]
-      @server.discrete_inputs = [1,1,0,0]
-      @server.holding_registers = [1,2,3,4]
-      @server.input_registers = [1,2,3,4]
+      @server = ModBus::TCPServer.new(@port)
+      @server_slave = @server.with_slave(valid_unit_id)
+      @server_slave.coils = [1,0,1,1]
+      @server_slave.discrete_inputs = [1,1,0,0]
+      @server_slave.holding_registers = [1,2,3,4]
+      @server_slave.input_registers = [1,2,3,4]
       @server.start
     rescue Errno::EADDRINUSE
       @port += 1
@@ -24,7 +25,10 @@ describe ModBus::TCPServer do
   end
 
   it "should succeed if UID is broadcast" do
-    @cl.with_slave(0).read_coils(1,3)
+    @cl.with_slave(0).write_coil(1,1)
+    # have to wait for the server to process it
+    sleep 1
+    @server_slave.coils[1].should == 1
   end
 
   it "should fail if UID is mismatched" do
@@ -68,59 +72,59 @@ describe ModBus::TCPServer do
   end
 
   it "should supported function 'read coils'" do
-    @slave.read_coils(0,3).should == @server.coils[0,3]
+    @slave.read_coils(0,3).should == @server_slave.coils[0,3]
   end
 
   it "should supported function 'read coils' with more than 125 in one request" do
-    @server.coils = Array.new( 1900, 1 )
-    @slave.read_coils(0,1900).should == @server.coils[0,1900]
+    @server_slave.coils = Array.new( 1900, 1 )
+    @slave.read_coils(0,1900).should == @server_slave.coils[0,1900]
   end
 
   it "should supported function 'read discrete inputs'" do
-    @slave.read_discrete_inputs(1,3).should == @server.discrete_inputs[1,3]
+    @slave.read_discrete_inputs(1,3).should == @server_slave.discrete_inputs[1,3]
   end
 
   it "should supported function 'read holding registers'" do
-    @slave.read_holding_registers(0,3).should == @server.holding_registers[0,3]
+    @slave.read_holding_registers(0,3).should == @server_slave.holding_registers[0,3]
   end
 
   it "should supported function 'read input registers'" do
-    @slave.read_input_registers(2,2).should == @server.input_registers[2,2]
+    @slave.read_input_registers(2,2).should == @server_slave.input_registers[2,2]
   end
 
   it "should supported function 'write single coil'" do
-    @server.coils[3] = 0
+    @server_slave.coils[3] = 0
     @slave.write_single_coil(3,1)
-    @server.coils[3].should == 1
+    @server_slave.coils[3].should == 1
   end
 
   it "should supported function 'write single register'" do
-    @server.holding_registers[3] = 25
+    @server_slave.holding_registers[3] = 25
     @slave.write_single_register(3,35)
-    @server.holding_registers[3].should == 35
+    @server_slave.holding_registers[3].should == 35
   end
 
   it "should supported function 'write multiple coils'" do
-    @server.coils = [1,1,1,0, 0,0,0,0, 0,0,0,0, 0,1,1,1]
+    @server_slave.coils = [1,1,1,0, 0,0,0,0, 0,0,0,0, 0,1,1,1]
     @slave.write_multiple_coils(3, [1, 0,1,0,1, 0,1,0,1])
-    @server.coils.should == [1,1,1,1, 0,1,0,1, 0,1,0,1, 0,1,1,1]
+    @server_slave.coils.should == [1,1,1,1, 0,1,0,1, 0,1,0,1, 0,1,1,1]
   end
 
   it "should supported function 'write multiple registers'" do
-    @server.holding_registers = [1,2,3,4,5,6,7,8,9]
+    @server_slave.holding_registers = [1,2,3,4,5,6,7,8,9]
     @slave.write_multiple_registers(3,[1,2,3,4,5])
-    @server.holding_registers.should == [1,2,3,1,2,3,4,5,9]
+    @server_slave.holding_registers.should == [1,2,3,1,2,3,4,5,9]
   end
 
   it "should have options :host" do
     host = '192.168.0.1'
-    srv = ModBus::TCPServer.new(1010, 1, :host => '192.168.0.1')
+    srv = ModBus::TCPServer.new(1010, :host => '192.168.0.1')
     srv.host.should eql(host)
   end
 
   it "should have options :max_connection" do
     max_conn = 5
-    srv = ModBus::TCPServer.new(1010, 1, :max_connection => 5)
+    srv = ModBus::TCPServer.new(1010, :max_connection => 5)
     srv.maxConnections.should eql(max_conn)
   end
 
