@@ -6,13 +6,19 @@ describe ModBus::TCPServer do
     unit_ids = (1..247).to_a.shuffle
     valid_unit_id = unit_ids.first
     @invalid_unit_id = unit_ids.last
-    @server = ModBus::TCPServer.new(8502, valid_unit_id)
-    @server.coils = [1,0,1,1]
-    @server.discrete_inputs = [1,1,0,0]
-    @server.holding_registers = [1,2,3,4]
-    @server.input_registers = [1,2,3,4]
-    @server.start
-    @cl = ModBus::TCPClient.new('127.0.0.1', 8502)
+    @port = 8502
+    begin
+      @server = ModBus::TCPServer.new(@port, valid_unit_id)
+      @server.coils = [1,0,1,1]
+      @server.discrete_inputs = [1,1,0,0]
+      @server.holding_registers = [1,2,3,4]
+      @server.input_registers = [1,2,3,4]
+      @server.start
+    rescue Errno::EADDRINUSE
+      @port += 1
+      retry
+    end
+    @cl = ModBus::TCPClient.new('127.0.0.1', @port)
     @cl.read_retries = 1
     @slave = @cl.with_slave(valid_unit_id)
   end
@@ -121,7 +127,7 @@ describe ModBus::TCPServer do
   after :all do
     @cl.close unless @cl.closed?
     @server.stop unless @server.stopped?
-    while GServer.in_service?(8502)
+    while GServer.in_service?(@port)
       sleep(0.01)
     end
     @server.stop
