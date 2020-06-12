@@ -116,6 +116,12 @@ describe ModBus::TCPServer do
     @server_slave.holding_registers.should == [1,2,3,1,2,3,4,5,9]
   end
 
+  it "should support function 'mask_write_register'" do
+    @server_slave.holding_registers = [0x12]
+    @slave.mask_write_register(0, 0xf2, 0x25)
+    @server_slave.holding_registers.should == [0x17]
+  end
+
   it "should support function 'read_write_multiple_registers'" do
     @server_slave.holding_registers = [1,2,3,4,5,6,7,8,9]
     @slave.read_write_multiple_registers(0, 5, 4, [3,2,1]).should == [1,2,3,4,3]

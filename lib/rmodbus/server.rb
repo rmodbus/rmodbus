@@ -5,7 +5,7 @@ module ModBus
 
     attr_accessor :promiscuous
 
-    Funcs = [1,2,3,4,5,6,15,16,23]
+    Funcs = [1,2,3,4,5,6,15,16,22,23]
 
     def with_slave(uid)
       slave = slaves[uid] ||= Server::Slave.new
@@ -79,6 +79,8 @@ module ModBus
         parse_write_multiple_coils_func(req)
       when 16
         parse_write_multiple_registers_func(req)
+      when 22
+        parse_mask_write_register_func(req)
       when 23
         parse_read_write_multiple_registers_func(req)
       end
@@ -135,6 +137,13 @@ module ModBus
           unless (err = validate_write_multiple_registers_func(params, slave))
             slave.holding_registers[params[:addr],params[:quant]] = params[:val]
             pdu = req[0,5]
+          end
+        when 22
+          unless (err = validate_write_register_func(params, slave))
+            addr = params[:addr]
+            and_mask = params[:and_mask]
+            slave.holding_registers[addr] = (slave.holding_registers[addr] & and_mask) | (params[:or_mask] & ~and_mask)
+            pdu = req
           end
         when 23
           unless (err = validate_read_write_multiple_registers_func(params, slave))
@@ -201,6 +210,15 @@ module ModBus
 
     def validate_write_multiple_registers_func(params, slave)
       validate_read_func(params, slave.holding_registers)
+    end
+
+    def parse_mask_write_register_func(req)
+      return nil if req.length != 7
+      {
+          addr: req[1,2].unpack('n')[0],
+          and_mask: req[3,2].unpack('n')[0],
+          or_mask: req[5,2].unpack('n')[0]
+      }
     end
 
     def parse_read_write_multiple_registers_func(req)

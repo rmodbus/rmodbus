@@ -7,6 +7,7 @@
 5. Properly function as a server in an environment with multiple RTU slaves
 6. Server now supports promiscuous mode to dump the conversation happening between a master and other slaves.
 7. Add read/write multiple registers function (server and client)
+8. Add mask write register function to server
 
 ###2017-03-30 Release 1.3.2
 
