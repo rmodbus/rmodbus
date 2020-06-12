@@ -48,7 +48,7 @@ module ModBus
           if unit_id == @uid || unit_id == 0
             log "Server RX (#{req.size} bytes): #{logging_bytes(req)}"
 
-            pdu = exec_req(req, @coils, @discrete_inputs, @holding_registers, @input_registers)
+            pdu = exec_req(req)
 
             resp = tx_id + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
             log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"

@@ -27,7 +27,7 @@ module ModBus
     def start
       @serv = Thread.new do
         serv_rtu_requests(@sp) do |msg|
-          exec_req(msg[1..-3], @coils, @discrete_inputs, @holding_registers, @input_registers)
+          exec_req(msg[1..-3])
         end
       end
     end

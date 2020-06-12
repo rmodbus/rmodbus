@@ -37,7 +37,7 @@ module ModBus
     # @param [TCPSocket] io socket
     def serve(io)
       serv_rtu_requests(io) do |msg|
-        exec_req(msg[1..-3], @coils, @discrete_inputs, @holding_registers, @input_registers)
+        exec_req(msg[1..-3])
       end
     end
   end

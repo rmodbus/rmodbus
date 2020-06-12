@@ -11,7 +11,7 @@ module ModBus
 
     private
 
-    def exec_req(req, coils, discrete_inputs, holding_registers, input_registers)
+    def exec_req(req)
       func = req.getbyte(0)
 
       unless Funcs.include?(func)
