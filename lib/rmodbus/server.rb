@@ -5,7 +5,7 @@ module ModBus
 
     attr_accessor :promiscuous
 
-    Funcs = [1,2,3,4,5,6,15,16]
+    Funcs = [1,2,3,4,5,6,15,16,23]
 
     def with_slave(uid)
       slave = slaves[uid] ||= Server::Slave.new
@@ -79,6 +79,8 @@ module ModBus
         parse_write_multiple_coils_func(req)
       when 16
         parse_write_multiple_registers_func(req)
+      when 23
+        parse_read_write_multiple_registers_func(req)
       end
     end
 
@@ -131,8 +133,13 @@ module ModBus
           end
         when 16
           unless (err = validate_write_multiple_registers_func(params, slave))
-            slave.holding_registers[params[:addr],params[:quant]] = params[:val][0,params[:quant]]
+            slave.holding_registers[params[:addr],params[:quant]] = params[:val]
             pdu = req[0,5]
+          end
+        when 23
+          unless (err = validate_read_write_multiple_registers_func(params, slave))
+            slave.holding_registers[params[:write][:addr],params[:write][:quant]] = params[:write][:val]
+            pdu = func.chr + (params[:read][:quant] * 2).chr + slave.holding_registers[params[:read][:addr],params[:read][:quant]].pack('n*')
           end
       end
 
@@ -194,6 +201,20 @@ module ModBus
 
     def validate_write_multiple_registers_func(params, slave)
       validate_read_func(params, slave.holding_registers)
+    end
+
+    def parse_read_write_multiple_registers_func(req)
+      return nil if req.length < 12
+      params = { read: parse_read_func(req, nil),
+        write: parse_write_multiple_registers_func(req[4..-1])}
+      return nil if params[:write].nil?
+      params
+    end
+
+    def validate_read_write_multiple_registers_func(params, slave)
+      result = validate_read_func(params[:read], slave.holding_registers)
+      return result if result
+      validate_write_multiple_registers_func(params[:write], slave)
     end
   end
 end
