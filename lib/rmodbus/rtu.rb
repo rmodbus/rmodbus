@@ -40,33 +40,6 @@ module ModBus
       end
     end
 
-    def send_rtu_pdu(pdu)
-      msg = @uid.chr + pdu
-      msg << [crc16(msg)].pack("S<")
-
-      clean_input_buff
-      @io.write msg
-
-      log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
-    end
-
-    def read_rtu_pdu
-      msg = read_rtu_response(@io)
-
-      log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
-
-      if msg.getbyte(0) == @uid
-        return msg[1..-3] if msg[-2,2].unpack('S<')[0] == crc16(msg[0..-3])
-        log "Ignore package: don't match CRC"
-      else
-        log "Ignore package: don't match uid ID"
-      end
-      loop do
-        #waite timeout
-        sleep(0.1)
-      end
-    end
-
     def read_rtu_request(io)
 			# Read the slave_id and function code
 			msg = io.read(2)
@@ -92,7 +65,7 @@ module ModBus
 			msg
 		end
 
-    def serv_rtu_requests(io)
+    def serve(io)
       loop do
         # read the RTU message
         msg = read_rtu_request(io)
@@ -100,7 +73,7 @@ module ModBus
         next if msg.nil?
 
         if msg[-2,2].unpack('S<')[0] == crc16(msg[0..-3])
-          pdu = yield msg
+          pdu = exec_req(msg[1..-3], msg.getbyte(0))
           next unless pdu
           resp = msg.getbyte(0).chr + pdu
           resp << [crc16(resp)].pack("S<")

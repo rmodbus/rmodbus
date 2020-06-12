@@ -1,7 +1,7 @@
 # -*- coding: ascii
 require 'rmodbus'
 
-describe ModBus::RTUViaTCPClient do
+describe ModBus::RTUClient do
   describe "method 'query'" do
     before do
       @sock = double('Socket')
@@ -9,7 +9,7 @@ describe ModBus::RTUViaTCPClient do
       @sock.stub(:read_timeout=)
       @sock.stub(:flush)
 
-      @cl = ModBus::RTUViaTCPClient.new("127.0.0.1")
+      @cl = ModBus::RTUClient.new("127.0.0.1")
       @slave = @cl.with_slave(1)
       @slave.read_retries = 1
     end
@@ -44,7 +44,7 @@ describe ModBus::RTUViaTCPClient do
       Socket.should_receive(:tcp).with(ipaddr, port, nil, nil, hash_including(:connect_timeout)).and_return(@sock)
       @sock.should_receive(:closed?).and_return(false)
       @sock.should_receive(:close)
-      ModBus::RTUViaTCPClient.connect(ipaddr, port) do |cl|
+      ModBus::RTUClient.connect(ipaddr, port) do |cl|
         cl.ipaddr.should == ipaddr
         cl.port.should == port
       end
@@ -71,6 +71,6 @@ describe ModBus::RTUViaTCPClient do
   end
 
   it "should tune connection timeout" do
-    lambda { ModBus::RTUViaTCPClient.new('81.123.231.11', 1999, :connect_timeout => 0.001) }.should raise_error(ModBus::Errors::ModBusTimeout)
+    lambda { ModBus::RTUClient.new('81.123.231.11', 1999, :connect_timeout => 0.001) }.should raise_error(ModBus::Errors::ModBusTimeout)
   end
 end

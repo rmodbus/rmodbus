@@ -1,8 +1,9 @@
 ###UPCOMING
 
 1. [BREAKING]Servers now support publishing multiple slaves
-2. Don't time out waiting to read a response that will never come from broadcast commands
-3. Don't send responses to broadcast commands as a server
+2. [BREAKING]RTUViaTCPClient/RTUViaTCPSlave are gone. Please just use RTUClient direclty
+3. Don't time out waiting to read a response that will never come from broadcast commands
+4. Don't send responses to broadcast commands as a server
 
 ###2017-03-30 Release 1.3.2
 

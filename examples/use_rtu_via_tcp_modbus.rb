@@ -9,7 +9,7 @@ srv.input_registers = [1,2,3,4]
 srv.debug = true
 srv.start
 
-ModBus::RTUViaTCPClient.connect('127.0.0.1', 10002) do |cl|
+ModBus::RTUClient.connect('127.0.0.1', 10002) do |cl|
   cl.with_slave(1) do |slave|
     slave.debug = true
     regs = slave.holding_registers

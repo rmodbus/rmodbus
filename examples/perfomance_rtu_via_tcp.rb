@@ -15,7 +15,7 @@ srv.input_registers = [0,1,2,3,4,5,6,7,8,9]  * 10
 srv.start
 
 
-cl = RTUViaTCPClient.new('127.0.0.1', 1502)
+cl = RTUClient.new('127.0.0.1', 1502)
 cl.with_slave(1) do |slave|
   Benchmark.bmbm do |x|
     x.report('Read coils') do

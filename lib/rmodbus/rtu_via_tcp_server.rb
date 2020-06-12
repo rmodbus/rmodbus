@@ -31,14 +31,5 @@ module ModBus
       opts[:max_connection] = 4 unless opts[:max_connection]
 			super(port, host = opts[:host], maxConnection = opts[:max_connection])
 		end
-
-    protected
-    # Serve requests
-    # @param [TCPSocket] io socket
-    def serve(io)
-      serv_rtu_requests(io) do |msg|
-        exec_req(msg[1..-3], msg.getbyte(0))
-      end
-    end
   end
 end

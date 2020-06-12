@@ -17,7 +17,5 @@ module ModBus
   autoload :RTUSlave, 'rmodbus/rtu_slave'
   autoload :RTUClient, 'rmodbus/rtu_client'
   autoload :RTUServer, 'rmodbus/rtu_server'
-  autoload :RTUViaTCPSlave, 'rmodbus/rtu_via_tcp_slave'
-  autoload :RTUViaTCPClient, 'rmodbus/rtu_via_tcp_client'
   autoload :RTUViaTCPServer, 'rmodbus/rtu_via_tcp_server'
 end

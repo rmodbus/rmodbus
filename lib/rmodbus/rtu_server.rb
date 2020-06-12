@@ -20,15 +20,17 @@ module ModBus
     # @see SP#open_serial_port
     def initialize(port, baud=9600, opts = {})
       Thread.abort_on_exception = true
-      @sp = open_serial_port(port, baud, opts)
+      if port.is_a?(IO)
+        @sp = port
+      else
+        @sp = open_serial_port(port, baud, opts)
+      end
     end
 
     # Start server
     def start
       @serv = Thread.new do
-        serv_rtu_requests(@sp) do |msg|
-          exec_req(msg[1..-3], msg.getbyte(0))
-        end
+        serve(@sp)
       end
     end
 

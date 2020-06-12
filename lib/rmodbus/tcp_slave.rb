@@ -7,7 +7,7 @@ module ModBus
   #     end
   #   end
   #
-  # @see RTUViaTCPClient#open_connection
+  # @see TCP#open_tcp_connection
   # @see Client#with_slave
   # @see Slave
   class TCPSlave < Client::Slave
