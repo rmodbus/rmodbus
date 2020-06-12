@@ -3,7 +3,7 @@ module ModBus
   module Server
     autoload :Slave, 'rmodbus/server/slave'
 
-    attr_accessor :promiscuous
+    attr_accessor :promiscuous, :request_callback, :response_callback
 
     Funcs = [1,2,3,4,5,6,15,16,22,23]
 
@@ -42,6 +42,9 @@ module ModBus
         else
           params = parse_response(func, req, @pending_response_req)
         end
+        response_callback&.call(uid, req, @pending_response_req)
+        @pending_response_uid = nil
+        @pending_response_req = nil
         log("Server RX response #{func} from #{uid}: #{params.inspect}")
         return
       end
@@ -54,13 +57,14 @@ module ModBus
 
       @pending_response_uid = uid
       # keep track of the request so that promiscuous printing of the response can have context if necessary
-      @pending_response_req = req
       params = parse_request(func, req)
       unless params
         log("Server RX unable to parse function #{func} to #{uid}")
         return unless slave
         return (func | 0x80).chr + 1.chr
       end
+      @pending_response_req = params
+      request_callback&.call(uid, params)
       log("Server RX function #{func} to #{uid}: #{params.inspect}")
 
       return unless slave
@@ -89,10 +93,10 @@ module ModBus
     def parse_response(func, res, req)
       case func
       when 1, 2
-        res[2..-1].unpack_bits[0..parse_read_func(req)[:quant]]
-      when 3, 4
+        res[2..-1].unpack_bits[0..req[:quant]]
+      when 3, 4, 23
         res[2..-1].unpack('n*')
-      when 5, 6, 15, 16
+      when 5, 6, 15, 16, 22
         {}
       end
     end
