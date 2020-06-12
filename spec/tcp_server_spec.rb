@@ -65,6 +65,13 @@ describe ModBus::TCPServer do
     )
   end
 
+  it "should send exception if function not supported" do
+    lambda { @slave.query('0x43') }.should raise_exception(
+                                               ModBus::Errors::IllegalFunction,
+                                               "The function code received in the query is not an allowable action for the server"
+                                           )
+  end
+
   it "should calc a many requests" do
     @slave.read_coils(1,2)
     @slave.write_multiple_registers(0,[9,9,9,])

@@ -22,30 +22,27 @@ module ModBus
       @slaves ||= {}
     end
 
-    def exec_req(req, uid)
+    def exec_req(uid, func, params, pdu, is_response: false)
+      if is_response
+        log("Server RX response #{func & 0x7f} from #{uid}: #{params.inspect}")
+      else
+        log("Server RX function #{func} to #{uid}: #{params.inspect}")
+      end
+      request_callback&.call(uid, func, params) unless is_response
+
       if uid == 0
-        slaves.each_key { |uid| exec_req(req, uid) }
+        slaves.each_key { |specific_uid| exec_req(specific_uid, func, params, pdu) }
         return
       end
       slave = slaves[uid]
       return nil if !slave && !promiscuous
 
-      func = req.getbyte(0)
-
-      if promiscuous && !slave && @pending_response_uid == uid
+      if promiscuous && !slave && is_response
         # we saw a request to a slave that we don't own; try
         # and parse this as a response, not a request
 
-        if func & 0x80 == 0x80
-          func &= 0x7f
-          params = { err: req.getbyte(1) }
-        else
-          params = parse_response(func, req, @pending_response_req)
-        end
-        response_callback&.call(uid, req, @pending_response_req)
-        @pending_response_uid = nil
+        response_callback&.call(uid, func, params, @pending_response_req)
         @pending_response_req = nil
-        log("Server RX response #{func} from #{uid}: #{params.inspect}")
         return
       end
 
@@ -55,20 +52,11 @@ module ModBus
         return (func | 0x80).chr + 1.chr
       end
 
-      @pending_response_uid = uid
       # keep track of the request so that promiscuous printing of the response can have context if necessary
-      params = parse_request(func, req)
-      unless params
-        log("Server RX unable to parse function #{func} to #{uid}")
-        return unless slave
-        return (func | 0x80).chr + 1.chr
-      end
       @pending_response_req = params
-      request_callback&.call(uid, params)
-      log("Server RX function #{func} to #{uid}: #{params.inspect}")
 
       return unless slave
-      process_func(func, slave, req, params)
+      process_func(func, slave, pdu, params)
     end
 
     def parse_request(func, req)
@@ -90,13 +78,24 @@ module ModBus
       end
     end
 
-    def parse_response(func, res, req)
+    def parse_response(func, res)
+      if func & 0x80 == 0x80 && Funcs.include?(func & 0x7f)
+        return nil unless res.length == 2
+        return { err: res[1].ord }
+      end
+
       case func
       when 1, 2
-        res[2..-1].unpack_bits[0..req[:quant]]
+        return nil unless res.length == res[1].ord + 2
+        res[2..-1].unpack_bits
       when 3, 4, 23
+        return nil unless res.length == res[1].ord + 2
         res[2..-1].unpack('n*')
-      when 5, 6, 15, 16, 22
+      when 5, 6, 15, 16
+        return nil unless res.length == 5
+        {}
+      when 22
+        return nil unless res.length == 7
         {}
       end
     end

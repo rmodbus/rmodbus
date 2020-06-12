@@ -40,13 +40,6 @@ describe ModBus::RTUViaTCPServer do
     srv.maxConnections.should eql(max_conn)
   end
 
-  it "should send exception if function not supported" do
-    lambda { @slave.query('0x43') }.should raise_exception(
-                                               ModBus::Errors::IllegalFunction,
-                                               "The function code received in the query is not an allowable action for the server"
-                                           )
-  end
-
   it "should properly ignore responses from other slaves" do
     request = "\x10\x03\x0\x1\x0\x1\xd6\x8b"
     response = "\x10\x83\x1\xd0\xf5"
@@ -82,9 +75,7 @@ describe ModBus::RTUViaTCPServer do
 
   it "should send exception if request is malformed" do
     lambda { @slave.query("\x01\x01") }.should raise_exception(
-                                                   ModBus::Errors::IllegalFunction,
-                                                   "The function code received in the query is not an allowable action for the server"
-                                               )
+                                                   ModBus::Errors::ModBusTimeout)
   end
 
   after :all do

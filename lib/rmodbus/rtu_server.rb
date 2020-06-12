@@ -20,7 +20,7 @@ module ModBus
     # @see SP#open_serial_port
     def initialize(port, baud=9600, opts = {})
       Thread.abort_on_exception = true
-      if port.is_a?(IO)
+      if port.is_a?(IO) || port.respond_to?(:read)
         @sp = port
       else
         @sp = open_serial_port(port, baud, opts)

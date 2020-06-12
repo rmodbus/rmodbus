@@ -47,9 +47,11 @@ module ModBus
         unit_id = header.getbyte(6)
         if proto_id == "\x00\x00"
           req = io.read(len - 1)
-
-          pdu = exec_req(req, unit_id)
           log "Server RX (#{req.size} bytes): #{logging_bytes(req)}"
+
+          func = req.getbyte(0)
+          params = parse_request(func, req)
+          pdu = exec_req(unit_id, func, params, req)
 
           if pdu
             resp = tx_id + "\0\0" + (pdu.size + 1).to_word + unit_id.chr + pdu

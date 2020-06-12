@@ -50,11 +50,33 @@ module ModBus
       loop do
         offset = 0
         crc = msg[-2..-1].unpack("S<").first
+
         # scan the bytestream for a valid CRC
         loop do
-          break if offset == msg.length - 3
+          break if offset == msg.length - 4
           calculated_crc = Digest::CRC16Modbus.checksum(msg[offset..-3])
-          return msg[offset..-1] if crc == calculated_crc
+          if crc == calculated_crc
+            is_response = (msg.getbyte(offset + 1) & 0x80 == 0x80) ||
+              (msg.getbyte(offset) == @last_req_uid &&
+                  msg.getbyte(offset + 1) == @last_req_func &&
+              @last_req_timestamp && Time.now.to_f - @last_req_timestamp < 0.5)
+
+            params = is_response ? parse_response(msg.getbyte(offset + 1), msg[(offset + 1)..-3]) :
+                parse_request(msg.getbyte(offset + 1), msg[(offset + 1)..-3])
+
+            unless params.nil?
+              if is_response
+                @last_req_uid = @last_req_func = @last_req_timestamp = nil
+              else
+                @last_req_uid = msg.getbyte(offset)
+                @last_req_func = msg.getbyte(offset + 1)
+                @last_req_timestamp = Time.now.to_f
+              end
+              log "Server RX discarding #{offset} bytes: #{logging_bytes(msg[0...offset])}" if offset != 0
+              log "Server RX (#{msg.size - offset} bytes): #{logging_bytes(msg[offset..-1])}"
+              return [msg.getbyte(offset), msg.getbyte(offset + 1), params, msg[offset + 1..-3], is_response]
+            end
+          end
           offset += 1
         end
 
@@ -63,25 +85,20 @@ module ModBus
         # be able to see at once
         msg = msg[1..-1] if msg.length > 256
       end
-
-			log "Server RX (#{msg.size} bytes): #{logging_bytes(msg)}"
-
-			msg
 		end
 
     def serve(io)
       loop do
         # read the RTU message
-        msg = read_rtu_request(io)
+        uid, func, params, pdu, is_response = read_rtu_request(io)
 
-        next if msg.nil?
+        next if uid.nil?
 
-        log "Server RX (#{msg.size} bytes): #{logging_bytes(msg)}"
-
-        pdu = exec_req(msg[1..-3], msg.getbyte(0))
+        pdu = exec_req(uid, func, params, pdu, is_response: is_response)
         next unless pdu
 
-        resp = msg.getbyte(0).chr + pdu
+        @last_req_uid = @last_req_func = @last_req_timestamp = nil
+        resp = uid.chr + pdu
         resp << [crc16(resp)].pack("S<")
         log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
         io.write resp
