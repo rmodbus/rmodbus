@@ -49,9 +49,9 @@ module ModBus
           req = io.read(len - 1)
 
           pdu = exec_req(req, unit_id)
+          log "Server RX (#{req.size} bytes): #{logging_bytes(req)}"
 
           if pdu
-            log "Server RX (#{req.size} bytes): #{logging_bytes(req)}"
             resp = tx_id + "\0\0" + (pdu.size + 1).to_word + unit_id.chr + pdu
             log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
             io.write resp

@@ -59,6 +59,9 @@ module ModBus
         end
 
         msg << io.readbyte
+        # maximum message size is 256, so that's as far as we have to
+        # be able to see at once
+        msg = msg[1..-1] if msg.length > 256
       end
 
 			log "Server RX (#{msg.size} bytes): #{logging_bytes(msg)}"
@@ -73,15 +76,16 @@ module ModBus
 
         next if msg.nil?
 
-        if msg[-2,2].unpack('S<')[0] == crc16(msg[0..-3])
-          pdu = exec_req(msg[1..-3], msg.getbyte(0))
-          next unless pdu
-          resp = msg.getbyte(0).chr + pdu
-          resp << [crc16(resp)].pack("S<")
-          log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
-          io.write resp
-		    end
-	    end
+        log "Server RX (#{msg.size} bytes): #{logging_bytes(msg)}"
+
+        pdu = exec_req(msg[1..-3], msg.getbyte(0))
+        next unless pdu
+
+        resp = msg.getbyte(0).chr + pdu
+        resp << [crc16(resp)].pack("S<")
+        log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
+        io.write resp
+      end
     end
 
     # Calc CRC16 for massage
