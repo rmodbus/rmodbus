@@ -41,24 +41,25 @@ module ModBus
     end
 
     def read_rtu_request(io)
-			# Read the slave_id and function code
-			msg = io.read(2)
+			# Every message is a minimum of 5 bytes (slave id, function code, error code, crc16)
+			msg = io.read(5)
 
 			# If msg is nil, then our client never sent us anything and it's time to disconnect
 			return if msg.nil?
 
-			function_code = msg.getbyte(1)
-			if [1, 2, 3, 4, 5, 6].include?(function_code)
-				# read 6 more bytes and return the message total message
-				msg += io.read(6)
-			elsif [15, 16].include?(function_code)
-				# Read in first register, register count, and data bytes
-				msg += io.read(5)
-				# Read in however much data we need to + 2 CRC bytes
-				msg += io.read(msg.getbyte(6) + 2)
-			else
-				raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
-			end
+      loop do
+        offset = 0
+        crc = msg[-2..-1].unpack("S<").first
+        # scan the bytestream for a valid CRC
+        loop do
+          break if offset == msg.length - 3
+          calculated_crc = Digest::CRC16Modbus.checksum(msg[offset..-3])
+          return msg[offset..-1] if crc == calculated_crc
+          offset += 1
+        end
+
+        msg << io.readbyte
+      end
 
 			log "Server RX (#{msg.size} bytes): #{logging_bytes(msg)}"
 

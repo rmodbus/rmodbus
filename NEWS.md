@@ -4,6 +4,7 @@
 2. [BREAKING]RTUViaTCPClient/RTUViaTCPSlave are gone. Please just use RTUClient direclty
 3. Don't time out waiting to read a response that will never come from broadcast commands
 4. Don't send responses to broadcast commands as a server
+5. Properly function as a server in an environment with multiple RTU slaves
 
 ###2017-03-30 Release 1.3.2
 
