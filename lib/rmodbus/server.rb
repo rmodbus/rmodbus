@@ -56,6 +56,11 @@ module ModBus
       # keep track of the request so that promiscuous printing of the response can have context if necessary
       @pending_response_req = req
       params = parse_request(func, req)
+      unless params
+        log("Server RX unable to parse function #{func} to #{uid}")
+        return unless slave
+        return (func | 0x80).chr + 1.chr
+      end
       log("Server RX function #{func} to #{uid}: #{params.inspect}")
 
       return unless slave
@@ -138,7 +143,8 @@ module ModBus
       end
     end
 
-    def parse_read_func(req)
+    def parse_read_func(req, expected_length = 5)
+      return nil if expected_length && req.length != expected_length
       { quant: req[3,2].unpack('n')[0], addr: req[1,2].unpack('n')[0] }
     end
 
@@ -148,6 +154,7 @@ module ModBus
     end
 
     def parse_write_coil_func(req)
+      return nil unless req.length == 5
       { addr: req[1,2].unpack('n')[0], val: req[3,2].unpack('n')[0] }
     end
 
@@ -157,6 +164,7 @@ module ModBus
     end
 
     def parse_write_register_func(req)
+      return nil unless req.length == 5
       { addr: req[1,2].unpack('n')[0], val: req[3,2].unpack('n')[0] }
     end
 
@@ -165,7 +173,9 @@ module ModBus
     end
 
     def parse_write_multiple_coils_func(req)
-      params = parse_read_func(req)
+      return nil if req.length < 7
+      params = parse_read_func(req, nil)
+      return nil if req.length != 6 + (params[:quant] + 7) / 8
       params[:val] = req[6,params[:quant]].unpack_bits
       params
     end
@@ -175,7 +185,9 @@ module ModBus
     end
 
     def parse_write_multiple_registers_func(req)
-      params = parse_read_func(req)
+      return nil if req.length < 8
+      params = parse_read_func(req, nil)
+      return nil if req.length != 6 + params[:quant] * 2
       params[:val] = req[6,params[:quant] * 2].unpack('n*')
       params
     end

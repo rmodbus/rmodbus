@@ -80,6 +80,13 @@ describe ModBus::RTUViaTCPServer do
     @slave.read_coils(0, 1).should == [1]
   end
 
+  it "should send exception if request is malformed" do
+    lambda { @slave.query("\x01\x01") }.should raise_exception(
+                                                   ModBus::Errors::IllegalFunction,
+                                                   "The function code received in the query is not an allowable action for the server"
+                                               )
+  end
+
   after :all do
     @cl.close unless @cl.closed?
     @server.stop unless @server.stopped?
