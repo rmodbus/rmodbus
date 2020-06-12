@@ -22,4 +22,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'pry', '~> 0.10'
   gem.add_development_dependency 'serialport', '~> 1.3'
   gem.add_development_dependency 'gserver', '~> 0.0'
+
+  gem.add_dependency 'digest-crc', '~> 0.1'
 end
