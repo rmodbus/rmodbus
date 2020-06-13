@@ -1,7 +1,8 @@
 ###UPCOMING
 
 1. [BREAKING] Servers now support publishing multiple slaves
-2. [BREAKING] RTUViaTCPClient/RTUViaTCPSlave are gone. Please just use RTUClient direclty
+2. [BREAKING] RTUViaTCPClient/RTUViaTCPSlave are gone. Please just use RTUClient directly
+3. [BREAKING] Proxy collections no longer return an array when requesting a single item.
 3. Don't time out waiting to read a response that will never come from broadcast commands
 4. Don't send responses to broadcast commands as a server
 5. Properly function as a server in an environment with multiple RTU slaves

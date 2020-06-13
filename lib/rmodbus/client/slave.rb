@@ -43,10 +43,13 @@ module ModBus
       # @param [Integer] addr address first coil
       # @param [Integer] ncoils number coils
       # @return [Array] coils
-      def read_coils(addr, ncoils)
+      def read_coils(addr, ncoils = 1)
         query("\x1" + addr.to_word + ncoils.to_word).unpack_bits[0..ncoils-1]
       end
-      alias_method :read_coil, :read_coils
+
+      def read_coil(addr)
+        read_coils(addr, 1).first
+      end
 
       # Write a single coil
       #
@@ -111,10 +114,13 @@ module ModBus
       # @param [Integer] addr address first input
       # @param[Integer] ninputs number inputs
       # @return [Array] inputs
-      def read_discrete_inputs(addr, ninputs)
+      def read_discrete_inputs(addr, ninputs = 1)
         query("\x2" + addr.to_word + ninputs.to_word).unpack_bits[0..ninputs-1]
       end
-      alias_method :read_discrete_input, :read_discrete_inputs
+
+      def read_discrete_input(addr)
+        read_discrete_inputs(addr, 1).first
+      end
 
       # Returns a read/write ModBus::ReadOnlyProxy hash interface for coils
       #
@@ -135,10 +141,13 @@ module ModBus
       # @param [Integer] addr address first registers
       # @param [Integer] nregs number registers
       # @return [Array] registers
-      def read_input_registers(addr, nregs)
+      def read_input_registers(addr, nregs = 1)
         query("\x4" + addr.to_word + nregs.to_word).unpack('n*')
       end
-      alias_method :read_input_register, :read_input_registers
+
+      def read_input_register(addr)
+        read_input_registers(addr, 1).first
+      end
 
       # Returns a ModBus::ReadWriteProxy hash interface for holding registers
       #
@@ -161,10 +170,13 @@ module ModBus
       # @param [Integer] addr address first registers
       # @param [Integer] nregs number registers
       # @return [Array] registers
-      def read_holding_registers(addr, nregs)
+      def read_holding_registers(addr, nregs = 1)
         query("\x3" + addr.to_word + nregs.to_word).unpack('n*')
       end
-      alias_method :read_holding_register, :read_holding_registers
+
+      def read_holding_register(addr)
+        read_holding_registers(addr, 1).first
+      end
 
       # Write a single holding register
       #

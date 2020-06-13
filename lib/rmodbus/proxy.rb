@@ -10,7 +10,7 @@ module ModBus
     # Note that in the case of multiples, a pluralized version of the method is sent to the slave
     def [](key)
       if key.instance_of?(0.class)
-        @slave.send("read_#{@type}", key, 1)
+        @slave.send("read_#{@type}", key)
       elsif key.instance_of?(Range)
         @slave.send("read_#{@type}s", key.first, key.count)
       else
