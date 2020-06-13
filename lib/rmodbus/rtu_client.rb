@@ -25,7 +25,7 @@ module ModBus
     protected
     # Open serial port
     def open_connection(port_or_ipaddr, arg = nil, opts = {})
-      if port_or_ipaddr.is_a?(IO)
+      if port_or_ipaddr.is_a?(IO) || port_or_ipaddr.respond_to?(:read)
         port_or_ipaddr
       elsif File.exist?(port_or_ipaddr) || port_or_ipaddr.start_with?('/dev') || port_or_ipaddr.start_with?('COM')
         arg ||= 9600
