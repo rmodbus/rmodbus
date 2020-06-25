@@ -1,3 +1,5 @@
+require 'time'
+
 module ModBus
   module Debug
     attr_accessor :debug, :raise_exception_on_mismatch,
@@ -5,10 +7,10 @@ module ModBus
 
 
     private
-    # Put log message on standart output
+    # Put log message on standard output
     # @param [String] msg message for log
     def log(msg)
-      $stdout.puts msg if @debug
+      $stdout.puts "#{Time.now.utc.iso8601(2)} #{msg}" if @debug
     end
 
     # Convert string of byte to string for log
@@ -17,16 +19,7 @@ module ModBus
     # @param [String] msg input string
     # @return [String] readable string of bytes
     def logging_bytes(msg)
-     result = ""
-     msg.each_byte do |c|
-       byte = if c < 16
-         '0' + c.to_s(16)
-       else
-          c.to_s(16)
-       end
-         result << "[#{byte}]"
-      end
-      result
+      msg.unpack("H*").first.gsub(/\X{2}/, "[\\0]")
     end
   end
 end
