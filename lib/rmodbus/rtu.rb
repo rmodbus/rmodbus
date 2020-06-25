@@ -1,4 +1,5 @@
 require 'digest/crc16_modbus'
+require 'io/wait'
 
 module ModBus
   module RTU

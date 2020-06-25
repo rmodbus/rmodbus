@@ -56,7 +56,12 @@ module ModBus
       @pending_response_req = params
 
       return unless slave
-      process_func(func, slave, pdu, params)
+      pdu = process_func(func, slave, pdu, params)
+      if response_callback
+        res = parse_response(pdu.getbyte(0), pdu)
+        response_callback.call(uid, pdu.getbyte(0), res, params)
+      end
+      pdu
     end
 
     def parse_request(func, req)
