@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README.md"]
   gem.extra_rdoc_files = ["README.md", "NEWS.md"]
 
-  gem.add_development_dependency 'rake','>= 12.3.3"'
+  gem.add_development_dependency 'rake','>= 12.3.3'
   gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'rspec', '~> 2.99'
   gem.add_development_dependency 'guard-rspec', '~> 1.2'
