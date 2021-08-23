@@ -4,12 +4,12 @@ $:.unshift lib unless $:.include?(lib)
 require 'rmodbus/version'
 
 Gem::Specification.new do |gem|
-  gem.name = "rmodbus"
+  gem.name = "rmodbus-ccutrer"
   gem.version = ModBus::VERSION
   gem.license = 'BSD-3-Clause'
-  gem.author  = 'A.Timin, J. Sanders, K. Reynolds, F. Luizão'
+  gem.author  = 'A.Timin, J. Sanders, K. Reynolds, F. Luizão, C. Cutrer'
   gem.email = "atimin@gmail.com"
-  gem.homepage = "http://www.rubydoc.info/github/rmodbus/rmodbus"
+  gem.homepage = "https://github.com/ccutrer/rmodbus"
   gem.summary = "RModBus - free implementation of protocol ModBus"
   gem.files = Dir['lib/**/*.rb','examples/*.rb','spec/*.rb', 'Rakefile']
   gem.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README.md"]
