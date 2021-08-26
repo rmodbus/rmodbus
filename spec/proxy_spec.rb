@@ -12,7 +12,7 @@ describe Array do
 
   # Handle all of the coil methods
   it "should call read_coil" do
-    @slave.should_receive(:read_coil).with(0, 1)
+    @slave.should_receive(:read_coil).with(0)
     @coil_proxy[0]
   end
   it "should call read_coils" do
@@ -31,7 +31,7 @@ describe Array do
 
   # Discrete input tests
   it "should call read_discrete_input" do
-    @slave.should_receive(:read_discrete_input).with(0, 1)
+    @slave.should_receive(:read_discrete_input).with(0)
     @discrete_input_proxy[0]
   end
 
@@ -43,7 +43,7 @@ describe Array do
 
   # Holding Register Tess
   it "should call read_holding_register" do
-    @slave.should_receive(:read_holding_register).with(0, 1)
+    @slave.should_receive(:read_holding_register).with(0)
     @holding_register_proxy[0]
   end
   it "should call read_holding_registers" do
@@ -62,7 +62,7 @@ describe Array do
 
   # Input Register Tests
   it "should call read_discrete_input" do
-    @slave.should_receive(:read_input_register).with(0, 1)
+    @slave.should_receive(:read_input_register).with(0)
     @input_register_proxy[0]
   end
 

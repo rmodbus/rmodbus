@@ -52,22 +52,16 @@ describe ModBus::TCPClient  do
 end
 
 begin
-  require "serialport"
+  require "ccutrer-serialport"
   describe ModBus::RTUClient do
     before do 
       @sp = double('Serial port')
+      allow(@sp).to receive(:flush)
 
-      SerialPort.should_receive(:new).with("/dev/port1", 9600, 7, 2, SerialPort::ODD).and_return(@sp)
-      SerialPort.stub(:public_method_defined?).with(:flush_input).and_return(true)
+      CCutrer::SerialPort.should_receive(:new).with("/dev/port1", baud: 9600, data_bits: 7, stop_bits: 2, parity: :odd).and_return(@sp)
 
-      @sp.stub(:class).and_return(SerialPort)
-      @sp.should_receive(:flow_control=).with(SerialPort::NONE)
-      @sp.stub(:read_timeout=)
-      @sp.stub(:flush_input)
-
-      @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => SerialPort::ODD).with_slave(1)
+      @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2, :parity => :odd).with_slave(1)
       @slave.read_retries = 0
-
     end
     
     it 'should log rec\send bytes' do

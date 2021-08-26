@@ -4,9 +4,7 @@ require 'rmodbus'
 describe ModBus::RTUServer do
   before do
     @sp = double('SerialPort')
-    SerialPort.should_receive(:new).with('/dev/ttyS0', 4800, 7, 2, SerialPort::NONE).and_return(@sp)
-    @sp.stub(:read_timeout=)
-    @sp.should_receive(:flow_control=).with(SerialPort::NONE)
+    CCutrer::SerialPort.should_receive(:new).with('/dev/ttyS0', baud: 4800, data_bits: 7, stop_bits: 2, parity: :none).and_return(@sp)
 
     @server = ModBus::RTUServer.new('/dev/ttyS0', 4800, :data_bits => 7, :stop_bits => 2)
     @slave = @server.with_slave(1)
@@ -26,6 +24,6 @@ describe ModBus::RTUServer do
     @server.baud.should == 4800
     @server.data_bits.should == 7
     @server.stop_bits.should == 2
-    @server.parity.should == SerialPort::NONE
+    @server.parity.should == :none
   end
 end
