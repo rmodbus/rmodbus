@@ -1,24 +1,9 @@
 # encoding: utf-8
 
-require 'rubygems'
-require 'bundler'
 begin
-  Bundler.setup(:default, :development)
-rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
-  exit e.status_code
+  require 'bundler/setup'
+rescue LoadError
+  puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
-require 'rake'
-require 'rspec/core'
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.pattern = FileList['spec/**/*_spec.rb']
-end
-
-task :default => :spec
-
-task :pry do
-  sh "bundle exec pry -r ./lib/rmodbus.rb"
-end
+Bundler::GemHelper.install_tasks
