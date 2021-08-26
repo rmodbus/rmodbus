@@ -39,13 +39,13 @@ describe ModBus::Client do
   end
 
   it 'should common for all slaves :debug flag' do
-    @cl.debug = true
+    @cl.logger = true
     @cl.with_slave(1) do |slave_1|
-      slave_1.debug.should be_truthy
+      slave_1.logger.should eq true
     end
     @cl.with_slave(2) do |slave_2|
-      slave_2.debug = false
-      slave_2.debug.should be_falsey
+      slave_2.logger = false
+      slave_2.logger.should eq false
     end
   end
 

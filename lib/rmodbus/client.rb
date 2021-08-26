@@ -17,7 +17,7 @@ module ModBus
     # @return [Client] client object
     def initialize(*args, &block)
       # Defaults
-      @debug = false
+      @logger = nil
       @raise_exception_on_mismatch = false
       @read_retry_timeout = 1
       @read_retries = 1
@@ -49,7 +49,7 @@ module ModBus
     # @return [Slave] slave object
     def with_slave(uid, &block)
       slave = get_slave(uid, @io)
-      slave.debug = debug
+      slave.logger = logger
       slave.raise_exception_on_mismatch = raise_exception_on_mismatch
       slave.read_retries = read_retries
       slave.read_retry_timeout = read_retry_timeout

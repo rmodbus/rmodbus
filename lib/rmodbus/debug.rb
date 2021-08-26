@@ -2,15 +2,16 @@ require 'time'
 
 module ModBus
   module Debug
-    attr_accessor :debug, :raise_exception_on_mismatch,
-                  :read_retries, :read_retry_timeout
+    attr_accessor :raise_exception_on_mismatch,
+                  :read_retries, :read_retry_timeout,
+                  :logger
 
 
     private
     # Put log message on standard output
     # @param [String] msg message for log
     def log(msg)
-      $stdout.puts "#{Time.now.utc.iso8601(2)} #{msg}" if @debug
+      logger&.debug(msg)
     end
 
     # Convert string of byte to string for log

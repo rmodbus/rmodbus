@@ -24,10 +24,6 @@ describe ModBus::RTUViaTCPServer do
     @io = @cl.instance_variable_get(:@io)
   end
 
-  before do
-    @server.debug = false
-  end
-
   it "should have options :host" do
     host = '192.168.0.1'
     srv = ModBus::RTUViaTCPServer.new(1010, :host => '192.168.0.1')
@@ -43,7 +39,6 @@ describe ModBus::RTUViaTCPServer do
   it "should properly ignore responses from other slaves" do
     request = "\x10\x03\x0\x1\x0\x1\xd6\x8b"
     response = "\x10\x83\x1\xd0\xf5"
-    @server.debug = true
     @server.should receive(:log).ordered.with("Server RX (8 bytes): [10][03][00][01][00][01][d6][8b]")
     @server.should receive(:log).ordered.with("Server RX function 3 to 16: {:quant=>1, :addr=>1}")
     @server.should receive(:log).ordered.with("Server RX (5 bytes): [10][83][01][d0][f5]")

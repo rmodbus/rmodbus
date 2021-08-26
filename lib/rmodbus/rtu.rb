@@ -8,8 +8,7 @@ module ModBus
     # We have to read specific amounts of numbers of bytes from the network depending on the function code and content
     def read_rtu_response(io)
 	    # Read the slave_id and function code
-      msg = read(io, 2)
-      log logging_bytes(msg)
+      msg = read(io, 2)      
 
       function_code = msg.getbyte(1)
       case function_code

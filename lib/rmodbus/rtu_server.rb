@@ -7,7 +7,7 @@ module ModBus
   #   slave.discrete_inputs = [1,1,0,0]
   #   slave.holding_registers = [1,2,3,4]
   #   slave.input_registers = [1,2,3,4]
-  #   srv.debug = true
+  #   srv.logger = Logger.new($stdout)
   #   srv.start
   class RTUServer
     include Debug
