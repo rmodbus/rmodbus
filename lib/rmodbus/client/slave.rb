@@ -9,7 +9,7 @@ module ModBus
       # Number of times to retry on read and read timeouts
       attr_accessor :uid
 
-      Exceptions = {
+      EXCEPTIONS = {
         1 => IllegalFunction,
         2 => IllegalDataAddress,
         3 => IllegalDataValue,
@@ -282,7 +282,7 @@ module ModBus
         read_func = response.getbyte(0)
         if read_func >= 0x80
           exc_id = response.getbyte(1)
-          raise Exceptions[exc_id].new unless Exceptions[exc_id].nil?
+          raise EXCEPTIONS[exc_id].new unless EXCEPTIONS[exc_id].nil?
 
           raise ModBusException.new, "Unknown error"
         end

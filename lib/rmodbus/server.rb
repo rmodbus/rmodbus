@@ -5,7 +5,7 @@ module ModBus
 
     attr_accessor :promiscuous, :request_callback, :response_callback
 
-    Funcs = [1, 2, 3, 4, 5, 6, 15, 16, 22, 23]
+    FUNCS = [1, 2, 3, 4, 5, 6, 15, 16, 22, 23]
 
     def with_slave(uid)
       slave = slaves[uid] ||= Server::Slave.new
@@ -46,7 +46,7 @@ module ModBus
         return
       end
 
-      unless Funcs.include?(func)
+      unless FUNCS.include?(func)
         log("Server RX unrecognized function #{func} to #{uid}")
         return unless slave
 
@@ -86,7 +86,7 @@ module ModBus
     end
 
     def parse_response(func, res)
-      if func & 0x80 == 0x80 && Funcs.include?(func & 0x7f)
+      if func & 0x80 == 0x80 && FUNCS.include?(func & 0x7f)
         return nil unless res.length == 2
 
         return { err: res[1].ord }

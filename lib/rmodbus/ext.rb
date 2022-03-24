@@ -14,10 +14,10 @@ class String
   end
 
   # Get word by index
-  # @param [Integer] i index first bytes of word
+  # @param [Integer] index index first bytes of word
   # @return unpacked word
-  def getword(i)
-    self[i, 2].unpack('n')[0]
+  def getword(index)
+    self[index, 2].unpack('n')[0]
   end
 end
 

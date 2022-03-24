@@ -10,7 +10,10 @@ Lint/UnusedMethodArgument:
 
 Metrics:
   Enabled: false
-Naming:
+
+# ModBus's master/slave terminology can be updated, but not now
+Naming/InclusiveLanguage:
   Enabled: false
+
 Style:
   Enabled: false
