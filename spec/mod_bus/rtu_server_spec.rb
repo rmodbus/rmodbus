@@ -5,7 +5,7 @@ require "rmodbus"
 
 describe ModBus::RTUServer do
   before do
-    @sp = double("SerialPort")
+    @sp = instance_double("CCutrer::SerialPort")
     expect(CCutrer::SerialPort).to receive(:new).with("/dev/ttyS0", baud: 4800, data_bits: 7, stop_bits: 2,
                                                                     parity: :none).and_return(@sp)
 
@@ -17,7 +17,7 @@ describe ModBus::RTUServer do
     @slave.input_registers = [1, 2, 3, 4]
   end
 
-  it "should be valid initialized " do
+  it "is valid initialized" do
     expect(@slave.coils).to eq([1, 0, 1, 1])
     expect(@slave.discrete_inputs).to eq([1, 1, 0, 0])
     expect(@slave.holding_registers).to eq([1, 2, 3, 4])

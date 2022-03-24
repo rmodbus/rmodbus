@@ -3,13 +3,13 @@
 
 require "spec_helper"
 
-describe "response mismach" do
-  before(:each) do
+describe ModBus::Errors::ResponseMismatch do
+  before do
     @slave = ModBus::Client::Slave.new(1, nil)
     @slave.raise_exception_on_mismatch = true
   end
 
-  it "should raise error if function code is mismatch" do
+  it "raises error if function code is mismatch" do
     request = "\x1\x0\x13\x0\x12"
     response = "\x2\x3\xcd\xb6\x5"
     mock_query!(request, response)
@@ -21,7 +21,7 @@ describe "response mismach" do
   end
 
   describe "read coils" do
-    it "should raise error if count of byte is mismatch" do
+    it "raises error if count of byte is mismatch" do
       request = "\x1\x0\x13\x0\x12"
       response = "\x1\x2\xcd\xb6"
       mock_query!(request, response)
@@ -34,7 +34,7 @@ describe "response mismach" do
   end
 
   describe "read discrete inputs" do
-    it "should raise error if count of byte is mismatch" do
+    it "raises error if count of byte is mismatch" do
       request = "\x2\x0\x13\x0\x12"
       response = "\x2\x2\xcd\xb6"
       mock_query!(request, response)
@@ -47,7 +47,7 @@ describe "response mismach" do
   end
 
   describe "read holding registesrs" do
-    it "should raise error if count of registers is mismatch" do
+    it "raises error if count of registers is mismatch" do
       request = "\x3\x0\x8\x0\x1"
       response = "\x3\x4\x0\xa\x0\xb"
       mock_query!(request, response)
@@ -60,7 +60,7 @@ describe "response mismach" do
   end
 
   describe "read input registesrs" do
-    it "should raise error if count of registers is mismatch" do
+    it "raises error if count of registers is mismatch" do
       request = "\x4\x0\x8\x0\x2"
       response = "\x4\x2\xa\x0"
       mock_query!(request, response)
@@ -73,7 +73,7 @@ describe "response mismach" do
   end
 
   describe "write single coil" do
-    it "should raise error if address of coil is mismatch" do
+    it "raises error if address of coil is mismatch" do
       request = "\x5\x0\x8\xff\x0"
       response = "\x5\x0\x9\xff\x0"
       mock_query!(request, response)
@@ -84,7 +84,7 @@ describe "response mismach" do
       )
     end
 
-    it "should raise error if value of coil is mismatch" do
+    it "raises error if value of coil is mismatch" do
       request = "\x5\x0\x8\xff\x0"
       response = "\x5\x0\x8\x0\x0"
       mock_query!(request, response)
@@ -97,7 +97,7 @@ describe "response mismach" do
   end
 
   describe "write single register" do
-    it "should raise error if address of register is mismatch" do
+    it "raises error if address of register is mismatch" do
       request = "\x6\x0\x8\xa\xb"
       response = "\x6\x0\x9\xa\xb"
       mock_query!(request, response)
@@ -108,7 +108,7 @@ describe "response mismach" do
       )
     end
 
-    it "should raise error if value of register is mismatch" do
+    it "raises error if value of register is mismatch" do
       request = "\x6\x0\x8\xa\xb"
       response = "\x6\x0\x8\x9\xb"
       mock_query!(request, response)
@@ -121,7 +121,7 @@ describe "response mismach" do
   end
 
   describe "write multiple coils" do
-    it "should raise error if address of first coil is mismatch" do
+    it "raises error if address of first coil is mismatch" do
       request = "\xf\x0\x13\x0\xa\2\xcd\x01"
       response = "\xf\x0\x14\x0\xa"
       mock_query!(request, response)
@@ -132,7 +132,7 @@ describe "response mismach" do
       )
     end
 
-    it "should raise error if quantity of coils is mismatch" do
+    it "raises error if quantity of coils is mismatch" do
       request = "\xf\x0\x13\x0\xa\2\xcd\x01"
       response = "\xf\x0\x13\x0\x9"
       mock_query!(request, response)
@@ -145,7 +145,7 @@ describe "response mismach" do
   end
 
   describe "write multiple registers" do
-    it "should raise error if address of first register is mismatch" do
+    it "raises error if address of first register is mismatch" do
       request = "\x10\x0\x1\x0\x2\x4\x0\xa\x1\x2"
       response = "\x10\x0\x2\x0\x2"
       mock_query!(request, response)
@@ -156,7 +156,7 @@ describe "response mismach" do
       )
     end
 
-    it "should raise error if quantity of registers is mismatch" do
+    it "raises error if quantity of registers is mismatch" do
       request = "\x10\x0\x1\x0\x2\x4\x0\xa\x1\x2"
       response = "\x10\x0\x2\x0\x1"
       mock_query!(request, response)

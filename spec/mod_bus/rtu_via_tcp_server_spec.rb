@@ -26,19 +26,26 @@ describe ModBus::RTUViaTCPServer do
     @io = @cl.instance_variable_get(:@io)
   end
 
-  it "should have options :host" do
+  after :all do
+    @cl.close unless @cl.closed?
+    @server.stop unless @server.stopped?
+    sleep(0.01) while GServer.in_service?(@port)
+    @server.stop
+  end
+
+  it "has :host option" do
     host = "192.168.0.1"
     srv = ModBus::RTUViaTCPServer.new(1010, host: "192.168.0.1")
     expect(srv.host).to eql(host)
   end
 
-  it "should have options :max_connection" do
+  it "has :max_connection option" do
     max_conn = 5
     srv = ModBus::RTUViaTCPServer.new(1010, max_connection: 5)
     expect(srv.maxConnections).to eql(max_conn)
   end
 
-  it "should properly ignore responses from other slaves" do
+  it "properly ignores responses from other slaves" do
     request = "\x10\x03\x0\x1\x0\x1\xd6\x8b"
     response = "\x10\x83\x1\xd0\xf5"
     expect(@server).to receive(:log).ordered.with("Server RX (8 bytes): [10][03][00][01][00][01][d6][8b]")
@@ -54,7 +61,7 @@ describe ModBus::RTUViaTCPServer do
     expect(@slave.read_coils(0, 1)).to eq([1])
   end
 
-  it "should properly ignore functions from other slaves that it doesn't understand" do
+  it "properly ignores functions from other slaves that it doesn't understand" do
     request = "\x10\x41\x0\x1\x0\x1\x0\x5\x0\x1\xb1\x00"
     response = "\x10\xc1\x1\xe0\x55"
     @io.write(request)
@@ -63,23 +70,16 @@ describe ModBus::RTUViaTCPServer do
     expect(@slave.read_coils(0, 1)).to eq([1])
   end
 
-  it "should properly ignore utter garbage on the line from starting up halfway through a conversation" do
+  it "properly ignores utter garbage on the line from starting up halfway through a conversation" do
     response = "#{"garbage" * 50}\x01\x55\xe0"
     @io.write(response)
     # just to prove the server can still handle subsequent requests
     expect(@slave.read_coils(0, 1)).to eq([1])
   end
 
-  it "should send exception if request is malformed" do
+  it "sends exception if request is malformed" do
     expect { @slave.query("\x01\x01") }.to raise_exception(
       ModBus::Errors::ModBusTimeout
     )
-  end
-
-  after :all do
-    @cl.close unless @cl.closed?
-    @server.stop unless @server.stopped?
-    sleep(0.01) while GServer.in_service?(@port)
-    @server.stop
   end
 end

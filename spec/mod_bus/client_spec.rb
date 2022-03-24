@@ -8,18 +8,18 @@ describe ModBus::Client do
     @cl = ModBus::Client.new
   end
 
-  it "should give object provider for slave" do
+  it "gives object provider for slave" do
     slave = @cl.with_slave(1)
     expect(slave.uid).to eq(1)
   end
 
-  it "should give object provider for slave in block" do
+  it "gives object provider for slave in block" do
     @cl.with_slave(1) do |slave|
       expect(slave.uid).to eq(1)
     end
   end
 
-  it "should connect with TCP server" do
+  it "connects with TCP server" do
     ModBus::Client.connect do |cl|
       expect(cl).to be_instance_of(ModBus::Client)
     end
@@ -31,27 +31,28 @@ describe ModBus::Client do
     end
   end
 
-  it "should close the connection when an exception is raised in the given block" do
+  it "closes the connection when an exception is raised in the given block" do
+    e = RuntimeError.new
     expect do
       ModBus::Client.new do |client|
         expect(client).to receive(:close)
-        raise
+        raise e
       end
-    end.to raise_error
+    end.to raise_error(e)
   end
 
-  it "should common for all slaves :debug flag" do
+  it "shares :debug flag with all slaves" do
     @cl.logger = true
     @cl.with_slave(1) do |slave1|
-      expect(slave1.logger).to eq true
+      expect(slave1.logger).to be true
     end
     @cl.with_slave(2) do |slave2|
       slave2.logger = false
-      expect(slave2.logger).to eq false
+      expect(slave2.logger).to be false
     end
   end
 
-  it "should common for all slaves :raise_exception_on_mismatch flag" do
+  it "shares :raise_exception_on_mismatch flag with all slaves" do
     @cl.raise_exception_on_mismatch = true
     @cl.with_slave(1) do |slave1|
       expect(slave1.raise_exception_on_mismatch).to be_truthy
@@ -63,27 +64,27 @@ describe ModBus::Client do
     end
   end
 
-  it "should common for all slaves :read_retries options" do
+  it "shares :read_retries option with all slaves" do
     @cl.read_retries = 5
     @cl.with_slave(1) do |slave1|
-      expect(slave1.read_retries).to eql(5)
+      expect(slave1.read_retries).to be(5)
     end
 
     @cl.with_slave(2) do |slave2|
       slave2.read_retries = 15
-      expect(slave2.read_retries).to eql(15)
+      expect(slave2.read_retries).to be(15)
     end
   end
 
-  it "should common for all slaves :read_retry_timeout options" do
+  it "shares :read_retry_timeout option with all slaves" do
     @cl.read_retry_timeout = 5
     @cl.with_slave(1) do |slave1|
-      expect(slave1.read_retry_timeout).to eql(5)
+      expect(slave1.read_retry_timeout).to be(5)
     end
 
     @cl.with_slave(2) do |slave2|
       slave2.read_retry_timeout = 15
-      expect(slave2.read_retry_timeout).to eql(15)
+      expect(slave2.read_retry_timeout).to be(15)
     end
   end
 end
