@@ -10,13 +10,13 @@ module ModBus
       attr_accessor :uid
 
       Exceptions = {
-        1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
-        2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),
-        3 => IllegalDataValue.new("A value contained in the query data field is not an allowable value for server"),
-        4 => SlaveDeviceFailure.new("An unrecoverable error occurred while the server was attempting to perform the requested action"),
-        5 => Acknowledge.new("The server has accepted the request and is processing it, but a long duration of time will be required to do so"),
-        6 => SlaveDeviceBus.new("The server is engaged in processing a long duration program command"),
-        8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
+        1 => IllegalFunction,
+        2 => IllegalDataAddress,
+        3 => IllegalDataValue,
+        4 => SlaveDeviceFailure,
+        5 => Acknowledge,
+        6 => SlaveDeviceBus,
+        8 => MemoryParityError
       }
       def initialize(uid, io)
         @uid = uid
@@ -245,6 +245,8 @@ module ModBus
       end
       alias_method :read_write_holding_registers, :read_write_multiple_registers
 
+      # rubocop:disable Layout/LineLength
+
       # Request pdu to slave device
       #
       # @param [String] pdu request to slave
@@ -280,7 +282,7 @@ module ModBus
         read_func = response.getbyte(0)
         if read_func >= 0x80
           exc_id = response.getbyte(1)
-          raise Exceptions[exc_id] unless Exceptions[exc_id].nil?
+          raise Exceptions[exc_id].new unless Exceptions[exc_id].nil?
 
           raise ModBusException.new, "Unknown error"
         end
@@ -288,6 +290,7 @@ module ModBus
         check_response_mismatch(request, response) if raise_exception_on_mismatch
         response[2..-1]
       end
+      # rubocop:enable Layout/LineLength
 
       private
 

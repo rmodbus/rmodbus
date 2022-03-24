@@ -20,7 +20,9 @@ describe ModBus::TCPClient do
     request, response = "\x3\x0\x6b\x0\x3", "\x3\x6\x2\x2b\x0\x0\x0\x64"
     mock_query(request, response)
     expect(@slave.logger).to receive(:debug).with("Tx (12 bytes): [00][01][00][00][00][06][01][03][00][6b][00][03]")
-    expect(@slave.logger).to receive(:debug).with("Rx (15 bytes): [00][01][00][00][00][09][01][03][06][02][2b][00][00][00][64]")
+    expect(@slave.logger).to receive(:debug).with(
+      "Rx (15 bytes): [00][01][00][00][00][09][01][03][06][02][2b][00][00][00][64]"
+    )
     @slave.query(request)
   end
 
