@@ -1,3 +1,7 @@
+require:
+  - rubocop-rake
+  - rubocop-performance
+
 AllCops:
   TargetRubyVersion: 2.5
   NewCops: enable

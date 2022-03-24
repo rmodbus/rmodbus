@@ -23,6 +23,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake", "~> 13.0"
   gem.add_development_dependency "rspec", "~> 3.11"
   gem.add_development_dependency "rubocop", "~> 1.26"
+  gem.add_development_dependency "rubocop-performance", "~> 1.12"
+  gem.add_development_dependency "rubocop-rake", "~> 0.6"
 
   gem.add_dependency "digest-crc", "~> 0.1"
 end
