@@ -1,14 +1,14 @@
 module ModBus
   module Errors
-    class ProxyException < StandardError
+    class ProxyException < RuntimeError
     end
 
-    class ModBusException < StandardError
+    class ModBusException < RuntimeError
     end
 
     class IllegalFunction < ModBusException
-      def initialize
-        super("The function code received in the query is not an allowable action for the server")
+      def initialize(msg = nil)
+        super(msg || "The function code received in the query is not an allowable action for the server")
       end
     end
 

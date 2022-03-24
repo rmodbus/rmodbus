@@ -15,7 +15,7 @@ module ModBus
     # @param *args depends on implementation
     # @yield return client object and close it before exit
     # @return [Client] client object
-    def initialize(*args, &block)
+    def initialize(*args)
       # Defaults
       @logger = nil
       @raise_exception_on_mismatch = false
@@ -47,7 +47,7 @@ module ModBus
     #
     # @param [Integer, #read] uid slave devise
     # @return [Slave] slave object
-    def with_slave(uid, &block)
+    def with_slave(uid)
       slave = get_slave(uid, @io)
       slave.logger = logger
       slave.raise_exception_on_mismatch = raise_exception_on_mismatch
@@ -73,18 +73,18 @@ module ModBus
 
     protected
 
-    def open_connection(*args)
+    def open_connection(*)
       # Stub conn object
       @io = Object.new
 
-      @io.instance_eval """
+      @io.instance_eval <<~RUBY, __FILE__, __LINE__ + 1
         def close
         end
 
         def closed?
           true
         end
-        """
+      RUBY
       @io
     end
 

@@ -16,14 +16,14 @@ module ModBus
         # read the third byte to find out how much more
         # we need to read + CRC
         msg += read(io, 1)
-        msg += read(io, msg.getbyte(2) + 2)
+        msg + read(io, msg.getbyte(2) + 2)
       when 5, 6, 15, 16 then
         # We just read in an additional 6 bytes
-        msg += read(io, 6)
+        msg + read(io, 6)
       when 22 then
-        msg += read(io, 8)
+        msg + read(io, 8)
       when 0x80..0xff then
-        msg += read(io, 3)
+        msg + read(io, 3)
       else
         raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
       end

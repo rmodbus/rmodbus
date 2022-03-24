@@ -80,9 +80,9 @@ describe "#read_rtu_response" do
 
   it "should raise exception if function is illegal" do
     resp = make_resp("\x1f\x0\x1\x0\x2")
-    expect { @cl_mb.test_read_method(resp) }.to raise_error {
+    expect { @cl_mb.test_read_method(resp) }.to raise_error(
       ModBus::Errors::IllegalFunction
-    }
+    )
   end
 
   def make_resp(msg)

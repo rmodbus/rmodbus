@@ -270,7 +270,7 @@ module ModBus
             send_pdu(request)
             response = read_pdu unless uid == 0
           end
-        rescue ModBusTimeout => err
+        rescue ModBusTimeout
           log "Timeout of read operation: (#{@read_retries - tried})"
           tried += 1
           retry unless tried >= @read_retries

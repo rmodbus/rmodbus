@@ -32,10 +32,10 @@ PORT = 8502
 
 @srv = ModBus::TCPServer.new(PORT, 1)
 
-@srv.holding_registers = Array.new(100) { |i| i = i + 1 }
-@srv.input_registers = Array.new(100) { |i| i = i + 1 }
-@srv.coils = Array.new(100) { |i| i = 0 }
-@srv.discrete_inputs = Array.new(100) { |i| i = 0 }
+@srv.holding_registers = Array.new(100) { |i| i + 1 }
+@srv.input_registers = Array.new(100) { |i| i + 1 }
+@srv.coils = Array.new(100) { 0 }
+@srv.discrete_inputs = Array.new(100) { 0 }
 
 @srv.start
 
@@ -71,7 +71,7 @@ get '/mb/:ip/:port/:slave/:dataplace/:firstaddr/:lastaddr' do
         :quality => "good"
       }
     end
-  rescue Exception => e
+  rescue => e
     resp = { :error => {
       :type => e.class,
       :message => e.message

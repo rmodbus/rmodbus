@@ -55,34 +55,30 @@ describe ModBus::TCPClient do
   end
 end
 
-begin
-  require "ccutrer-serialport"
-  describe ModBus::RTUClient do
-    before do
-      @sp = double('Serial port')
-      allow(@sp).to receive(:flush)
+describe ModBus::RTUClient do
+  before do
+    @sp = double('Serial port')
+    allow(@sp).to receive(:flush)
 
-      expect(CCutrer::SerialPort).to receive(:new).with("/dev/port1", baud: 9600, data_bits: 7, stop_bits: 2,
-                                                                      parity: :odd).and_return(@sp)
+    expect(CCutrer::SerialPort).to receive(:new).with("/dev/port1", baud: 9600, data_bits: 7, stop_bits: 2,
+                                                                    parity: :odd).and_return(@sp)
 
-      @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2,
-                                                         :parity => :odd).with_slave(1)
-      @slave.read_retries = 0
-    end
-
-    it 'should log rec\send bytes' do
-      request = "\x3\x0\x1\x0\x1"
-      expect(@sp).to receive(:write).with("\1#{request}\xd5\xca")
-      expect(@sp).to receive(:read).with(2).and_return("\x1\x3")
-      expect(@sp).to receive(:read).with(1).and_return("\x2")
-      expect(@sp).to receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
-
-      @slave.logger = double("logger")
-      expect(@slave.logger).to receive(:debug).with("Tx (8 bytes): [01][03][00][01][00][01][d5][ca]")
-      expect(@slave.logger).to receive(:debug).with("Rx (7 bytes): [01][03][02][ff][ff][b9][f4]")
-
-      expect(@slave.query(request)).to eq("\xff\xff")
-    end
+    @slave = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 7, :stop_bits => 2,
+                                                       :parity => :odd).with_slave(1)
+    @slave.read_retries = 0
   end
-rescue LoadError
+
+  it 'should log rec\send bytes' do
+    request = "\x3\x0\x1\x0\x1"
+    expect(@sp).to receive(:write).with("\1#{request}\xd5\xca")
+    expect(@sp).to receive(:read).with(2).and_return("\x1\x3")
+    expect(@sp).to receive(:read).with(1).and_return("\x2")
+    expect(@sp).to receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
+
+    @slave.logger = double("logger")
+    expect(@slave.logger).to receive(:debug).with("Tx (8 bytes): [01][03][00][01][00][01][d5][ca]")
+    expect(@slave.logger).to receive(:debug).with("Rx (7 bytes): [01][03][02][ff][ff][b9][f4]")
+
+    expect(@slave.query(request)).to eq("\xff\xff")
+  end
 end

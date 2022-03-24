@@ -1,6 +1,6 @@
 begin
   require 'ccutrer-serialport'
-rescue Exception => e
+rescue LoadError
   warn "[WARNING] Install `ccutrer-serialport` gem for use RTU protocols"
 end
 
