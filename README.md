@@ -5,12 +5,12 @@ RModBus [![Build Status](https://secure.travis-ci.org/rmodbus/rmodbus.png)](http
 
 Features
 ---------------------------
-  - Ruby 2.2, 2.3 and JRuby (without serial ModBus RTU)
+  - Ruby 2.5+ and JRuby (without serial ModBus RTU)
   - TCP, RTU, RTU over TCP protocols
   - Client(master) and server(slave)
-  - 16, 32 -bit and float registers
+  - 16, 32-bit and floating point registers
 
-Support functions
+Supported functions
 ---------------------------
   * Read Coils (0x01)
   * Read Discrete Inputs (0x02)
@@ -19,7 +19,7 @@ Support functions
   * Write Single Coil (0x05)
   * Write Single Register (0x06)
   * Write Multiple Coils (0x0F)
-  * Write Multiple registers (0x10)
+  * Write Multiple Registers (0x10)
   * Mask Write register (0x16)
 
 Installation
@@ -37,14 +37,14 @@ Or if you are using bundler, add to your Gemfile:
 gem 'rmodbus'
 ```
 
-If you want to use ModBus over serial, you will also need to install the 'serialport' gem.
+If you want to use ModBus over serial, you will also need to install the 'ccutrer-serialport' gem.
 If you are using bundler, add to your Gemfile:
 
 ```
-gem 'serialport'
+gem 'ccutrer-serialport'
 ```
 
-If you want to use ModBus::TCPServer or ModBus::RTUViaTCPServer and are using Ruby >= 2.2,
+If you want to use ModBus::TCPServer or ModBus::RTUViaTCPServer,
 you will also need to install the 'gserver' gem. If you are using bundler, add to your Gemfile:
 
 ```
