@@ -30,57 +30,57 @@ describe "#read_rtu_response" do
 
   it "should read response for 'read coils'" do
     resp = make_resp("\x1\x3\xcd\x6b\x05")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should read response for 'read discrete inputs'" do
     resp = make_resp("\x2\x3\xac\xdb\x35")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should read response for 'read holding registers'" do
     resp = make_resp("\x3\x6\x2\x2b\x0\x0\x0\x64")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should read response for 'read input registers'" do
     resp = make_resp("\x4\x2\x0\xa")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should read response for 'write single coil'" do
     resp = make_resp("\x5\x0\xac\xff\x0")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should read response for 'write single register'" do
     resp = make_resp("\x6\x0\x1\x0\x3")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should read response for 'write multiple coils'" do
     resp = make_resp("\xf\x0\x13\x0\xa")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should read response for 'write multiple registers'" do
     resp = make_resp("\x10\x0\x1\x0\x2")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should read response 'mask write register'" do
     resp = make_resp("\x16\x0\x4\x0\xf2\x0\x25")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should read exception codes" do
     resp = make_resp("\x84\x3")
-    @cl_mb.test_read_method(resp).should == resp 
+    expect(@cl_mb.test_read_method(resp)).to eq(resp) 
   end
 
   it "should raise exception if function is illegal" do
     resp =  make_resp("\x1f\x0\x1\x0\x2")
-    lambda{ @cl_mb.test_read_method(resp)}.should raise_error {
+    expect{ @cl_mb.test_read_method(resp)}.to raise_error {
       ModBus::Errors::IllegalFunction
     }
   end

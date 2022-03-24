@@ -6,7 +6,7 @@ describe ModBus::RTUClient do
     @sp = double('Serial port')
     allow(@sp).to receive(:flush)
 
-    CCutrer::SerialPort.should_receive(:new).with("/dev/port1", baud: 9600, data_bits: 8, stop_bits: 1, parity: :none).and_return(@sp)    
+    expect(CCutrer::SerialPort).to receive(:new).with("/dev/port1", baud: 9600, data_bits: 8, stop_bits: 1, parity: :none).and_return(@sp)    
 
     @cl = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 8, :stop_bits => 1, :parity => :none)
     @slave = @cl.with_slave(1)
@@ -15,50 +15,50 @@ describe ModBus::RTUClient do
 
   it "should ignore frame with other UID" do
     request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
-    @sp.should_receive(:write).with("\1#{request}\xA6\x31")
-    @sp.should_receive(:read).with(2).and_return("\x2\x10")
-    @sp.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
-    lambda {@slave.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
+    expect(@sp).to receive(:write).with("\1#{request}\xA6\x31")
+    expect(@sp).to receive(:read).with(2).and_return("\x2\x10")
+    expect(@sp).to receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
+    expect {@slave.query(request)}.to raise_error(ModBus::Errors::ModBusTimeout)
   end
 
   it "should ignored frame with incorrect CRC" do
     request = "\x10\x0\x1\x0\x1\x2\xff\xff" 
-    @sp.should_receive(:write).with("\1#{request}\xA6\x31")
-    @sp.should_receive(:read).with(2).and_return("\x2\x10")
-    @sp.should_receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
-    lambda {@slave.query(request)}.should raise_error(ModBus::Errors::ModBusTimeout)
+    expect(@sp).to receive(:write).with("\1#{request}\xA6\x31")
+    expect(@sp).to receive(:read).with(2).and_return("\x2\x10")
+    expect(@sp).to receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
+    expect {@slave.query(request)}.to raise_error(ModBus::Errors::ModBusTimeout)
   end
   
   it "should return value of registers"do
     request = stab_valid_request
-    @slave.query(request).should == "\xff\xff"
+    expect(@slave.query(request)).to eq("\xff\xff")
   end
 
   it 'should sugar connect method' do
     port, baud = "/dev/port1", 4800
-    CCutrer::SerialPort.should_receive(:new).with(port, baud: baud, data_bits: 8, stop_bits: 1, parity: :none).and_return(@sp)    
-    @sp.should_receive(:closed?).and_return(false)
-    @sp.should_receive(:close)
+    expect(CCutrer::SerialPort).to receive(:new).with(port, baud: baud, data_bits: 8, stop_bits: 1, parity: :none).and_return(@sp)    
+    expect(@sp).to receive(:closed?).and_return(false)
+    expect(@sp).to receive(:close)
     ModBus::RTUClient.connect(port, baud) do |cl|
-      cl.port.should == port
-      cl.baud.should == baud
-      cl.data_bits.should == 8
-      cl.stop_bits.should == 1
-      cl.parity.should == :none
+      expect(cl.port).to eq(port)
+      expect(cl.baud).to eq(baud)
+      expect(cl.data_bits).to eq(8)
+      expect(cl.stop_bits).to eq(1)
+      expect(cl.parity).to eq(:none)
     end
   end
 
   it 'should have closed? method' do
-    @sp.should_receive(:closed?).and_return(false)
-    @cl.closed?.should == false
+    expect(@sp).to receive(:closed?).and_return(false)
+    expect(@cl.closed?).to eq(false)
 
-    @sp.should_receive(:closed?).and_return(false)
-    @sp.should_receive(:close)
+    expect(@sp).to receive(:closed?).and_return(false)
+    expect(@sp).to receive(:close)
 
     @cl.close
 
-    @sp.should_receive(:closed?).and_return(true)
-    @cl.closed?.should == true
+    expect(@sp).to receive(:closed?).and_return(true)
+    expect(@cl.closed?).to eq(true)
   end
 
   it 'should give slave object in block' do
@@ -69,10 +69,10 @@ describe ModBus::RTUClient do
 
   def stab_valid_request
     request = "\x3\x0\x1\x0\x1"
-    @sp.should_receive(:write).with("\1#{request}\xd5\xca")
-    @sp.should_receive(:read).with(2).and_return("\x1\x3")
-    @sp.should_receive(:read).with(1).and_return("\x2")
-    @sp.should_receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
+    expect(@sp).to receive(:write).with("\1#{request}\xd5\xca")
+    expect(@sp).to receive(:read).with(2).and_return("\x1\x3")
+    expect(@sp).to receive(:read).with(1).and_return("\x2")
+    expect(@sp).to receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
 
     request
   end

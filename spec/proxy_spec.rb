@@ -12,62 +12,62 @@ describe Array do
 
   # Handle all of the coil methods
   it "should call read_coil" do
-    @slave.should_receive(:read_coil).with(0)
+    expect(@slave).to receive(:read_coil).with(0)
     @coil_proxy[0]
   end
   it "should call read_coils" do
-    @slave.should_receive(:read_coils).with(0, 2)
+    expect(@slave).to receive(:read_coils).with(0, 2)
     @coil_proxy[0..1]
   end
   it "should call write_coil" do
-    @slave.should_receive(:write_coil).with(0, 1)
+    expect(@slave).to receive(:write_coil).with(0, 1)
     @coil_proxy[0] = 1
   end
   it "should call write_coils" do
-    @slave.should_receive(:write_coils).with(0, [0, 0])
+    expect(@slave).to receive(:write_coils).with(0, [0, 0])
     @coil_proxy[0..1] = [0, 0]
   end
 
 
   # Discrete input tests
   it "should call read_discrete_input" do
-    @slave.should_receive(:read_discrete_input).with(0)
+    expect(@slave).to receive(:read_discrete_input).with(0)
     @discrete_input_proxy[0]
   end
 
   it "should call read_discrete_inputs" do
-    @slave.should_receive(:read_discrete_inputs).with(0, 2)
+    expect(@slave).to receive(:read_discrete_inputs).with(0, 2)
     @discrete_input_proxy[0..1]
   end
 
 
   # Holding Register Tess
   it "should call read_holding_register" do
-    @slave.should_receive(:read_holding_register).with(0)
+    expect(@slave).to receive(:read_holding_register).with(0)
     @holding_register_proxy[0]
   end
   it "should call read_holding_registers" do
-    @slave.should_receive(:read_holding_registers).with(0, 2)
+    expect(@slave).to receive(:read_holding_registers).with(0, 2)
     @holding_register_proxy[0..1]
   end
   it "should call write_holding_register" do
-    @slave.should_receive(:write_holding_register).with(0, 1)
+    expect(@slave).to receive(:write_holding_register).with(0, 1)
     @holding_register_proxy[0] = 1
   end
   it "should call write_holding_registers" do
-    @slave.should_receive(:write_holding_registers).with(0, [0, 0])
+    expect(@slave).to receive(:write_holding_registers).with(0, [0, 0])
     @holding_register_proxy[0..1] = [0, 0]
   end
 
 
   # Input Register Tests
   it "should call read_discrete_input" do
-    @slave.should_receive(:read_input_register).with(0)
+    expect(@slave).to receive(:read_input_register).with(0)
     @input_register_proxy[0]
   end
 
   it "should call read_discrete_inputs" do
-    @slave.should_receive(:read_input_registers).with(0, 2)
+    expect(@slave).to receive(:read_input_registers).with(0, 2)
     @input_register_proxy[0..1]
   end
 end

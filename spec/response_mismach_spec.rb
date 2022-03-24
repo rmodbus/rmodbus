@@ -13,7 +13,7 @@ describe "response mismach" do
     response = "\x2\x3\xcd\xb6\x5"
     mock_query!(request, response)
 
-    lambda{ @slave.read_coils(0x13,0x12) }.should raise_response_mismatch(
+    expect{ @slave.read_coils(0x13,0x12) }.to raise_response_mismatch(
       "Function code is mismatch (expected 1, got 2)",
       request, response)
   end
@@ -24,7 +24,7 @@ describe "response mismach" do
       response = "\x1\x2\xcd\xb6"
       mock_query!(request, response)
 
-      lambda{ @slave.read_coils(0x13,0x12) }.should raise_response_mismatch(
+      expect{ @slave.read_coils(0x13,0x12) }.to raise_response_mismatch(
         "Byte count is mismatch (expected 3, got 2 bytes)",
         request, response)
     end
@@ -36,7 +36,7 @@ describe "response mismach" do
       response = "\x2\x2\xcd\xb6"
       mock_query!(request, response)
 
-      lambda{ @slave.read_discrete_inputs(0x13,0x12) }.should raise_response_mismatch(
+      expect{ @slave.read_discrete_inputs(0x13,0x12) }.to raise_response_mismatch(
         "Byte count is mismatch (expected 3, got 2 bytes)",
         request, response)
     end
@@ -48,7 +48,7 @@ describe "response mismach" do
       response = "\x3\x4\x0\xa\x0\xb"
       mock_query!(request, response)
 
-      lambda{ @slave.read_holding_registers(0x8,0x1) }.should raise_response_mismatch(
+      expect{ @slave.read_holding_registers(0x8,0x1) }.to raise_response_mismatch(
         "Register count is mismatch (expected 1, got 2 regs)",
         request, response)
     end
@@ -60,7 +60,7 @@ describe "response mismach" do
       response = "\x4\x2\xa\x0"
       mock_query!(request, response)
 
-      lambda{ @slave.read_input_registers(0x8,0x2) }.should raise_response_mismatch(
+      expect{ @slave.read_input_registers(0x8,0x2) }.to raise_response_mismatch(
         "Register count is mismatch (expected 2, got 1 regs)",
         request, response)
     end
@@ -72,7 +72,7 @@ describe "response mismach" do
       response = "\x5\x0\x9\xff\x0"
       mock_query!(request, response)
 
-      lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
+      expect{ @slave.write_coil(8,true) }.to raise_response_mismatch(
         "Address is mismatch (expected 8, got 9)",
         request, response)
     end
@@ -82,7 +82,7 @@ describe "response mismach" do
       response = "\x5\x0\x8\x0\x0"
       mock_query!(request, response)
 
-      lambda{ @slave.write_coil(8,true) }.should raise_response_mismatch(
+      expect{ @slave.write_coil(8,true) }.to raise_response_mismatch(
         "Value is mismatch (expected 0xff00, got 0x0)",
         request, response)
     end
@@ -94,7 +94,7 @@ describe "response mismach" do
       response = "\x6\x0\x9\xa\xb"
       mock_query!(request, response)
 
-      lambda{ @slave.write_single_register(8,0x0a0b) }.should raise_response_mismatch(
+      expect{ @slave.write_single_register(8,0x0a0b) }.to raise_response_mismatch(
         "Address is mismatch (expected 8, got 9)",
         request, response)
     end
@@ -104,7 +104,7 @@ describe "response mismach" do
       response = "\x6\x0\x8\x9\xb"
       mock_query!(request, response)
 
-      lambda{ @slave.write_single_register(8,0x0a0b) }.should raise_response_mismatch(
+      expect{ @slave.write_single_register(8,0x0a0b) }.to raise_response_mismatch(
         "Value is mismatch (expected 0xa0b, got 0x90b)",
         request, response)
     end
@@ -116,7 +116,7 @@ describe "response mismach" do
       response = "\xf\x0\x14\x0\xa"
       mock_query!(request, response)
 
-      lambda{ @slave.write_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]) }.should raise_response_mismatch(
+      expect{ @slave.write_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]) }.to raise_response_mismatch(
         "Address is mismatch (expected 19, got 20)",
         request, response)
    end
@@ -126,7 +126,7 @@ describe "response mismach" do
       response = "\xf\x0\x13\x0\x9"
       mock_query!(request, response)
 
-      lambda{ @slave.write_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]) }.should raise_response_mismatch(
+      expect{ @slave.write_coils(0x13,[1,0,1,1, 0,0,1,1, 1,0]) }.to raise_response_mismatch(
         "Quantity is mismatch (expected 10, got 9)",
         request, response)
     end
@@ -138,7 +138,7 @@ describe "response mismach" do
       response = "\x10\x0\x2\x0\x2"
       mock_query!(request, response)
 
-      lambda{ @slave.write_holding_registers(0x1,[0xa,0x102]) }.should raise_response_mismatch(
+      expect{ @slave.write_holding_registers(0x1,[0xa,0x102]) }.to raise_response_mismatch(
         "Address is mismatch (expected 1, got 2)",
         request, response)
    end
@@ -148,7 +148,7 @@ describe "response mismach" do
       response = "\x10\x0\x2\x0\x1"
       mock_query!(request, response)
 
-      lambda{ @slave.write_holding_registers(0x1,[0xa,0x102]) }.should raise_response_mismatch(
+      expect{ @slave.write_holding_registers(0x1,[0xa,0x102]) }.to raise_response_mismatch(
         "Quantity is mismatch (expected 2, got 1)",
         request, response)
     end
@@ -157,7 +157,7 @@ describe "response mismach" do
 
   private
   def mock_query!(request, response)
-    @slave.should_receive(:send_pdu).with(request)
-    @slave.should_receive(:read_pdu).and_return(response)
+    expect(@slave).to receive(:send_pdu).with(request)
+    expect(@slave).to receive(:read_pdu).and_return(response)
   end
 end

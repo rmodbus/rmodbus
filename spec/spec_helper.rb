@@ -6,6 +6,10 @@ class RaiseResponseMismatch
     @expected_message, @expected_request, @expected_response = message, request, response
   end
 
+  def supports_block_expectations?
+    true
+  end
+
   def matches?(given_block)
     begin
       given_block.call
