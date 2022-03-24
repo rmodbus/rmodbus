@@ -13,6 +13,7 @@ Gem::Specification.new do |gem|
   gem.files = Dir["lib/**/*.rb", "examples/*.rb", "spec/*.rb", "Rakefile"]
   gem.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README.md"]
   gem.extra_rdoc_files = ["README.md", "NEWS.md"]
+  gem.metadata["rubygems_mfa_required"] = "true"
 
   gem.required_ruby_version = ">= 2.5"
 

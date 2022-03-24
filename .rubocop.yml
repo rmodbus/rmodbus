@@ -1,6 +1,6 @@
 AllCops:
   TargetRubyVersion: 2.5
-  NewCops: disable
+  NewCops: enable
   SuggestExtensions: false
 
 Lint/UnusedBlockArgument:

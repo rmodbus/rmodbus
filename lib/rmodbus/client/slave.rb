@@ -301,7 +301,7 @@ module ModBus
 
         case read_func
         when 1, 2
-          bc = request.getword(3) / 8 + 1
+          bc = (request.getword(3) / 8) + 1
           msg = "Byte count is mismatch (expected #{bc}, got #{data.size} bytes)" if data.size != bc
         when 3, 4
           rc = request.getword(3)

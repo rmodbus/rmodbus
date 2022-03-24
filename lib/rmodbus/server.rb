@@ -214,7 +214,7 @@ module ModBus
       return nil if req.length < 7
 
       params = parse_read_func(req, nil)
-      return nil if req.length != 6 + (params[:quant] + 7) / 8
+      return nil if req.length != 6 + ((params[:quant] + 7) / 8)
 
       params[:val] = req[6, params[:quant]].unpack_bits
       params
@@ -228,7 +228,7 @@ module ModBus
       return nil if req.length < 8
 
       params = parse_read_func(req, nil)
-      return nil if req.length != 6 + params[:quant] * 2
+      return nil if req.length != 6 + (params[:quant] * 2)
 
       params[:val] = req[6, params[:quant] * 2].unpack("n*")
       params
