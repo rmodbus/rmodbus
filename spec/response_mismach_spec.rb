@@ -2,7 +2,6 @@
 require "spec_helper"
 
 describe "response mismach" do
-  include RaiseResponseMatcher
   before(:each) do
     @slave = ModBus::Client::Slave.new(1, nil)
     @slave.raise_exception_on_mismatch = true
