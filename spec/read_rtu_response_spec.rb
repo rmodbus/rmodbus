@@ -1,13 +1,16 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
-require 'rmodbus'
+require "rmodbus"
 
 # Use public wrap method
-class ModBus::Client
-  include ModBus::RTU
-  def test_read_method(msg)
-    io = TestIO.new(msg)
-    read_rtu_response(io)
+module ModBus
+  class Client
+    include ModBus::RTU
+    def test_read_method(msg)
+      io = TestIO.new(msg)
+      read_rtu_response(io)
+    end
   end
 end
 
@@ -86,6 +89,6 @@ describe "#read_rtu_response" do
   end
 
   def make_resp(msg)
-    "\x1" + msg + "\x2\x2" # slave + msg + mock_crc
+    "\x01#{msg}\x02\x02" # slave + msg + mock_crc
   end
 end

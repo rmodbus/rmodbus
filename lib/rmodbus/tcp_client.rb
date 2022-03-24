@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ModBus
   # TCP client implementation
   # @example

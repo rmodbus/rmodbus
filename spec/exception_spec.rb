@@ -1,6 +1,7 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
-require 'rmodbus'
+require "rmodbus"
 
 describe ModBus::TCPClient do
   before(:all) do
@@ -12,7 +13,7 @@ describe ModBus::TCPClient do
     srv_slave.input_registers = [0] * 8
     @srv.start
 
-    @cl = ModBus::TCPClient.new('127.0.0.1', 1502)
+    @cl = ModBus::TCPClient.new("127.0.0.1", 1502)
     @slave = @cl.with_slave(1)
   end
 

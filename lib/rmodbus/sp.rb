@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 begin
-  require 'ccutrer-serialport'
+  require "ccutrer-serialport"
 rescue LoadError
   warn "[WARNING] Install `ccutrer-serialport` gem for use RTU protocols"
 end

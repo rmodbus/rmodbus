@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ModBus
   # Given a slave and a type of operation, execute a single or multiple read using hash syntax
   class ReadOnlyProxy

@@ -1,4 +1,6 @@
-require 'time'
+# frozen_string_literal: true
+
+require "time"
 
 module ModBus
   module Debug
@@ -20,7 +22,7 @@ module ModBus
     # @param [String] msg input string
     # @return [String] readable string of bytes
     def logging_bytes(msg)
-      msg.unpack("H*").first.gsub(/\X{2}/, "[\\0]")
+      msg.unpack1("H*").gsub(/\X{2}/, "[\\0]")
     end
   end
 end

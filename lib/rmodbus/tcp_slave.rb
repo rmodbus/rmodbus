@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ModBus
   # TCP slave implementation
   # @example
@@ -24,9 +26,9 @@ module ModBus
     # overide method for RTU over TCP implamentaion
     # @see Slave#query
     def send_pdu(pdu)
-      @transaction = 0 if @transaction.next > 65535
+      @transaction = 0 if @transaction.next > 65_535
       @transaction += 1
-      msg = @transaction.to_word + "\0\0" + (pdu.size + 1).to_word + @uid.chr + pdu
+      msg = "#{@transaction.to_word}\x00\x00#{(pdu.size + 1).to_word}#{@uid.chr}#{pdu}"
       @io.write msg
 
       log "Tx (#{msg.size} bytes): " + logging_bytes(msg)
@@ -37,19 +39,17 @@ module ModBus
     def read_pdu
       loop do
         header = @io.read(7)
-        if header
-          trn = header[0, 2].unpack('n')[0]
-          len = header[4, 2].unpack('n')[0]
-          msg = @io.read(len - 1)
+        next unless header
 
-          log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg)
+        trn = header[0, 2].unpack1("n")
+        len = header[4, 2].unpack1("n")
+        msg = @io.read(len - 1)
 
-          if trn == @transaction
-            return msg
-          else
-            log "Transaction number mismatch. A packet is ignored."
-          end
-        end
+        log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg)
+
+        return msg if trn == @transaction
+
+        log "Transaction number mismatch. A packet is ignored."
       end
     end
   end

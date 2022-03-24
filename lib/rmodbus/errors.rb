@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ModBus
   module Errors
     class ProxyException < RuntimeError

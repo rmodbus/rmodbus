@@ -1,16 +1,17 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
-require 'rmodbus'
+require "rmodbus"
 
 describe ModBus::RTUClient do
   before do
-    @sp = double('Serial port')
+    @sp = double("Serial port")
     allow(@sp).to receive(:flush)
 
     expect(CCutrer::SerialPort).to receive(:new).with("/dev/port1", baud: 9600, data_bits: 8, stop_bits: 1,
                                                                     parity: :none).and_return(@sp)
 
-    @cl = ModBus::RTUClient.new("/dev/port1", 9600, :data_bits => 8, :stop_bits => 1, :parity => :none)
+    @cl = ModBus::RTUClient.new("/dev/port1", 9600, data_bits: 8, stop_bits: 1, parity: :none)
     @slave = @cl.with_slave(1)
     @slave.read_retries = 1
   end
@@ -36,7 +37,7 @@ describe ModBus::RTUClient do
     expect(@slave.query(request)).to eq("\xff\xff")
   end
 
-  it 'should sugar connect method' do
+  it "should sugar connect method" do
     port, baud = "/dev/port1", 4800
     expect(CCutrer::SerialPort).to receive(:new).with(port, baud: baud, data_bits: 8, stop_bits: 1,
                                                             parity: :none).and_return(@sp)
@@ -51,7 +52,7 @@ describe ModBus::RTUClient do
     end
   end
 
-  it 'should have closed? method' do
+  it "should have closed? method" do
     expect(@sp).to receive(:closed?).and_return(false)
     expect(@cl.closed?).to eq(false)
 
@@ -64,7 +65,7 @@ describe ModBus::RTUClient do
     expect(@cl.closed?).to eq(true)
   end
 
-  it 'should give slave object in block' do
+  it "should give slave object in block" do
     @cl.with_slave(1) do |slave|
       slave.uid = 1
     end

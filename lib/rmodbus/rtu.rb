@@ -1,5 +1,7 @@
-require 'digest/crc16_modbus'
-require 'io/wait'
+# frozen_string_literal: true
+
+require "digest/crc16_modbus"
+require "io/wait"
 
 module ModBus
   module RTU
@@ -12,17 +14,17 @@ module ModBus
 
       function_code = msg.getbyte(1)
       case function_code
-      when 1, 2, 3, 4 then
+      when 1, 2, 3, 4
         # read the third byte to find out how much more
         # we need to read + CRC
         msg += read(io, 1)
         msg + read(io, msg.getbyte(2) + 2)
-      when 5, 6, 15, 16 then
+      when 5, 6, 15, 16
         # We just read in an additional 6 bytes
         msg + read(io, 6)
-      when 22 then
+      when 22
         msg + read(io, 8)
-      when 0x80..0xff then
+      when 0x80..0xff
         msg + read(io, 3)
       else
         raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
@@ -39,7 +41,7 @@ module ModBus
     end
 
     def read(io, len)
-      result = ""
+      result = +""
       loop do
         this_iter = io.read(len - result.length)
         result.concat(this_iter) if this_iter
@@ -58,7 +60,7 @@ module ModBus
 
       loop do
         offset = 0
-        crc = msg[-2..-1].unpack("S<").first
+        crc = msg[-2..-1].unpack1("S<")
 
         # scan the bytestream for a valid CRC
         loop do
@@ -71,8 +73,11 @@ module ModBus
                               msg.getbyte(offset + 1) == @last_req_func &&
                           @last_req_timestamp && Time.now.to_f - @last_req_timestamp < 5)
 
-            params = is_response ? parse_response(msg.getbyte(offset + 1), msg[(offset + 1)..-3]) :
-                parse_request(msg.getbyte(offset + 1), msg[(offset + 1)..-3])
+            params = if is_response
+                       parse_response(msg.getbyte(offset + 1), msg[(offset + 1)..-3])
+                     else
+                       parse_request(msg.getbyte(offset + 1), msg[(offset + 1)..-3])
+                     end
 
             unless params.nil?
               if is_response

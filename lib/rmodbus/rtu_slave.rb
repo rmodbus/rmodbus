@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ModBus
   # RTU slave implementation
   # @example
@@ -35,7 +37,7 @@ module ModBus
       log "Rx (#{msg.size} bytes): " + logging_bytes(msg)
 
       if msg.getbyte(0) == @uid
-        return msg[1..-3] if msg[-2, 2].unpack('S<')[0] == crc16(msg[0..-3])
+        return msg[1..-3] if msg[-2, 2].unpack1("S<") == crc16(msg[0..-3])
 
         log "Ignore package: don't match CRC"
       else

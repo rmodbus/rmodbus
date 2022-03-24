@@ -1,33 +1,35 @@
-=begin
-It's very simple example of implementation XPCA gateway (see http://www.xpca.org)
-for communication with TCP ModBus devices
-It receives  REST requests (e.g http://127.0.0.1:4567/mb/127.0.0.1/8502/1/coils/6/17 )
-and returns data in JSON format addr : data:
-{"coils": {
-  "6":{
-    "value":0,
-    "timestamp":"2011-07-12 18:11:03 +0000",
-    "quality":"good"
-  },
-  "7":{
-    "value":0,
-    "timestamp":"2011-07-12 18:11:03 +0000",
-    "quality":"good"
-    }
-  ...
-}
+# frozen_string_literal: true
 
-This code requies gems: rmodbus, sinatra and json
-2011 (c) Aleksey Timin
-=end
+# It's very simple example of implementation XPCA gateway (see http://www.xpca.org)
+# for communication with TCP ModBus devices
+# It receives  REST requests (e.g http://127.0.0.1:4567/mb/127.0.0.1/8502/1/coils/6/17 )
+# and returns data in JSON format addr : data:
+# {"coils": {
+#   "6":{
+#     "value":0,
+#     "timestamp":"2011-07-12 18:11:03 +0000",
+#     "quality":"good"
+#   },
+#   "7":{
+#     "value":0,
+#     "timestamp":"2011-07-12 18:11:03 +0000",
+#     "quality":"good"
+#     }
+#   ...
+# }
+#
+# This code requies gems: rmodbus, sinatra and json
+# 2011 (c) Aleksey Timin
 
-require 'rubygems'
-require 'rmodbus'
-require 'sinatra'
-require 'json'
+gem "rmodbus"
+gem "sinatra"
+
+require "rmodbus"
+require "sinatra"
+require "json"
 
 # Launche TCP ModBus server for test
-IP = '127.0.0.1'
+IP = "127.0.0.1"
 PORT = 8502
 
 @srv = ModBus::TCPServer.new(PORT, 1)
@@ -51,7 +53,7 @@ PORT = 8502
 # :dataplace - valid values: coils, discrete_inputs, input_registers, holding_registers
 # :firstaddr - first addr of registers(contacts)
 # :lastaddr - last addr of registers(contacts)
-get '/mb/:ip/:port/:slave/:dataplace/:firstaddr/:lastaddr' do
+get "/mb/:ip/:port/:slave/:dataplace/:firstaddr/:lastaddr" do
   resp = {}
   begin
     data = []
@@ -66,15 +68,15 @@ get '/mb/:ip/:port/:slave/:dataplace/:firstaddr/:lastaddr' do
     resp = { params[:dataplace] => {} }
     data.each_with_index do |v, i|
       resp[params[:dataplace]][params[:firstaddr].to_i + i] = {
-        :value => v,
-        :timestamp => Time.now.utc.strftime("%Y-%m-%d %H:%M:%S %z"),
-        :quality => "good"
+        value: v,
+        timestamp: Time.now.utc.strftime("%Y-%m-%d %H:%M:%S %z"),
+        quality: "good"
       }
     end
   rescue => e
-    resp = { :error => {
-      :type => e.class,
-      :message => e.message
+    resp = { error: {
+      type: e.class,
+      message: e.message
     } }
   end
 

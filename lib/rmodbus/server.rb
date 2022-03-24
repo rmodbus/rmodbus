@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 module ModBus
   # Module for implementation ModBus server
   module Server
-    autoload :Slave, 'rmodbus/server/slave'
+    autoload :Slave, "rmodbus/server/slave"
 
     attr_accessor :promiscuous, :request_callback, :response_callback
 
-    FUNCS = [1, 2, 3, 4, 5, 6, 15, 16, 22, 23]
+    FUNCS = [1, 2, 3, 4, 5, 6, 15, 16, 22, 23].freeze
 
     def with_slave(uid)
       slave = slaves[uid] ||= Server::Slave.new
@@ -30,7 +32,7 @@ module ModBus
       end
       request_callback&.call(uid, func, params) unless is_response
 
-      if uid == 0
+      if uid.zero?
         slaves.each_key { |specific_uid| exec_req(specific_uid, func, params, pdu) }
         return
       end
@@ -100,7 +102,7 @@ module ModBus
       when 3, 4, 23
         return nil unless res.length == res[1].ord + 2
 
-        res[2..-1].unpack('n*')
+        res[2..-1].unpack("n*")
       when 5, 6, 15, 16
         return nil unless res.length == 5
 
@@ -127,11 +129,11 @@ module ModBus
       when 3
         unless (err = validate_read_func(params, slave.holding_registers))
           pdu = func.chr + (params[:quant] * 2).chr + slave.holding_registers[params[:addr],
-                                                                              params[:quant]].pack('n*')
+                                                                              params[:quant]].pack("n*")
         end
       when 4
         unless (err = validate_read_func(params, slave.input_registers))
-          pdu = func.chr + (params[:quant] * 2).chr + slave.input_registers[params[:addr], params[:quant]].pack('n*')
+          pdu = func.chr + (params[:quant] * 2).chr + slave.input_registers[params[:addr], params[:quant]].pack("n*")
         end
       when 5
         unless (err = validate_write_coil_func(params, slave))
@@ -165,7 +167,7 @@ module ModBus
         unless (err = validate_read_write_multiple_registers_func(params, slave))
           slave.holding_registers[params[:write][:addr], params[:write][:quant]] = params[:write][:val]
           pdu = func.chr + (params[:read][:quant] * 2).chr + slave.holding_registers[params[:read][:addr],
-                                                                                     params[:read][:quant]].pack('n*')
+                                                                                     params[:read][:quant]].pack("n*")
         end
       end
 
@@ -179,7 +181,7 @@ module ModBus
     def parse_read_func(req, expected_length = 5)
       return nil if expected_length && req.length != expected_length
 
-      { quant: req[3, 2].unpack('n')[0], addr: req[1, 2].unpack('n')[0] }
+      { quant: req[3, 2].unpack1("n"), addr: req[1, 2].unpack1("n") }
     end
 
     def validate_read_func(params, field, quant_max = 0x7d)
@@ -190,18 +192,18 @@ module ModBus
     def parse_write_coil_func(req)
       return nil unless req.length == 5
 
-      { addr: req[1, 2].unpack('n')[0], val: req[3, 2].unpack('n')[0] }
+      { addr: req[1, 2].unpack1("n"), val: req[3, 2].unpack1("n") }
     end
 
     def validate_write_coil_func(params, slave)
       return 2 unless params[:addr] <= slave.coils.size
-      return 3 unless params[:val] == 0 or params[:val] == 0xff00
+      return 3 unless params[:val].zero? || (params[:val] == 0xff00)
     end
 
     def parse_write_register_func(req)
       return nil unless req.length == 5
 
-      { addr: req[1, 2].unpack('n')[0], val: req[3, 2].unpack('n')[0] }
+      { addr: req[1, 2].unpack1("n"), val: req[3, 2].unpack1("n") }
     end
 
     def validate_write_register_func(params, slave)
@@ -228,7 +230,7 @@ module ModBus
       params = parse_read_func(req, nil)
       return nil if req.length != 6 + params[:quant] * 2
 
-      params[:val] = req[6, params[:quant] * 2].unpack('n*')
+      params[:val] = req[6, params[:quant] * 2].unpack("n*")
       params
     end
 
@@ -240,9 +242,9 @@ module ModBus
       return nil if req.length != 7
 
       {
-        addr: req[1, 2].unpack('n')[0],
-        and_mask: req[3, 2].unpack('n')[0],
-        or_mask: req[5, 2].unpack('n')[0]
+        addr: req[1, 2].unpack1("n"),
+        and_mask: req[3, 2].unpack1("n"),
+        or_mask: req[5, 2].unpack1("n")
       }
     end
 

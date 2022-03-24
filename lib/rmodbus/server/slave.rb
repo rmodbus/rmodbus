@@ -1,4 +1,6 @@
-require 'timeout'
+# frozen_string_literal: true
+
+require "timeout"
 
 module ModBus
   module Server

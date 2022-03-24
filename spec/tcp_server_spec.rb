@@ -1,4 +1,5 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
 require "rmodbus"
 
@@ -20,7 +21,7 @@ describe ModBus::TCPServer do
       @port += 1
       retry
     end
-    @cl = ModBus::TCPClient.new('127.0.0.1', @port)
+    @cl = ModBus::TCPClient.new("127.0.0.1", @port)
     @cl.read_retries = 1
     @slave = @cl.with_slave(valid_unit_id)
   end
@@ -39,7 +40,7 @@ describe ModBus::TCPServer do
   end
 
   it "should send exception if function not supported" do
-    expect { @slave.query('0x43') }.to raise_exception(
+    expect { @slave.query("0x43") }.to raise_exception(
       ModBus::Errors::IllegalFunction,
       "The function code received in the query is not an allowable action for the server"
     )
@@ -67,7 +68,7 @@ describe ModBus::TCPServer do
   end
 
   it "should send exception if function not supported" do
-    expect { @slave.query('0x43') }.to raise_exception(
+    expect { @slave.query("0x43") }.to raise_exception(
       ModBus::Errors::IllegalFunction,
       "The function code received in the query is not an allowable action for the server"
     )
@@ -75,7 +76,7 @@ describe ModBus::TCPServer do
 
   it "should calc a many requests" do
     @slave.read_coils(1, 2)
-    @slave.write_multiple_registers(0, [9, 9, 9,])
+    @slave.write_multiple_registers(0, [9, 9, 9])
     expect(@slave.read_holding_registers(0, 3)).to eq([9, 9, 9])
   end
 
@@ -137,23 +138,21 @@ describe ModBus::TCPServer do
   end
 
   it "should have options :host" do
-    host = '192.168.0.1'
-    srv = ModBus::TCPServer.new(1010, :host => '192.168.0.1')
+    host = "192.168.0.1"
+    srv = ModBus::TCPServer.new(1010, host: "192.168.0.1")
     expect(srv.host).to eql(host)
   end
 
   it "should have options :max_connection" do
     max_conn = 5
-    srv = ModBus::TCPServer.new(1010, :max_connection => 5)
+    srv = ModBus::TCPServer.new(1010, max_connection: 5)
     expect(srv.maxConnections).to eql(max_conn)
   end
 
   after :all do
     @cl.close unless @cl.closed?
     @server.stop unless @server.stopped?
-    while GServer.in_service?(@port)
-      sleep(0.01)
-    end
+    sleep(0.01) while GServer.in_service?(@port)
     @server.stop
   end
 end

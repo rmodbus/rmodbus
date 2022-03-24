@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 begin
-  require 'gserver'
+  require "gserver"
 rescue
   warn "[WARNING] Install `gserver` gem for use TCPServer"
 end
@@ -39,27 +41,27 @@ module ModBus
     # Serve requests
     # @param [TCPSocket] io socket
     def serve(io)
-      while not stopped?
+      until stopped?
         header = io.read(7)
         tx_id = header[0, 2]
         proto_id = header[2, 2]
-        len = header[4, 2].unpack('n')[0]
+        len = header[4, 2].unpack1("n")
         unit_id = header.getbyte(6)
-        if proto_id == "\x00\x00"
-          req = io.read(len - 1)
-          log "Server RX (#{req.size} bytes): #{logging_bytes(req)}"
+        next unless proto_id == "\x00\x00"
 
-          func = req.getbyte(0)
-          params = parse_request(func, req)
-          pdu = exec_req(unit_id, func, params, req)
+        req = io.read(len - 1)
+        log "Server RX (#{req.size} bytes): #{logging_bytes(req)}"
 
-          if pdu
-            resp = tx_id + "\0\0" + (pdu.size + 1).to_word + unit_id.chr + pdu
-            log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
-            io.write resp
-          else
-            log "Ignored server RX (invalid unit ID #{unit_id}, #{req.size} bytes): #{logging_bytes(req)}"
-          end
+        func = req.getbyte(0)
+        params = parse_request(func, req)
+        pdu = exec_req(unit_id, func, params, req)
+
+        if pdu
+          resp = "#{tx_id}\x00\x00#{(pdu.size + 1).to_word}#{unit_id.chr}#{pdu}"
+          log "Server TX (#{resp.size} bytes): #{logging_bytes(resp)}"
+          io.write resp
+        else
+          log "Ignored server RX (invalid unit ID #{unit_id}, #{req.size} bytes): #{logging_bytes(req)}"
         end
       end
     end

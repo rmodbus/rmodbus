@@ -1,4 +1,6 @@
-require 'socket'
+# frozen_string_literal: true
+
+require "socket"
 
 module ModBus
   module TCP
@@ -23,7 +25,7 @@ module ModBus
       begin
         io = Socket.tcp(@ipaddr, @port, nil, nil, connect_timeout: timeout)
       rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
-        raise ModBusTimeout.new, 'Timed out attempting to create connection'
+        raise ModBusTimeout.new, "Timed out attempting to create connection"
       end
 
       io

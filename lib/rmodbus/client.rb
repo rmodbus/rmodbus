@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module ModBus
   # @abstract
   class Client
-    autoload :Slave, 'rmodbus/client/slave'
+    autoload :Slave, "rmodbus/client/slave"
 
     include Errors
     include Debug

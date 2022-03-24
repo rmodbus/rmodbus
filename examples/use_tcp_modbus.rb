@@ -1,5 +1,8 @@
-$:.unshift(File.dirname(__FILE__) + '/../lib/')
-require 'rmodbus'
+# frozen_string_literal: true
+
+gem "rmodbus"
+
+require "rmodbus"
 
 srv = ModBus::TCPServer.new(8502, 1)
 srv.coils = [1, 0, 1, 1]
@@ -10,7 +13,7 @@ srv.debug = true
 srv.audit = true
 srv.start
 
-ModBus::TCPClient.connect('127.0.0.1', 8502) do |cl|
+ModBus::TCPClient.connect("127.0.0.1", 8502) do |cl|
   cl.with_slave(1) do |slave|
     slave.debug = true
     regs = slave.holding_registers

@@ -1,4 +1,5 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
 require "rmodbus"
 
@@ -28,9 +29,7 @@ RSpec::Matchers.define :raise_response_mismatch do |expected_message, expected_r
   end
 
   failure_message do
-    unless @with_expected_message
-      return "Expected message '#{expected_message}', got '#{@actual_message}'"
-    end
+    return "Expected message '#{expected_message}', got '#{@actual_message}'" unless @with_expected_message
 
     unless @with_expected_request
       return "Expected request #{logging_bytes expected_request}, got #{logging_bytes @actual_request}"

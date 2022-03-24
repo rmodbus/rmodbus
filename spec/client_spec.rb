@@ -1,6 +1,7 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
-require 'rmodbus'
+require "rmodbus"
 
 describe ModBus::Client do
   before do
@@ -31,15 +32,15 @@ describe ModBus::Client do
   end
 
   it "should close the connection when an exception is raised in the given block" do
-    expect {
+    expect do
       ModBus::Client.new do |client|
         expect(client).to receive(:close)
         raise
       end
-    }.to raise_error
+    end.to raise_error
   end
 
-  it 'should common for all slaves :debug flag' do
+  it "should common for all slaves :debug flag" do
     @cl.logger = true
     @cl.with_slave(1) do |slave1|
       expect(slave1.logger).to eq true
@@ -50,7 +51,7 @@ describe ModBus::Client do
     end
   end
 
-  it 'should common for all slaves :raise_exception_on_mismatch flag' do
+  it "should common for all slaves :raise_exception_on_mismatch flag" do
     @cl.raise_exception_on_mismatch = true
     @cl.with_slave(1) do |slave1|
       expect(slave1.raise_exception_on_mismatch).to be_truthy
@@ -62,7 +63,7 @@ describe ModBus::Client do
     end
   end
 
-  it 'should common for all slaves :read_retries options' do
+  it "should common for all slaves :read_retries options" do
     @cl.read_retries = 5
     @cl.with_slave(1) do |slave1|
       expect(slave1.read_retries).to eql(5)
@@ -74,7 +75,7 @@ describe ModBus::Client do
     end
   end
 
-  it 'should common for all slaves :read_retry_timeout options' do
+  it "should common for all slaves :read_retry_timeout options" do
     @cl.read_retry_timeout = 5
     @cl.with_slave(1) do |slave1|
       expect(slave1.read_retry_timeout).to eql(5)

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 begin
-  require 'gserver'
+  require "gserver"
 rescue
   warn "[WARNING] Install `gserver` gem for use RTUViaTCPServer"
 end
@@ -26,7 +28,7 @@ module ModBus
     # @param [Hash] opts options of server
     # @option opts [String] :host host of server default '127.0.0.1'
     # @option opts [Float, Integer] :max_connection max of TCP connection with server default 4
-    def initialize(port = 10002, opts = {})
+    def initialize(port = 10_002, opts = {})
       opts[:host] = DEFAULT_HOST unless opts[:host]
       opts[:max_connection] = 4 unless opts[:max_connection]
       super(port, opts[:host], opts[:max_connection])

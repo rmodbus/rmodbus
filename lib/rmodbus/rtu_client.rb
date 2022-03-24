@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ModBus
   # RTU client implementation
   # @example
@@ -28,11 +30,11 @@ module ModBus
     def open_connection(port_or_ipaddr, arg = nil, opts = {})
       if port_or_ipaddr.is_a?(IO) || port_or_ipaddr.respond_to?(:read)
         port_or_ipaddr
-      elsif File.exist?(port_or_ipaddr) || port_or_ipaddr.start_with?('/dev') || port_or_ipaddr.start_with?('COM')
+      elsif File.exist?(port_or_ipaddr) || port_or_ipaddr.start_with?("/dev") || port_or_ipaddr.start_with?("COM")
         arg ||= 9600
         open_serial_port(port_or_ipaddr, arg, opts)
       else
-        arg ||= 10002
+        arg ||= 10_002
         open_tcp_connection(port_or_ipaddr, arg, opts)
       end
     end

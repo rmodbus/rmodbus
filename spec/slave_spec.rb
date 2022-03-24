@@ -1,12 +1,13 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
-require 'rmodbus'
+require "rmodbus"
 
 describe ModBus::Client::Slave do
   before do
     @slave = ModBus::Client.new.with_slave(1)
 
-    allow(@slave).to receive(:query).and_return('')
+    allow(@slave).to receive(:query).and_return("")
   end
 
   it "should support function 'read coils'" do

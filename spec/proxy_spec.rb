@@ -1,10 +1,11 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
-require 'rmodbus'
+require "rmodbus"
 
 describe Array do
   before do
-    @slave = double('ModBus Slave')
+    @slave = double("ModBus Slave")
     @coil_proxy = ModBus::ReadWriteProxy.new(@slave, :coil)
     @discrete_input_proxy = ModBus::ReadOnlyProxy.new(@slave, :discrete_input)
     @holding_register_proxy = ModBus::ReadWriteProxy.new(@slave, :holding_register)

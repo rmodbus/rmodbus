@@ -1,4 +1,5 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
 require "rmodbus"
 
@@ -18,7 +19,7 @@ describe ModBus::RTUViaTCPServer do
       @port += 1
       retry
     end
-    @cl = ModBus::RTUClient.new('127.0.0.1', @port)
+    @cl = ModBus::RTUClient.new("127.0.0.1", @port)
     @cl.read_retries = 1
     @slave = @cl.with_slave(1)
     # pretend this is a serialport and we're just someone else on the same bus
@@ -26,14 +27,14 @@ describe ModBus::RTUViaTCPServer do
   end
 
   it "should have options :host" do
-    host = '192.168.0.1'
-    srv = ModBus::RTUViaTCPServer.new(1010, :host => '192.168.0.1')
+    host = "192.168.0.1"
+    srv = ModBus::RTUViaTCPServer.new(1010, host: "192.168.0.1")
     expect(srv.host).to eql(host)
   end
 
   it "should have options :max_connection" do
     max_conn = 5
-    srv = ModBus::RTUViaTCPServer.new(1010, :max_connection => 5)
+    srv = ModBus::RTUViaTCPServer.new(1010, max_connection: 5)
     expect(srv.maxConnections).to eql(max_conn)
   end
 
@@ -63,7 +64,7 @@ describe ModBus::RTUViaTCPServer do
   end
 
   it "should properly ignore utter garbage on the line from starting up halfway through a conversation" do
-    response = "garbage" * 50 + "\x1\x55\xe0"
+    response = "#{"garbage" * 50}\x01\x55\xe0"
     @io.write(response)
     # just to prove the server can still handle subsequent requests
     expect(@slave.read_coils(0, 1)).to eq([1])
@@ -78,9 +79,7 @@ describe ModBus::RTUViaTCPServer do
   after :all do
     @cl.close unless @cl.closed?
     @server.stop unless @server.stopped?
-    while GServer.in_service?(@port)
-      sleep(0.01)
-    end
+    sleep(0.01) while GServer.in_service?(@port)
     @server.stop
   end
 end

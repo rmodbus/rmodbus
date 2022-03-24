@@ -1,12 +1,13 @@
 # -*- coding: ascii
+# frozen_string_literal: true
 
-require 'rmodbus'
+require "rmodbus"
 
 describe ModBus::RTUClient do
   describe "method 'query'" do
     before do
-      @sock = double('Socket')
-      expect(Socket).to receive(:tcp).with("127.0.0.1", 10002, nil, nil,
+      @sock = double("Socket")
+      expect(Socket).to receive(:tcp).with("127.0.0.1", 10_002, nil, nil,
                                            hash_including(:connect_timeout)).and_return(@sock)
       allow(@sock).to receive(:read_timeout=)
       allow(@sock).to receive(:flush)
@@ -41,8 +42,8 @@ describe ModBus::RTUClient do
       expect(@slave.query(request)).to eq("\xff\xff")
     end
 
-    it 'should sugar connect method' do
-      ipaddr, port = '127.0.0.1', 502
+    it "should sugar connect method" do
+      ipaddr, port = "127.0.0.1", 502
       expect(Socket).to receive(:tcp).with(ipaddr, port, nil, nil, hash_including(:connect_timeout)).and_return(@sock)
       expect(@sock).to receive(:closed?).and_return(false)
       expect(@sock).to receive(:close)
@@ -52,7 +53,7 @@ describe ModBus::RTUClient do
       end
     end
 
-    it 'should have closed? method' do
+    it "should have closed? method" do
       expect(@sock).to receive(:closed?).and_return(false)
       expect(@cl.closed?).to eq(false)
 
@@ -65,7 +66,7 @@ describe ModBus::RTUClient do
       expect(@cl.closed?).to eq(true)
     end
 
-    it 'should give slave object in block' do
+    it "should give slave object in block" do
       @cl.with_slave(1) do |slave|
         slave.uid = 1
       end
@@ -73,8 +74,8 @@ describe ModBus::RTUClient do
   end
 
   it "should tune connection timeout" do
-    expect {
-      ModBus::RTUClient.new('81.123.231.11', 1999, :connect_timeout => 0.001)
-    }.to raise_error(ModBus::Errors::ModBusTimeout)
+    expect do
+      ModBus::RTUClient.new("81.123.231.11", 1999, connect_timeout: 0.001)
+    end.to raise_error(ModBus::Errors::ModBusTimeout)
   end
 end
