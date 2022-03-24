@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">= 2.5"
 
   gem.add_development_dependency "bundler", "~> 2.2"
-  gem.add_development_dependency "ccutrer-serialport", "~> 1.0.0"
+  gem.add_development_dependency "ccutrer-serialport", "~> 1.1"
   gem.add_development_dependency "gserver", "~> 0.0"
   gem.add_development_dependency "rake", "~> 13.0"
   gem.add_development_dependency "rspec", "~> 3.11"
