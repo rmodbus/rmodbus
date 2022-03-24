@@ -8,14 +8,15 @@ module ModBus
       include Options
       # Number of times to retry on read and read timeouts
       attr_accessor :uid
+
       Exceptions = {
-            1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
-            2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),
-            3 => IllegalDataValue.new("A value contained in the query data field is not an allowable value for server"),
-            4 => SlaveDeviceFailure.new("An unrecoverable error occurred while the server was attempting to perform the requested action"),
-            5 => Acknowledge.new("The server has accepted the request and is processing it, but a long duration of time will be required to do so"),
-            6 => SlaveDeviceBus.new("The server is engaged in processing a long duration program command"),
-            8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
+        1 => IllegalFunction.new("The function code received in the query is not an allowable action for the server"),
+        2 => IllegalDataAddress.new("The data address received in the query is not an allowable address for the server"),
+        3 => IllegalDataValue.new("A value contained in the query data field is not an allowable value for server"),
+        4 => SlaveDeviceFailure.new("An unrecoverable error occurred while the server was attempting to perform the requested action"),
+        5 => Acknowledge.new("The server has accepted the request and is processing it, but a long duration of time will be required to do so"),
+        6 => SlaveDeviceBus.new("The server is engaged in processing a long duration program command"),
+        8 => MemoryParityError.new("The extended file area failed to pass a consistency check")
       }
       def initialize(uid, io)
         @uid = uid
@@ -44,7 +45,7 @@ module ModBus
       # @param [Integer] ncoils number coils
       # @return [Array] coils
       def read_coils(addr, ncoils = 1)
-        query("\x1" + addr.to_word + ncoils.to_word).unpack_bits[0..ncoils-1]
+        query("\x1" + addr.to_word + ncoils.to_word).unpack_bits[0..ncoils - 1]
       end
 
       def read_coil(addr)
@@ -77,7 +78,7 @@ module ModBus
       # @param [Integer] addr address first coil
       # @param [Array] vals written coils
       def write_multiple_coils(addr, vals)
-        nbyte = ((vals.size-1) >> 3) + 1
+        nbyte = ((vals.size - 1) >> 3) + 1
         sum = 0
         (vals.size - 1).downto(0) do |i|
           sum = sum << 1
@@ -115,7 +116,7 @@ module ModBus
       # @param[Integer] ninputs number inputs
       # @return [Array] inputs
       def read_discrete_inputs(addr, ninputs = 1)
-        query("\x2" + addr.to_word + ninputs.to_word).unpack_bits[0..ninputs-1]
+        query("\x2" + addr.to_word + ninputs.to_word).unpack_bits[0..ninputs - 1]
       end
 
       def read_discrete_input(addr)
@@ -191,7 +192,6 @@ module ModBus
         self
       end
       alias_method :write_holding_register, :write_single_register
-
 
       # Write multiple holding registers
       #
@@ -290,27 +290,28 @@ module ModBus
       end
 
       private
+
       def check_response_mismatch(request, response)
         read_func = response.getbyte(0)
         data = response[2..-1]
-        #Mismatch functional code
+        # Mismatch functional code
         send_func = request.getbyte(0)
         if read_func != send_func
           msg = "Function code is mismatch (expected #{send_func}, got #{read_func})"
         end
 
         case read_func
-        when 1,2
-          bc = request.getword(3)/8 + 1
+        when 1, 2
+          bc = request.getword(3) / 8 + 1
           if data.size != bc
             msg = "Byte count is mismatch (expected #{bc}, got #{data.size} bytes)"
           end
-        when 3,4
+        when 3, 4
           rc = request.getword(3)
-          if data.size/2 != rc
-            msg = "Register count is mismatch (expected #{rc}, got #{data.size/2} regs)"
+          if data.size / 2 != rc
+            msg = "Register count is mismatch (expected #{rc}, got #{data.size / 2} regs)"
           end
-        when 5,6
+        when 5, 6
           exp_addr = request.getword(1)
           got_addr = response.getword(1)
           if exp_addr != got_addr
@@ -322,7 +323,7 @@ module ModBus
           if exp_val != got_val
             msg = "Value is mismatch (expected 0x#{exp_val.to_s(16)}, got 0x#{got_val.to_s(16)})"
           end
-        when 15,16
+        when 15, 16
           exp_addr = request.getword(1)
           got_addr = response.getword(1)
           if exp_addr != got_addr

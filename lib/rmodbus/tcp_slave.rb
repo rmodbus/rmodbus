@@ -20,6 +20,7 @@ module ModBus
     end
 
     private
+
     # overide method for RTU over TCP implamentaion
     # @see Slave#query
     def send_pdu(pdu)
@@ -37,9 +38,9 @@ module ModBus
       loop do
         header = @io.read(7)
         if header
-          trn = header[0,2].unpack('n')[0]
-          len = header[4,2].unpack('n')[0]
-          msg = @io.read(len-1)
+          trn = header[0, 2].unpack('n')[0]
+          len = header[4, 2].unpack('n')[0]
+          msg = @io.read(len - 1)
 
           log "Rx (#{(header + msg).size} bytes): " + logging_bytes(header + msg)
 

@@ -29,7 +29,7 @@ module ModBus
     def initialize(port = 10002, opts = {})
       opts[:host] = DEFAULT_HOST unless opts[:host]
       opts[:max_connection] = 4 unless opts[:max_connection]
-			super(port, host = opts[:host], maxConnection = opts[:max_connection])
-		end
+      super(port, host = opts[:host], maxConnection = opts[:max_connection])
+    end
   end
 end

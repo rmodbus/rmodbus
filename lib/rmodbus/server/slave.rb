@@ -8,7 +8,7 @@ module ModBus
       def initialize
         @coils = []
         @discrete_inputs = []
-        @holding_registers =[]
+        @holding_registers = []
         @input_registers = []
       end
     end

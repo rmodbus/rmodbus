@@ -1,0 +1,15 @@
+AllCops:
+  TargetRubyVersion: 2.5
+  NewCops: disable
+  SuggestExtensions: false
+
+Gemspec:
+  Enabled: false
+Lint:
+  Enabled: false
+Metrics:
+  Enabled: false
+Naming:
+  Enabled: false
+Style:
+  Enabled: false

@@ -72,8 +72,9 @@ module ModBus
     end
 
     protected
+
     def open_connection(*args)
-      #Stub conn object
+      # Stub conn object
       @io = Object.new
 
       @io.instance_eval """
@@ -87,7 +88,7 @@ module ModBus
       @io
     end
 
-    def get_slave(uid,io)
+    def get_slave(uid, io)
       Slave.new(uid, io)
     end
   end

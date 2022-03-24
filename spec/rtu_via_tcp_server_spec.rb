@@ -1,4 +1,5 @@
 # -*- coding: ascii
+
 require "rmodbus"
 
 describe ModBus::RTUViaTCPServer do
@@ -7,10 +8,10 @@ describe ModBus::RTUViaTCPServer do
     begin
       @server = ModBus::RTUViaTCPServer.new(@port)
       @server_slave = @server.with_slave(1)
-      @server_slave.coils = [1,0,1,1]
-      @server_slave.discrete_inputs = [1,1,0,0]
-      @server_slave.holding_registers = [1,2,3,4]
-      @server_slave.input_registers = [1,2,3,4]
+      @server_slave.coils = [1, 0, 1, 1]
+      @server_slave.discrete_inputs = [1, 1, 0, 0]
+      @server_slave.holding_registers = [1, 2, 3, 4]
+      @server_slave.input_registers = [1, 2, 3, 4]
       @server.promiscuous = true
       @server.start
     rescue Errno::EADDRINUSE
@@ -70,7 +71,8 @@ describe ModBus::RTUViaTCPServer do
 
   it "should send exception if request is malformed" do
     expect { @slave.query("\x01\x01") }.to raise_exception(
-                                                   ModBus::Errors::ModBusTimeout)
+      ModBus::Errors::ModBusTimeout
+    )
   end
 
   after :all do

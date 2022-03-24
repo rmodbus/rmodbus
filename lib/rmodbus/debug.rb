@@ -6,8 +6,8 @@ module ModBus
                   :read_retries, :read_retry_timeout,
                   :logger
 
-
     private
+
     # Put log message on standard output
     # @param [String] msg message for log
     def log(msg)

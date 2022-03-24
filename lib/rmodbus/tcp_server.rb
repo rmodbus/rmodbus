@@ -15,9 +15,9 @@ module ModBus
   #   slave.input_registers = [1,2,3,4]
   #   srv.logger = Logger.new($stdout)
   #   srv.start
-	class TCPServer < GServer
-		include Debug
-		include Server
+  class TCPServer < GServer
+    include Debug
+    include Server
 
     # Init server
     # @param [Integer] port listen port
@@ -25,11 +25,11 @@ module ModBus
     # @param [Hash] opts options of server
     # @option opts [String] :host host of server default '127.0.0.1'
     # @option opts [Float, Integer] :max_connection max of TCP connection with server default 4
-		def initialize(port = 502, opts = {})
+    def initialize(port = 502, opts = {})
       opts[:host] = DEFAULT_HOST unless opts[:host]
       opts[:max_connection] = 4 unless opts[:max_connection]
-			super(port, host = opts[:host], maxConnection = opts[:max_connection])
-		end
+      super(port, host = opts[:host], maxConnection = opts[:max_connection])
+    end
 
     # set the default param
     def with_slave(uid = 255)
@@ -41,9 +41,9 @@ module ModBus
     def serve(io)
       while not stopped?
         header = io.read(7)
-        tx_id = header[0,2]
-        proto_id = header[2,2]
-        len = header[4,2].unpack('n')[0]
+        tx_id = header[0, 2]
+        proto_id = header[2, 2]
+        len = header[4, 2].unpack('n')[0]
         unit_id = header.getbyte(6)
         if proto_id == "\x00\x00"
           req = io.read(len - 1)
@@ -63,5 +63,5 @@ module ModBus
         end
       end
     end
-	end
+  end
 end

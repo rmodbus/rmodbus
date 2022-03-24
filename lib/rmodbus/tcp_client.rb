@@ -13,6 +13,7 @@ module ModBus
     include TCP
 
     protected
+
     # Open TCP\IP connection
     def open_connection(ipaddr, port = 502, opts = {})
       open_tcp_connection(ipaddr, port, opts)

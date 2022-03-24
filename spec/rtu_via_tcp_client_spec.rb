@@ -1,11 +1,13 @@
 # -*- coding: ascii
+
 require 'rmodbus'
 
 describe ModBus::RTUClient do
   describe "method 'query'" do
     before do
       @sock = double('Socket')
-      expect(Socket).to receive(:tcp).with("127.0.0.1", 10002, nil, nil, hash_including(:connect_timeout)).and_return(@sock)
+      expect(Socket).to receive(:tcp).with("127.0.0.1", 10002, nil, nil,
+                                           hash_including(:connect_timeout)).and_return(@sock)
       allow(@sock).to receive(:read_timeout=)
       allow(@sock).to receive(:flush)
 
@@ -19,7 +21,7 @@ describe ModBus::RTUClient do
       expect(@sock).to receive(:write).with("\1#{request}\xA6\x31")
       expect(@sock).to receive(:read).with(2).and_return("\x2\x10")
       expect(@sock).to receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
-      expect {@slave.query(request)}.to raise_error(ModBus::Errors::ModBusTimeout)
+      expect { @slave.query(request) }.to raise_error(ModBus::Errors::ModBusTimeout)
     end
 
     it "should ignored frame with incorrect CRC" do
@@ -27,10 +29,10 @@ describe ModBus::RTUClient do
       expect(@sock).to receive(:write).with("\1#{request}\xA6\x31")
       expect(@sock).to receive(:read).with(2).and_return("\x2\x10")
       expect(@sock).to receive(:read).with(6).and_return("\x0\x1\x0\x1\x1C\x08")
-      expect {@slave.query(request)}.to raise_error(ModBus::Errors::ModBusTimeout)
+      expect { @slave.query(request) }.to raise_error(ModBus::Errors::ModBusTimeout)
     end
 
-    it "should return value of registers"do
+    it "should return value of registers" do
       request = "\x3\x0\x1\x0\x1"
       expect(@sock).to receive(:write).with("\1#{request}\xd5\xca")
       expect(@sock).to receive(:read).with(2).and_return("\x1\x3")
@@ -71,6 +73,8 @@ describe ModBus::RTUClient do
   end
 
   it "should tune connection timeout" do
-    expect { ModBus::RTUClient.new('81.123.231.11', 1999, :connect_timeout => 0.001) }.to raise_error(ModBus::Errors::ModBusTimeout)
+    expect {
+      ModBus::RTUClient.new('81.123.231.11', 1999, :connect_timeout => 0.001)
+    }.to raise_error(ModBus::Errors::ModBusTimeout)
   end
 end

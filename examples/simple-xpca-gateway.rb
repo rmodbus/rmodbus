@@ -30,15 +30,14 @@ require 'json'
 IP = '127.0.0.1'
 PORT = 8502
 
-@srv = ModBus::TCPServer.new(PORT,1)
+@srv = ModBus::TCPServer.new(PORT, 1)
 
-@srv.holding_registers = Array.new(100) { |i| i = i + 1  }
-@srv.input_registers = Array.new(100) { |i| i = i + 1  }
+@srv.holding_registers = Array.new(100) { |i| i = i + 1 }
+@srv.input_registers = Array.new(100) { |i| i = i + 1 }
 @srv.coils = Array.new(100) { |i| i = 0 }
-@srv.discrete_inputs = Array.new(100) { |i| i = 0  }
+@srv.discrete_inputs = Array.new(100) { |i| i = 0 }
 
 @srv.start
-
 
 # Calc a GET request
 # @example
@@ -60,12 +59,12 @@ get '/mb/:ip/:port/:slave/:dataplace/:firstaddr/:lastaddr' do
       cl.with_slave(params[:slave].to_i) do |slave|
         slave.debug = true
         dataplace = slave.send params[:dataplace]
-        data = dataplace[params[:firstaddr].to_i .. params[:lastaddr].to_i]
+        data = dataplace[params[:firstaddr].to_i..params[:lastaddr].to_i]
       end
     end
 
-    resp = { params[:dataplace] => {}}
-    data.each_with_index do |v,i|
+    resp = { params[:dataplace] => {} }
+    data.each_with_index do |v, i|
       resp[params[:dataplace]][params[:firstaddr].to_i + i] = {
         :value => v,
         :timestamp => Time.now.utc.strftime("%Y-%m-%d %H:%M:%S %z"),
@@ -75,8 +74,8 @@ get '/mb/:ip/:port/:slave/:dataplace/:firstaddr/:lastaddr' do
   rescue Exception => e
     resp = { :error => {
       :type => e.class,
-      :message => e.message }
-    }
+      :message => e.message
+    } }
   end
 
   content_type "application/json"

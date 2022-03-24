@@ -23,6 +23,7 @@ module ModBus
     include TCP
 
     protected
+
     # Open serial port
     def open_connection(port_or_ipaddr, arg = nil, opts = {})
       if port_or_ipaddr.is_a?(IO) || port_or_ipaddr.respond_to?(:read)

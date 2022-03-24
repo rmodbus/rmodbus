@@ -7,6 +7,7 @@ end
 module ModBus
   module SP
     attr_reader :port, :baud, :data_bits, :stop_bits, :parity, :read_timeout
+
     # Open serial port
     # @param [String] port name serial ports ("/dev/ttyS0")
     # @param [Integer] baud rate serial port (default 9600)

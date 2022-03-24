@@ -32,6 +32,7 @@ module ModBus
 
     class ResponseMismatch < ModBusException
       attr_reader :request, :response
+
       def initialize(msg, request, response)
         super(msg)
         @request = request

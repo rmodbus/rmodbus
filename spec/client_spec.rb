@@ -1,4 +1,5 @@
 # -*- coding: ascii
+
 require 'rmodbus'
 
 describe ModBus::Client do
@@ -16,13 +17,13 @@ describe ModBus::Client do
       expect(slave.uid).to eq(1)
     end
   end
-  
+
   it "should connect with TCP server" do
     ModBus::Client.connect do |cl|
       expect(cl).to be_instance_of(ModBus::Client)
     end
   end
-  
+
   it ":new alias :connect" do
     ModBus::Client.new do |cl|
       expect(cl).to be_instance_of(ModBus::Client)
@@ -60,9 +61,9 @@ describe ModBus::Client do
       expect(slave_2.raise_exception_on_mismatch).to be_falsey
     end
   end
-  
+
   it 'should common for all slaves :read_retries options' do
-   @cl.read_retries = 5
+    @cl.read_retries = 5
     @cl.with_slave(1) do |slave_1|
       expect(slave_1.read_retries).to eql(5)
     end
@@ -74,7 +75,7 @@ describe ModBus::Client do
   end
 
   it 'should common for all slaves :read_retry_timeout options' do
-   @cl.read_retry_timeout = 5
+    @cl.read_retry_timeout = 5
     @cl.with_slave(1) do |slave_1|
       expect(slave_1.read_retry_timeout).to eql(5)
     end
@@ -84,5 +85,4 @@ describe ModBus::Client do
       expect(slave_2.read_retry_timeout).to eql(15)
     end
   end
-
 end

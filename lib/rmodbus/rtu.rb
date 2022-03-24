@@ -7,25 +7,25 @@ module ModBus
 
     # We have to read specific amounts of numbers of bytes from the network depending on the function code and content
     def read_rtu_response(io)
-	    # Read the slave_id and function code
-      msg = read(io, 2)      
+      # Read the slave_id and function code
+      msg = read(io, 2)
 
       function_code = msg.getbyte(1)
       case function_code
-        when 1,2,3,4 then
-          # read the third byte to find out how much more
-          # we need to read + CRC
-          msg += read(io, 1)
-          msg += read(io, msg.getbyte(2)+2)
-        when 5,6,15,16 then
-          # We just read in an additional 6 bytes
-          msg += read(io, 6)
-        when 22 then
-          msg += read(io, 8)
-        when 0x80..0xff then
-          msg += read(io, 3)
-        else
-          raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
+      when 1, 2, 3, 4 then
+        # read the third byte to find out how much more
+        # we need to read + CRC
+        msg += read(io, 1)
+        msg += read(io, msg.getbyte(2) + 2)
+      when 5, 6, 15, 16 then
+        # We just read in an additional 6 bytes
+        msg += read(io, 6)
+      when 22 then
+        msg += read(io, 8)
+      when 0x80..0xff then
+        msg += read(io, 3)
+      else
+        raise ModBus::Errors::IllegalFunction, "Illegal function: #{function_code}"
       end
     end
 
@@ -44,16 +44,17 @@ module ModBus
         this_iter = io.read(len - result.length)
         result.concat(this_iter) if this_iter
         return result if result.length == len
+
         io.wait_readable
       end
     end
 
     def read_rtu_request(io)
-			# Every message is a minimum of 4 bytes (slave id, function code, crc16)
-			msg = read(io, 4)
+      # Every message is a minimum of 4 bytes (slave id, function code, crc16)
+      msg = read(io, 4)
 
-			# If msg is nil, then our client never sent us anything and it's time to disconnect
-			return if msg.nil?
+      # If msg is nil, then our client never sent us anything and it's time to disconnect
+      return if msg.nil?
 
       loop do
         offset = 0
@@ -62,12 +63,13 @@ module ModBus
         # scan the bytestream for a valid CRC
         loop do
           break if offset >= msg.length - 3
+
           calculated_crc = Digest::CRC16Modbus.checksum(msg[offset..-3])
           if crc == calculated_crc
             is_response = (msg.getbyte(offset + 1) & 0x80 == 0x80) ||
-              (msg.getbyte(offset) == @last_req_uid &&
-                  msg.getbyte(offset + 1) == @last_req_func &&
-              @last_req_timestamp && Time.now.to_f - @last_req_timestamp < 5)
+                          (msg.getbyte(offset) == @last_req_uid &&
+                              msg.getbyte(offset + 1) == @last_req_func &&
+                          @last_req_timestamp && Time.now.to_f - @last_req_timestamp < 5)
 
             params = is_response ? parse_response(msg.getbyte(offset + 1), msg[(offset + 1)..-3]) :
                 parse_request(msg.getbyte(offset + 1), msg[(offset + 1)..-3])
@@ -93,7 +95,7 @@ module ModBus
         # be able to see at once
         msg = msg[1..-1] if msg.length > 256
       end
-		end
+    end
 
     def serve(io)
       loop do

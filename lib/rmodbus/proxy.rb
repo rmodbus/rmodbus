@@ -28,7 +28,8 @@ module ModBus
         @slave.send("write_#{@type}", key, val)
       elsif key.instance_of?(Range)
         if key.count != val.size
-          raise ModBus::Errors::ProxyException, "The size of the range must match the size of the values (#{key.count} != #{val.size})"
+          raise ModBus::Errors::ProxyException,
+                "The size of the range must match the size of the values (#{key.count} != #{val.size})"
         end
 
         @slave.send("write_#{@type}s", key.first, val)
@@ -37,5 +38,4 @@ module ModBus
       end
     end
   end
-
 end

@@ -1,4 +1,5 @@
 # -*- coding: ascii
+
 require 'rmodbus'
 
 describe Array do
@@ -28,7 +29,6 @@ describe Array do
     @coil_proxy[0..1] = [0, 0]
   end
 
-
   # Discrete input tests
   it "should call read_discrete_input" do
     expect(@slave).to receive(:read_discrete_input).with(0)
@@ -39,7 +39,6 @@ describe Array do
     expect(@slave).to receive(:read_discrete_inputs).with(0, 2)
     @discrete_input_proxy[0..1]
   end
-
 
   # Holding Register Tess
   it "should call read_holding_register" do
@@ -59,7 +58,6 @@ describe Array do
     @holding_register_proxy[0..1] = [0, 0]
   end
 
-
   # Input Register Tests
   it "should call read_discrete_input" do
     expect(@slave).to receive(:read_input_register).with(0)
@@ -71,4 +69,3 @@ describe Array do
     @input_register_proxy[0..1]
   end
 end
-
