@@ -3,12 +3,15 @@
 1. [BREAKING] Servers now support publishing multiple slaves
 2. [BREAKING] RTUViaTCPClient/RTUViaTCPSlave are gone. Please just use RTUClient directly
 3. [BREAKING] Proxy collections no longer return an array when requesting a single item.
-3. Don't time out waiting to read a response that will never come from broadcast commands
-4. Don't send responses to broadcast commands as a server
-5. Properly function as a server in an environment with multiple RTU slaves
-6. Server now supports promiscuous mode to dump the conversation happening between a master and other slaves.
-7. Add read/write multiple registers function (server and client)
-8. Add mask write register function to server
+4. [BREAKING] to/from_32* use big endian order. if you want little endian order for the 
+   constituent 16-bit registers, use `wordswap` before/after conversion as appropriate.
+5. [BREAKING] to/from_32i works with _signed_ integers. If you want unsigned, use 32u
+6. Don't time out waiting to read a response that will never come from broadcast commands
+7. Don't send responses to broadcast commands as a server
+8. Properly function as a server in an environment with multiple RTU slaves
+9. Server now supports promiscuous mode to dump the conversation happening between a master and other slaves.
+10. Add read/write multiple registers function (server and client)
+11. Add mask write register function to server
 
 ###2017-03-30 Release 1.3.2
 

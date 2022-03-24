@@ -1,5 +1,6 @@
 *.sw?
 *.gem
+.byebug_history
 .redcar/
 coverage/
 .yardoc/

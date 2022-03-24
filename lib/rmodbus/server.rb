@@ -118,12 +118,12 @@ module ModBus
       case func
       when 1
         unless (err = validate_read_func(params, slave.coils, 2000))
-          val = slave.coils[params[:addr], params[:quant]].pack_to_word
+          val = slave.coils[params[:addr], params[:quant]].pack_bits
           pdu = func.chr + val.size.chr + val
         end
       when 2
         unless (err = validate_read_func(params, slave.discrete_inputs, 2000))
-          val = slave.discrete_inputs[params[:addr], params[:quant]].pack_to_word
+          val = slave.discrete_inputs[params[:addr], params[:quant]].pack_bits
           pdu = func.chr + val.size.chr + val
         end
       when 3
