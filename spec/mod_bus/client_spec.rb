@@ -1,8 +1,6 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "rmodbus"
-
 describe ModBus::Client do
   before do
     @cl = ModBus::Client.new

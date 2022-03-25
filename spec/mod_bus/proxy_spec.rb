@@ -1,8 +1,6 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "rmodbus"
-
 # RuboCop doesn't think singular vs. plural differs
 # rubocop:disable RSpec/RepeatedDescription
 describe ModBus::ReadOnlyProxy do

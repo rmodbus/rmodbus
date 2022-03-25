@@ -1,8 +1,6 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "spec_helper"
-
 describe ModBus::Errors::ResponseMismatch do
   before do
     @slave = ModBus::Client::Slave.new(1, nil)

@@ -1,8 +1,6 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "rmodbus"
-
 describe ModBus::Errors do
   before(:all) do
     @srv = ModBus::TCPServer.new(1502)

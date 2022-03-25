@@ -1,8 +1,6 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "rmodbus"
-
 describe ModBus::RTUServer do
   before do
     @sp = instance_double("CCutrer::SerialPort")

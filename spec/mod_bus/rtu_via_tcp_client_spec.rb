@@ -1,8 +1,6 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "rmodbus"
-
 describe ModBus::RTUClient do
   describe "method 'query'" do
     before do

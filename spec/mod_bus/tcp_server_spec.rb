@@ -1,8 +1,6 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "rmodbus"
-
 describe ModBus::TCPServer do
   before :all do
     unit_ids = (1..247).to_a.shuffle

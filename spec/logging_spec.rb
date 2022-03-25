@@ -1,8 +1,6 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "rmodbus"
-
 describe "Logging" do
   describe ModBus::TCPClient do
     before do

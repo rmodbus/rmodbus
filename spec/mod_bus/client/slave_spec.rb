@@ -1,8 +1,6 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "rmodbus"
-
 describe ModBus::Client::Slave do
   before do
     @slave = ModBus::Client.new.with_slave(1)
