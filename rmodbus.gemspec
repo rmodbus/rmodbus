@@ -3,7 +3,7 @@
 require_relative "lib/rmodbus/version"
 
 Gem::Specification.new do |gem|
-  gem.name = "rmodbus-ccutrer"
+  gem.name = "rmodbus"
   gem.version = ModBus::VERSION
   gem.license = "BSD-3-Clause"
   gem.author  = "A.Timin, J. Sanders, K. Reynolds, F. Luizão, C. Cutrer"

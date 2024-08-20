@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rmodbus-ccutrer (2.1.1)
+    rmodbus (2.1.2)
       digest-crc (~> 0.1)
 
 GEM
@@ -90,7 +90,7 @@ DEPENDENCIES
   debug (~> 1.9)
   gserver (~> 0.0)
   rake (~> 13.0)
-  rmodbus-ccutrer!
+  rmodbus!
   rspec (~> 3.11)
   rubocop-inst (~> 1.0)
   rubocop-rake (~> 0.6)
