@@ -323,7 +323,7 @@ module ModBus
           got_quant = response.getword(3)
           msg = "Quantity is mismatch (expected #{exp_quant}, got #{got_quant})" if exp_quant != got_quant
         else
-          warn "Fuiction (#{read_func}) is not supported raising response mismatch"
+          warn "Function (#{read_func}) is not supported raising response mismatch"
         end
 
         raise ResponseMismatch.new(msg, request, response) if msg
