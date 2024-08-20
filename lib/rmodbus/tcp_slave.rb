@@ -18,7 +18,7 @@ module ModBus
     # @see Slave::initialize
     def initialize(uid, io)
       @transaction = 0
-      super(uid, io)
+      super
     end
 
     private

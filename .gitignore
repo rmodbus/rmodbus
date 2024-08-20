@@ -1,10 +1,7 @@
-*.sw?
-*.gem
-.byebug_history
-.redcar/
-coverage/
-.yardoc/
-html/
-doc/
-.rvmrc
-tags
+/*.gem
+/.bundle/
+/.yardoc/
+/coverage/
+/doc/
+/html/
+/pkg/
