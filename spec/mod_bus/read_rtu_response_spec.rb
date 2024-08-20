@@ -19,7 +19,7 @@ class TestIO
 
   def read(num)
     result = @msg[0, num]
-    @msg = @msg[num..-1]
+    @msg = @msg[num..]
     result
   end
 end

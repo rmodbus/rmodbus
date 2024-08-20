@@ -98,11 +98,11 @@ module ModBus
       when 1, 2
         return nil unless res.length == res[1].ord + 2
 
-        res[2..-1].unpack_bits
+        res[2..].unpack_bits
       when 3, 4, 23
         return nil unless res.length == res[1].ord + 2
 
-        res[2..-1].unpack("n*")
+        res[2..].unpack("n*")
       when 5, 6, 15, 16
         return nil unless res.length == 5
 
@@ -254,7 +254,7 @@ module ModBus
       return nil if req.length < 12
 
       params = { read: parse_read_func(req, nil),
-                 write: parse_write_multiple_registers_func(req[4..-1]) }
+                 write: parse_write_multiple_registers_func(req[4..]) }
       return nil if params[:write].nil?
 
       params

@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.extra_rdoc_files = ["README.md", "NEWS.md"]
   gem.metadata["rubygems_mfa_required"] = "true"
 
-  gem.required_ruby_version = ">= 2.5"
+  gem.required_ruby_version = ">= 2.7"
 
   gem.add_development_dependency "bundler", "~> 2.2"
   gem.add_development_dependency "ccutrer-serialport", "~> 1.1"

@@ -286,7 +286,7 @@ module ModBus
         end
 
         check_response_mismatch(request, response) if raise_exception_on_mismatch
-        response[2..-1]
+        response[2..]
       end
       # rubocop:enable Layout/LineLength
 
@@ -294,7 +294,7 @@ module ModBus
 
       def check_response_mismatch(request, response)
         read_func = response.getbyte(0)
-        data = response[2..-1]
+        data = response[2..]
         # Mismatch functional code
         send_func = request.getbyte(0)
         msg = "Function code is mismatch (expected #{send_func}, got #{read_func})" if read_func != send_func
