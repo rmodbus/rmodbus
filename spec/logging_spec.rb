@@ -1,19 +1,24 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
+require "logger"
+
 describe "Logging" do
   describe ModBus::TCPClient do
     before do
       @uid = 1
-      @sock = instance_double("Socket")
+      @sock = instance_double(Socket)
       @adu = +"\000\001\000\000\000\001\001"
 
-      expect(Socket).to receive(:tcp).with("127.0.0.1", 1502, nil, nil,
+      expect(Socket).to receive(:tcp).with("127.0.0.1",
+                                           1502,
+                                           nil,
+                                           nil,
                                            hash_including(:connect_timeout)).and_return(@sock)
       allow(@sock).to receive(:read).with(0).and_return("")
 
       @slave = ModBus::TCPClient.new("127.0.0.1", 1502).with_slave(@uid)
-      @slave.logger = instance_double("Logger")
+      @slave.logger = instance_double(Logger)
     end
 
     it "logs rec/send bytes" do
@@ -57,14 +62,20 @@ describe "Logging" do
 
   describe ModBus::RTUClient do
     before do
-      @sp = instance_double("CCutrer::SerialPort")
+      @sp = instance_double(CCutrer::SerialPort)
       allow(@sp).to receive(:flush)
 
-      expect(CCutrer::SerialPort).to receive(:new).with("/dev/port1", baud: 9600, data_bits: 7, stop_bits: 2,
-                                                                      parity: :odd).and_return(@sp)
+      expect(CCutrer::SerialPort).to receive(:new).with("/dev/port1",
+                                                        baud: 9600,
+                                                        data_bits: 7,
+                                                        stop_bits: 2,
+                                                        parity: :odd).and_return(@sp)
 
-      @slave = ModBus::RTUClient.new("/dev/port1", 9600, data_bits: 7, stop_bits: 2,
-                                                         parity: :odd).with_slave(1)
+      @slave = ModBus::RTUClient.new("/dev/port1",
+                                     9600,
+                                     data_bits: 7,
+                                     stop_bits: 2,
+                                     parity: :odd).with_slave(1)
       @slave.read_retries = 0
     end
 
@@ -75,7 +86,7 @@ describe "Logging" do
       expect(@sp).to receive(:read).with(1).and_return("\x2")
       expect(@sp).to receive(:read).with(4).and_return("\xff\xff\xb9\xf4")
 
-      @slave.logger = instance_double("Logger")
+      @slave.logger = instance_double(Logger)
       expect(@slave.logger).to receive(:debug).with("Tx (8 bytes): [01][03][00][01][00][01][d5][ca]")
       expect(@slave.logger).to receive(:debug).with("Rx (7 bytes): [01][03][02][ff][ff][b9][f4]")
 

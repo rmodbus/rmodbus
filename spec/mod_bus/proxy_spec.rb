@@ -5,7 +5,7 @@
 # rubocop:disable RSpec/RepeatedDescription
 describe ModBus::ReadOnlyProxy do
   before do
-    @slave = instance_double("ModBus::Slave")
+    @slave = instance_double(ModBus::Client::Slave)
     @coil_proxy = ModBus::ReadWriteProxy.new(@slave, :coil)
     @discrete_input_proxy = ModBus::ReadOnlyProxy.new(@slave, :discrete_input)
     @holding_register_proxy = ModBus::ReadWriteProxy.new(@slave, :holding_register)

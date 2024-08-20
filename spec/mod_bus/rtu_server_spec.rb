@@ -3,9 +3,12 @@
 
 describe ModBus::RTUServer do
   before do
-    @sp = instance_double("CCutrer::SerialPort")
-    expect(CCutrer::SerialPort).to receive(:new).with("/dev/ttyS0", baud: 4800, data_bits: 7, stop_bits: 2,
-                                                                    parity: :none).and_return(@sp)
+    @sp = instance_double(CCutrer::SerialPort)
+    expect(CCutrer::SerialPort).to receive(:new).with("/dev/ttyS0",
+                                                      baud: 4800,
+                                                      data_bits: 7,
+                                                      stop_bits: 2,
+                                                      parity: :none).and_return(@sp)
 
     @server = ModBus::RTUServer.new("/dev/ttyS0", 4800, data_bits: 7, stop_bits: 2)
     @slave = @server.with_slave(1)

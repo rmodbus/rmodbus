@@ -5,10 +5,13 @@ describe ModBus::TCPClient do
   describe "method 'query'" do
     before do
       @uid = 1
-      @sock = instance_double("Socket")
+      @sock = instance_double(Socket)
       @adu = +"\000\001\000\000\000\001\001"
 
-      expect(Socket).to receive(:tcp).with("127.0.0.1", 1502, nil, nil,
+      expect(Socket).to receive(:tcp).with("127.0.0.1",
+                                           1502,
+                                           nil,
+                                           nil,
                                            hash_including(:connect_timeout)).and_return(@sock)
       allow(@sock).to receive(:read).with(0).and_return("")
       @cl = ModBus::TCPClient.new("127.0.0.1", 1502)

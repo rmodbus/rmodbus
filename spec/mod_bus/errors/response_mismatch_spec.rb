@@ -14,7 +14,8 @@ describe ModBus::Errors::ResponseMismatch do
 
     expect { @slave.read_coils(0x13, 0x12) }.to raise_response_mismatch(
       "Function code is mismatch (expected 1, got 2)",
-      request, response
+      request,
+      response
     )
   end
 
@@ -26,7 +27,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.read_coils(0x13, 0x12) }.to raise_response_mismatch(
         "Byte count is mismatch (expected 3, got 2 bytes)",
-        request, response
+        request,
+        response
       )
     end
   end
@@ -39,7 +41,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.read_discrete_inputs(0x13, 0x12) }.to raise_response_mismatch(
         "Byte count is mismatch (expected 3, got 2 bytes)",
-        request, response
+        request,
+        response
       )
     end
   end
@@ -52,7 +55,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.read_holding_registers(0x8, 0x1) }.to raise_response_mismatch(
         "Register count is mismatch (expected 1, got 2 regs)",
-        request, response
+        request,
+        response
       )
     end
   end
@@ -65,7 +69,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.read_input_registers(0x8, 0x2) }.to raise_response_mismatch(
         "Register count is mismatch (expected 2, got 1 regs)",
-        request, response
+        request,
+        response
       )
     end
   end
@@ -78,7 +83,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.write_coil(8, true) }.to raise_response_mismatch(
         "Address is mismatch (expected 8, got 9)",
-        request, response
+        request,
+        response
       )
     end
 
@@ -89,7 +95,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.write_coil(8, true) }.to raise_response_mismatch(
         "Value is mismatch (expected 0xff00, got 0x0)",
-        request, response
+        request,
+        response
       )
     end
   end
@@ -102,7 +109,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.write_single_register(8, 0x0a0b) }.to raise_response_mismatch(
         "Address is mismatch (expected 8, got 9)",
-        request, response
+        request,
+        response
       )
     end
 
@@ -113,7 +121,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.write_single_register(8, 0x0a0b) }.to raise_response_mismatch(
         "Value is mismatch (expected 0xa0b, got 0x90b)",
-        request, response
+        request,
+        response
       )
     end
   end
@@ -126,7 +135,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.write_coils(0x13, [1, 0, 1, 1, 0, 0, 1, 1, 1, 0]) }.to raise_response_mismatch(
         "Address is mismatch (expected 19, got 20)",
-        request, response
+        request,
+        response
       )
     end
 
@@ -137,7 +147,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.write_coils(0x13, [1, 0, 1, 1, 0, 0, 1, 1, 1, 0]) }.to raise_response_mismatch(
         "Quantity is mismatch (expected 10, got 9)",
-        request, response
+        request,
+        response
       )
     end
   end
@@ -150,7 +161,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.write_holding_registers(0x1, [0xa, 0x102]) }.to raise_response_mismatch(
         "Address is mismatch (expected 1, got 2)",
-        request, response
+        request,
+        response
       )
     end
 
@@ -161,7 +173,8 @@ describe ModBus::Errors::ResponseMismatch do
 
       expect { @slave.write_holding_registers(0x1, [0xa, 0x102]) }.to raise_response_mismatch(
         "Quantity is mismatch (expected 2, got 1)",
-        request, response
+        request,
+        response
       )
     end
   end

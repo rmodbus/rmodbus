@@ -4,8 +4,11 @@
 describe ModBus::RTUClient do
   describe "method 'query'" do
     before do
-      @sock = instance_double("Socket")
-      expect(Socket).to receive(:tcp).with("127.0.0.1", 10_002, nil, nil,
+      @sock = instance_double(Socket)
+      expect(Socket).to receive(:tcp).with("127.0.0.1",
+                                           10_002,
+                                           nil,
+                                           nil,
                                            hash_including(:connect_timeout)).and_return(@sock)
       allow(@sock).to receive(:flush)
 

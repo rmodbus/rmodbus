@@ -3,11 +3,14 @@
 
 describe ModBus::RTUClient do
   before do
-    @sp = instance_double("CCutrer::SerialPort")
+    @sp = instance_double(CCutrer::SerialPort)
     allow(@sp).to receive(:flush)
 
-    expect(CCutrer::SerialPort).to receive(:new).with("/dev/port1", baud: 9600, data_bits: 8, stop_bits: 1,
-                                                                    parity: :none).and_return(@sp)
+    expect(CCutrer::SerialPort).to receive(:new).with("/dev/port1",
+                                                      baud: 9600,
+                                                      data_bits: 8,
+                                                      stop_bits: 1,
+                                                      parity: :none).and_return(@sp)
 
     @cl = ModBus::RTUClient.new("/dev/port1", 9600, data_bits: 8, stop_bits: 1, parity: :none)
     @slave = @cl.with_slave(1)
@@ -37,8 +40,11 @@ describe ModBus::RTUClient do
 
   it "sugars connect method" do
     port, baud = "/dev/port1", 4800
-    expect(CCutrer::SerialPort).to receive(:new).with(port, baud: baud, data_bits: 8, stop_bits: 1,
-                                                            parity: :none).and_return(@sp)
+    expect(CCutrer::SerialPort).to receive(:new).with(port,
+                                                      baud: baud,
+                                                      data_bits: 8,
+                                                      stop_bits: 1,
+                                                      parity: :none).and_return(@sp)
     expect(@sp).to receive(:closed?).and_return(false)
     expect(@sp).to receive(:close)
     ModBus::RTUClient.connect(port, baud) do |cl|

@@ -5,7 +5,8 @@ require "time"
 module ModBus
   module Debug
     attr_accessor :raise_exception_on_mismatch,
-                  :read_retries, :read_retry_timeout,
+                  :read_retries,
+                  :read_retry_timeout,
                   :logger
 
     private

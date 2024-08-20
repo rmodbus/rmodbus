@@ -1,22 +1,13 @@
+inherit_gem:
+  rubocop-inst:
+  - rubocop.yml
+  - rubocop-rspec.yml
+
 require:
   - rubocop-rake
-  - rubocop-performance
-  - rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 2.7
-  NewCops: enable
-
-Gemspec/DevelopmentDependencies:
-  EnforcedStyle: gemspec
-
-Lint/UnusedBlockArgument:
-  AutoCorrect: false
-Lint/UnusedMethodArgument:
-  AutoCorrect: false
-
-Metrics:
-  Enabled: false
 
 # ModBus's master/slave terminology can be updated, but not now
 Naming/InclusiveLanguage:
@@ -24,13 +15,7 @@ Naming/InclusiveLanguage:
 
 RSpec/BeforeAfterAll:
   Enabled: false
-RSpec/DescribedClass:
-  Enabled: false
-RSpec/ExampleLength:
-  Enabled: false
-RSpec/ExpectInHook:
-  Enabled: false
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
   Exclude:
    - spec/ext_spec.rb
    - spec/mod_bus/proxy_spec.rb
@@ -38,15 +23,7 @@ RSpec/FilePath:
    - spec/mod_bus/rtu_via_tcp_client_spec.rb
 RSpec/InstanceVariable:
   Enabled: false
-RSpec/MessageSpies:
-  Enabled: false
-RSpec/MultipleExpectations:
-  Enabled: false
-RSpec/StubbedMock:
-  Enabled: false
 
-Style/Alias:
-  EnforcedStyle: prefer_alias_method
 Style/BlockDelimiters:
   AllowedMethods: []
 Style/DocumentDynamicEvalDefinition:
@@ -55,19 +32,5 @@ Style/Documentation:
   Enabled: false
 Style/DoubleNegation:
   Enabled: false
-Style/HashSyntax:
-  EnforcedStyle: ruby19_no_mixed_keys
 Style/ParallelAssignment:
   Enabled: false
-Style/PercentQLiterals:
-  EnforcedStyle: upper_case_q
-Style/PerlBackrefs:
-  Enabled: false
-Style/RescueStandardError:
-  EnforcedStyle: implicit
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
-Style/StringLiteralsInInterpolation:
-  EnforcedStyle: double_quotes
-Style/TernaryParentheses:
-  EnforcedStyle: require_parentheses_when_complex
