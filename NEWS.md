@@ -1,4 +1,4 @@
-###UPCOMING
+###2024-08-20 Release 2.1.1
 
 1. [BREAKING] Servers now support publishing multiple slaves
 2. [BREAKING] RTUViaTCPClient/RTUViaTCPSlave are gone. Please just use RTUClient directly
@@ -12,6 +12,10 @@
 9. Server now supports promiscuous mode to dump the conversation happening between a master and other slaves.
 10. Add read/write multiple registers function (server and client)
 11. Add mask write register function to server
+12. Log to a logger object, not $stderr
+13. Improve RTU read resiliency with partial reads
+14. Callbacks in server to implement additional custom processing
+15. Ability to use any IO (including a proxy you've set up) with RTUClient
 
 ###2017-03-30 Release 1.3.2
 
