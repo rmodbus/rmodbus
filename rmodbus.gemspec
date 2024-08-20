@@ -7,13 +7,17 @@ Gem::Specification.new do |gem|
   gem.version = ModBus::VERSION
   gem.license = "BSD-3-Clause"
   gem.author  = "A.Timin, J. Sanders, K. Reynolds, F. Luizão, C. Cutrer"
-  gem.email = "atimin@gmail.com"
-  gem.homepage = "https://github.com/ccutrer/rmodbus"
+  gem.email = "cody@cutrer.us"
+  gem.homepage = "https://github.com/rmodbus/rmodbus"
   gem.summary = "RModBus - free implementation of protocol ModBus"
-  gem.files = Dir["lib/**/*.rb", "examples/*.rb", "spec/*.rb", "Rakefile"]
+  gem.files = Dir["lib/**/*.rb", "examples/*.rb"]
   gem.rdoc_options = ["--title", "RModBus", "--inline-source", "--main", "README.md"]
   gem.extra_rdoc_files = ["README.md", "NEWS.md"]
-  gem.metadata["rubygems_mfa_required"] = "true"
+  gem.metadata = {
+    "changelog_uri" => "https://github.com/rmodbus/rmodbus/blob/main/NEWS.md",
+    "source_code_uri" => "https://github.com/rmodbus/rmodbus",
+    "rubygems_mfa_required" => "true"
+  }
 
   gem.required_ruby_version = ">= 2.7"
 
