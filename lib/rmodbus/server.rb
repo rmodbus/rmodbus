@@ -186,7 +186,8 @@ module ModBus
 
     def validate_read_func(params, field, quant_max = 0x7d)
       return 3 unless params[:quant] <= quant_max
-      return 2 unless params[:addr] + params[:quant] <= field.size
+
+      2 unless params[:addr] + params[:quant] <= field.size
     end
 
     def parse_write_coil_func(req)
@@ -197,7 +198,8 @@ module ModBus
 
     def validate_write_coil_func(params, slave)
       return 2 unless params[:addr] <= slave.coils.size
-      return 3 unless params[:val].zero? || (params[:val] == 0xff00)
+
+      3 unless params[:val].zero? || (params[:val] == 0xff00)
     end
 
     def parse_write_register_func(req)
@@ -207,7 +209,7 @@ module ModBus
     end
 
     def validate_write_register_func(params, slave)
-      return 2 unless params[:addr] <= slave.holding_registers.size
+      2 unless params[:addr] <= slave.holding_registers.size
     end
 
     def parse_write_multiple_coils_func(req)

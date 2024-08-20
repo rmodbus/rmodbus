@@ -6,36 +6,32 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  BUNDLE_LOCKFILE: active
+
 jobs:
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby-version: [3.0, 2.7, 2.6, 2.5]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby-version }}
+          ruby-version: 3.3
           bundler-cache: true
-      - name: Install dependencies
-        run: bundle install
       - name: Run rubocop
-        run: bundle exec rubocop
+        run: bin/rubocop
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: [3.0, 2.7, 2.6, 2.5]
+        ruby-version: [3.3, 3.2, 3.1, "3.0", 2.7]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
-      - name: Install dependencies
-        run: bundle install
       - name: Run rspec
-        run: bundle exec rake spec
+        run: bin/rspec

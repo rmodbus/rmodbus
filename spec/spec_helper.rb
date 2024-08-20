@@ -1,7 +1,7 @@
 # -*- coding: ascii
 # frozen_string_literal: true
 
-require "byebug"
+require "debug"
 require "rmodbus"
 
 RSpec::Matchers.define :raise_response_mismatch do |expected_message, expected_request, expected_response|

@@ -84,7 +84,7 @@ module ModBus
         nbyte = ((vals.size - 1) >> 3) + 1
         sum = 0
         (vals.size - 1).downto(0) do |i|
-          sum = sum << 1
+          sum <<= 1
           sum |= 1 if vals[i].positive?
         end
 
@@ -275,7 +275,7 @@ module ModBus
           raise ModBusTimeout.new, "Timed out during read attempt"
         end
 
-        return nil if response.size.zero?
+        return nil if response.empty?
 
         read_func = response.getbyte(0)
         if read_func >= 0x80
