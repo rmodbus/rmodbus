@@ -30,9 +30,9 @@ module ModBus
       #
       # @example
       #  coils[addr] => [1]
-      #  coils[addr1..addr2] => [1, 0, ..]
+      #  coils[addr1..addr2] => [1, 0, ..-1]
       #  coils[addr] = 0 => [0]
-      #  coils[addr1..addr2] = [1, 0, ..] => [1, 0, ..]
+      #  coils[addr1..addr2] = [1, 0, ..-1] => [1, 0, ..-1]
       #
       # @return [ReadWriteProxy] proxy object
       def coils
@@ -42,7 +42,7 @@ module ModBus
       # Read coils
       #
       # @example
-      #  read_coils(addr, ncoils) => [1, 0, ..]
+      #  read_coils(addr, ncoils) => [1, 0, ..-1]
       #
       # @param [Integer] addr address first coil
       # @param [Integer] ncoils number coils
@@ -103,7 +103,7 @@ module ModBus
       #
       # @example
       #  discrete_inputs[addr] => [1]
-      #  discrete_inputs[addr1..addr2] => [1, 0, ..]
+      #  discrete_inputs[addr1..addr2] => [1, 0, ..-1]
       #
       # @return [ReadOnlyProxy] proxy object
       def discrete_inputs
@@ -113,7 +113,7 @@ module ModBus
       # Read discrete inputs
       #
       # @example
-      #  read_discrete_inputs(addr, ninputs) => [1, 0, ..]
+      #  read_discrete_inputs(addr, ninputs) => [1, 0, ..-1]
       #
       # @param [Integer] addr address first input
       # @param[Integer] ninputs number inputs
@@ -130,7 +130,7 @@ module ModBus
       #
       # @example
       #  input_registers[addr] => [1]
-      #  input_registers[addr1..addr2] => [1, 0, ..]
+      #  input_registers[addr1..addr2] => [1, 0, ..-1]
       #
       # @return [ReadOnlyProxy] proxy object
       def input_registers
@@ -140,7 +140,7 @@ module ModBus
       # Read input registers
       #
       # @example
-      #  read_input_registers(1, 5) => [1, 0, ..]
+      #  read_input_registers(1, 5) => [1, 0, ..-1]
       #
       # @param [Integer] addr address first registers
       # @param [Integer] nregs number registers
@@ -157,9 +157,9 @@ module ModBus
       #
       # @example
       #  holding_registers[addr] => [123]
-      #  holding_registers[addr1..addr2] => [123, 234, ..]
+      #  holding_registers[addr1..addr2] => [123, 234, ..-1]
       #  holding_registers[addr] = 123 => 123
-      #  holding_registers[addr1..addr2] = [234, 345, ..] => [234, 345, ..]
+      #  holding_registers[addr1..addr2] = [234, 345, ..-1] => [234, 345, ..-1]
       #
       # @return [ReadWriteProxy] proxy object
       def holding_registers
@@ -169,7 +169,7 @@ module ModBus
       # Read holding registers
       #
       # @example
-      #  read_holding_registers(1, 5) => [1, 0, ..]
+      #  read_holding_registers(1, 5) => [1, 0, ..-1]
       #
       # @param [Integer] addr address first registers
       # @param [Integer] nregs number registers
@@ -227,7 +227,7 @@ module ModBus
       # Read/write multiple holding registers
       #
       # @example
-      #  read_write_multiple_registers(1, 5, 1, [0xaa, 0]) => [1, 0, ..]
+      #  read_write_multiple_registers(1, 5, 1, [0xaa, 0]) => [1, 0, ..-1]
       #
       # @param [Integer] addr_r address first registers to read
       # @param [Integer] nregs number registers to read
@@ -286,7 +286,7 @@ module ModBus
         end
 
         check_response_mismatch(request, response) if raise_exception_on_mismatch
-        response[2..]
+        response[2..-1]
       end
       # rubocop:enable Layout/LineLength
 
@@ -294,7 +294,7 @@ module ModBus
 
       def check_response_mismatch(request, response)
         read_func = response.getbyte(0)
-        data = response[2..]
+        data = response[2..-1]
         # Mismatch functional code
         send_func = request.getbyte(0)
         msg = "Function code is mismatch (expected #{send_func}, got #{read_func})" if read_func != send_func

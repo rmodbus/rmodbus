@@ -7,7 +7,7 @@ require:
   - rubocop-rake
 
 AllCops:
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 2.5
 
 # ModBus's master/slave terminology can be updated, but not now
 Naming/InclusiveLanguage:

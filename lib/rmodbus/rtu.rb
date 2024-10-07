@@ -60,7 +60,7 @@ module ModBus
 
       loop do
         offset = 0
-        crc = msg[-2..].unpack1("S<")
+        crc = msg[-2..-1].unpack1("S<")
 
         # scan the bytestream for a valid CRC
         loop do
@@ -88,7 +88,7 @@ module ModBus
                 @last_req_timestamp = Time.now.to_f
               end
               log "Server RX discarding #{offset} bytes: #{logging_bytes(msg[0...offset])}" if offset != 0
-              log "Server RX (#{msg.size - offset} bytes): #{logging_bytes(msg[offset..])}"
+              log "Server RX (#{msg.size - offset} bytes): #{logging_bytes(msg[offset..-1])}"
               return [msg.getbyte(offset), msg.getbyte(offset + 1), params, msg[offset + 1..-3], is_response]
             end
           end
@@ -98,7 +98,7 @@ module ModBus
         msg.concat(read(io, 1))
         # maximum message size is 256, so that's as far as we have to
         # be able to see at once
-        msg = msg[1..] if msg.length > 256
+        msg = msg[1..-1] if msg.length > 256
       end
     end
 

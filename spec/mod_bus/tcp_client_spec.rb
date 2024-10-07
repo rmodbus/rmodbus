@@ -51,7 +51,7 @@ describe ModBus::TCPClient do
       expect(@sock).to receive(:read).with(7).and_return(@adu[0, 7])
       expect(@sock).to receive(:read).with(8).and_return(response)
 
-      expect(@slave.query(request)).to eq(response[2..])
+      expect(@slave.query(request)).to eq(response[2..-1])
     end
 
     it "sugars connect method" do
